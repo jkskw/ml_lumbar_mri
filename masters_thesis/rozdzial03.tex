@@ -1,14 +1,14 @@
-\chapter{Zalecenia dotycz¹ce formatowania}
-Wiêksza czêœæ niniejszego rozdzia³u ma charakter informacyjny. Treœci w nim zawarte maj¹ uzmys³owiæ czytelnikowi, jak wiele jest parametrów do ustawienia, by zredagowany dokument wygl¹da³ ,,³adnie''. Parametry te poustawiano w szablonie. Wystarczy z niego skorzystaæ.
+\chapter{Zalecenia dotyczÄ…ce formatowania}
+WiÄ™ksza czÄ™Å›Ä‡ niniejszego rozdziaÅ‚u ma charakter informacyjny. TreÅ›ci w nim zawarte majÄ… uzmysÅ‚owiÄ‡ czytelnikowi, jak wiele jest parametrÃ³w do ustawienia, by zredagowany dokument wyglÄ…daÅ‚ ,,Å‚adnie''. Parametry te poustawiano w szablonie. Wystarczy z niego skorzystaÄ‡.
 
-\section{Rozmiar i uk³ad treœci na stronach dokumentu}
-Praca dyplomowa powinna byæ przygotowana do wydruku na papierze formatu A4 w orientacji pionowej.
-Marginesy na stronach parzystych i nieparzystych powinny byæ jednakowe i mieæ nastêpuj¹ce wartoœci:
-lewy = 25mm, prawy = 25mm, górny = 10mm, dolny = 15mm. Wielkoœæ marginesów w szablonie sterowana jest parametrami przedstawionymi na rysunku~\ref{fig:pageLayout}. Margines dolny powinien byæ mierzony do linii bazowej tekstu stopki.
+\section{Rozmiar i ukÅ‚ad treÅ›ci na stronach dokumentu}
+Praca dyplomowa powinna byÄ‡ przygotowana do wydruku na papierze formatu A4 w orientacji pionowej.
+Marginesy na stronach parzystych i nieparzystych powinny byÄ‡ jednakowe i mieÄ‡ nastÄ™pujÄ…ce wartoÅ›ci:
+lewy = 25mm, prawy = 25mm, gÃ³rny = 10mm, dolny = 15mm. WielkoÅ›Ä‡ marginesÃ³w w szablonie sterowana jest parametrami przedstawionymi na rysunku~\ref{fig:pageLayout}. Margines dolny powinien byÄ‡ mierzony do linii bazowej tekstu stopki.
 %\begin{figure}[htb]
 	%\centering
 	%\includegraphics[width=.7\linewidth]{rys03/pageLayout2}
-	%\caption{Kontrola marginesów i odstêpów elementów na stronie} \label{fig:pageLayout}
+	%\caption{Kontrola marginesÃ³w i odstÄ™pÃ³w elementÃ³w na stronie} \label{fig:pageLayout}
 %\end{figure}
 \begin{figure}[htb]
 \setlayoutscale{0.43}
@@ -17,10 +17,10 @@ lewy = 25mm, prawy = 25mm, górny = 10mm, dolny = 15mm. Wielkoœæ marginesów w sza
 %\drawpage
 \oddpagelayoutfalse
 \drawstock
-\caption{Uk³ad strony nieparzystej dla dokumentu klasy \texttt{memoir}} \label{fig:pageLayout}
+\caption{UkÅ‚ad strony nieparzystej dla dokumentu klasy \texttt{memoir}} \label{fig:pageLayout}
 \end{figure}
 
-Rzeczywisty uk³ad strony zastosowany w niniejszym dokumencie przedstawiono na rysunku~\ref{fig:currentPageLayout}. Lewy i prawy margines s¹ takie same, wiêc strony parzyste i nieparzyste wygl¹daj¹ podobnie, z dok³adnoœci¹ do umiejscowienia notatek marginesowych. Taki rezultat zapewni³o zastosowanie poni¿szych komend. 
+Rzeczywisty ukÅ‚ad strony zastosowany w niniejszym dokumencie przedstawiono na rysunku~\ref{fig:currentPageLayout}. Lewy i prawy margines sÄ… takie same, wiÄ™c strony parzyste i nieparzyste wyglÄ…dajÄ… podobnie, z dokÅ‚adnoÅ›ciÄ… do umiejscowienia notatek marginesowych. Taki rezultat zapewniÅ‚o zastosowanie poniÅ¼szych komend. 
 \begin{figure}[t]
 \setlayoutscale{0.43}
 \currentstock
@@ -29,7 +29,7 @@ Rzeczywisty uk³ad strony zastosowany w niniejszym dokumencie przedstawiono na ry
 \drawmarginparstrue
 \drawparametersfalse
 \drawstock
-\caption{Rzeczywisty uk³ad strony nieparzystej w tym dokumencie} \label{fig:currentPageLayout}
+\caption{Rzeczywisty ukÅ‚ad strony nieparzystej w tym dokumencie} \label{fig:currentPageLayout}
 \end{figure}
 
 \begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
@@ -49,34 +49,34 @@ Rzeczywisty uk³ad strony zastosowany w niniejszym dokumencie przedstawiono na ry
 \end{lstlisting}
 
 
-\section{Strona tytu³owa}
-Stronê tytu³ow¹ przygotowano staraj¹c siê wype³niæ zalecenia zamieszczone na stronie Wydzia³u Informatyki i Teleinformatyki (\url{https://wit.pwr.edu.pl/studenci/dyplomanci/praca-dyplomowa}, [dostêp dnia 16.12.2022]). Zastosowano wiêc pakiet \texttt{ebgaramond}. Dostarcza on klonu wymaganej czcionki \texttt{garamond}, jednak bez kszta³tu \texttt{slanted} i z pewnymi brakami. Na przyk³ad zamiast literki ,,³'' w zbiorze \texttt{EBGaramond08 Italic} renderuje siê samo ,,l'' (braku tego nie ma zbiór \texttt{EBGaramond12}).  Zalet¹ pakietu  w porównaniu do innych jest to, ¿e generalnie dobrze obs³ugiwane s¹ w nim polskie znaki oraz ¿e pakiet ten mo¿na znaleŸæ w ró¿nych dystrybucjach latexa (\texttt{MikTeX} instaluje go automatycznie).
+\section{Strona tytuÅ‚owa}
+StronÄ™ tytuÅ‚owÄ… przygotowano starajÄ…c siÄ™ wypeÅ‚niÄ‡ zalecenia zamieszczone na stronie WydziaÅ‚u Informatyki i Teleinformatyki (\url{https://wit.pwr.edu.pl/studenci/dyplomanci/praca-dyplomowa}, [dostÄ™p dnia 16.12.2022]). Zastosowano wiÄ™c pakiet \texttt{ebgaramond}. Dostarcza on klonu wymaganej czcionki \texttt{garamond}, jednak bez ksztaÅ‚tu \texttt{slanted} i z pewnymi brakami. Na przykÅ‚ad zamiast literki ,,Å‚'' w zbiorze \texttt{EBGaramond08 Italic} renderuje siÄ™ samo ,,l'' (braku tego nie ma zbiÃ³r \texttt{EBGaramond12}).  ZaletÄ… pakietu  w porÃ³wnaniu do innych jest to, Å¼e generalnie dobrze obsÅ‚ugiwane sÄ… w nim polskie znaki oraz Å¼e pakiet ten moÅ¼na znaleÅºÄ‡ w rÃ³Å¼nych dystrybucjach latexa (\texttt{MikTeX} instaluje go automatycznie).
 
-Wielkoœci znaków u¿ytych do wype³nienia strony tytu³owej treœci¹ s¹ nastêpuj¹ce:
+WielkoÅ›ci znakÃ³w uÅ¼ytych do wypeÅ‚nienia strony tytuÅ‚owej treÅ›ciÄ… sÄ… nastÄ™pujÄ…ce:
 \begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
-Politechnika Wroc³awska (Garamond Bold 20pt 22pt)
-Wydzia³ Informatyki i Teleinformatyki (Garamond Bold 16pt 18pt)
-Kierunek: Jakiœ kierunek (Garamond 14pt 16pt, Garamond Bold 14pt 16pt)
-Specjalnoœæ: Jakaœ specjalnoœæ (Garamond 14pt 16pt, Garamond Bold 14pt 16pt)
+Politechnika WrocÅ‚awska (Garamond Bold 20pt 22pt)
+WydziaÅ‚ Informatyki i Teleinformatyki (Garamond Bold 16pt 18pt)
+Kierunek: JakiÅ› kierunek (Garamond 14pt 16pt, Garamond Bold 14pt 16pt)
+SpecjalnoÅ›Ä‡: JakaÅ› specjalnoÅ›Ä‡ (Garamond 14pt 16pt, Garamond Bold 14pt 16pt)
 {P}RACA {D}YPLOMOWA (Garamond 26pt 28pt, Garamond 24pt 26pt)
-{I}N¯YNIERSKA (Garamond 26pt 28pt, Garamond 24pt 26pt)
-Tytu³ pracy w jêzyku polskim (Garamond Bold 18pt 20pt)
+{I}NÅ»YNIERSKA (Garamond 26pt 28pt, Garamond 24pt 26pt)
+TytuÅ‚ pracy w jÄ™zyku polskim (Garamond Bold 18pt 20pt)
 Title in English (Garamond Bold 18pt 20pt)
 % AUTOR: (Garamond 16pt 18pt) - zamarkowane
-Imiê Nazwisko (Garamond Bold 16pt 18pt)
+ImiÄ™ Nazwisko (Garamond Bold 16pt 18pt)
 Opiekun pracy (Garamond 14pt 16pt)
-tytu³/stopieñ naukowy, Imiê Nazwisko (Garamond 14pt 16pt)
+tytuÅ‚/stopieÅ„ naukowy, ImiÄ™ Nazwisko (Garamond 14pt 16pt)
 %OCENA PRACY: (Garamond 16pt 18pt) - zamarkowane
-WROC£AW, 2021 (Garamond 14pt 16pt)
+WROCÅAW, 2021 (Garamond 14pt 16pt)
 \end{lstlisting}
 
 
-\section{G³ówny tekst}
-G³ówny tekst pracy powinien byæ zredagowany z wykorzystaniem czcionki \texttt{Times}, typ normalny, o wysokoœci 12pt, z odstêpem miêdzy liniami równym 14.5pt. Istnieje mo¿liwoœæ zmiany odstêpu miêdzy liniami za pomoc¹ komendy \verb?\linespread?, jednak zaleca siê pozostawienie tego odstêpu jak w niniejszym dokumencie (\verb?\linespread{1}?). Wymagania odnoœnie kroju pisma pozosta³ych elementów (nag³ówków, stopek itp.) zamieszczono w tabeli~\ref{tab:secfonts}.
+\section{GÅ‚Ã³wny tekst}
+GÅ‚Ã³wny tekst pracy powinien byÄ‡ zredagowany z wykorzystaniem czcionki \texttt{Times}, typ normalny, o wysokoÅ›ci 12pt, z odstÄ™pem miÄ™dzy liniami rÃ³wnym 14.5pt. Istnieje moÅ¼liwoÅ›Ä‡ zmiany odstÄ™pu miÄ™dzy liniami za pomocÄ… komendy \verb?\linespread?, jednak zaleca siÄ™ pozostawienie tego odstÄ™pu jak w niniejszym dokumencie (\verb?\linespread{1}?). Wymagania odnoÅ›nie kroju pisma pozostaÅ‚ych elementÃ³w (nagÅ‚Ã³wkÃ³w, stopek itp.) zamieszczono w tabeli~\ref{tab:secfonts}.
 
-W szablonie zastosowano czcionkê \texttt{texgyre-termes} (dostarcza j¹ pakiet \texttt{tgtermes}). Czcionka ta jest klonem czcionki \texttt{Times}, w którym obs³ugiwane jest œrodkowoeuropejskie kodowanie znaków (podobnie jak w przypadku czcionki \texttt{ebgaramond}, dziêki czemu polskie literki nie s¹ zlepkami dwóch znaków lecz pojedynczymi znakami).  
+W szablonie zastosowano czcionkÄ™ \texttt{texgyre-termes} (dostarcza jÄ… pakiet \texttt{tgtermes}). Czcionka ta jest klonem czcionki \texttt{Times}, w ktÃ³rym obsÅ‚ugiwane jest Å›rodkowoeuropejskie kodowanie znakÃ³w (podobnie jak w przypadku czcionki \texttt{ebgaramond}, dziÄ™ki czemu polskie literki nie sÄ… zlepkami dwÃ³ch znakÃ³w lecz pojedynczymi znakami).  
 
-Wszelkie przyk³ady Ÿróde³ kodu (fragmenty programów, komendy linii poleceñ), nazwy plików i uruchamianych programów powinny byæ pisane czcionk¹ maszynow¹. W szablonie czcionk¹ maszynow¹ jest \texttt{t1xtt}. Czcionka ta obs³uguje polskie znaki. Dostarcza j¹ pakiet \texttt{txfonts}, który nale¿y wczeœniej zainstalowaæ (MiKTeX zainstaluje go automatycznie podczas pierwszej kompilacji szablonu).   
+Wszelkie przykÅ‚ady ÅºrÃ³deÅ‚ kodu (fragmenty programÃ³w, komendy linii poleceÅ„), nazwy plikÃ³w i uruchamianych programÃ³w powinny byÄ‡ pisane czcionkÄ… maszynowÄ…. W szablonie czcionkÄ… maszynowÄ… jest \texttt{t1xtt}. Czcionka ta obsÅ‚uguje polskie znaki. Dostarcza jÄ… pakiet \texttt{txfonts}, ktÃ³ry naleÅ¼y wczeÅ›niej zainstalowaÄ‡ (MiKTeX zainstaluje go automatycznie podczas pierwszej kompilacji szablonu).   
 
 % https://en.wikibooks.org/wiki/LaTeX/Lengths
 % there are two different point sizes.  A pdf point is 1/72 inch.  A LaTeX point is 1/72.27 inch.  Thus,
@@ -90,27 +90,27 @@ Wszelkie przyk³ady Ÿróde³ kodu (fragmenty programów, komendy linii poleceñ), naz
 
 \begin{table}[htb]
 \centering
-\caption{Zestawienie czcionek elementów podzia³u dokumentu, tekstu wiod¹cego, nag³ówka i stopki oraz podpisów (Rozm. -- rozmiar czcionki, Odst. -- \texttt{baselineskip})}
+\caption{Zestawienie czcionek elementÃ³w podziaÅ‚u dokumentu, tekstu wiodÄ…cego, nagÅ‚Ã³wka i stopki oraz podpisÃ³w (Rozm. -- rozmiar czcionki, Odst. -- \texttt{baselineskip})}
 \label{tab:secfonts}\small
 \begin{tabularx}{\linewidth}{|ll@{\hskip 5pt}l@{\hskip 5pt}lX|} \hline
-Element & Przyk³ad & Czcionka & Rozm. & Odst. \\ \hline\hline
-Nr rozdzia³u & {\huge\bfseries Rozdzia³ 1 } & \verb?\huge\bfseries? & 25pt & 30pt \\
-Tytu³ rozdzia³u & {\Huge\bfseries Wstêp } & \verb?\Huge\bfseries? & 30pt & 37pt\\
-Nr i tytu³ sekcji & {\Large\bfseries 1.1. Wprowadzenie } & \verb?\Large\bfseries? & 17pt & 22pt \\
-Nr i tytu³ podsekcji & {\large\bfseries 1.1.1. Cel szczegó³owy } & \verb?\large\bfseries? &14.5pt & 18pt\\
-Tytu³ podpodsekcji  & {\normalsize\bfseries Za³o¿enia } & \verb?\normalsize\bfseries? & 12pt & 14.5pt\\
-Tytu³ paragrafu & {\normalsize\bfseries  Podstawy } Opis ... &  \verb?\normalsize\bfseries? & 12pt & 14.5pt\\
-Tekst wiod¹cy & {\normalsize Niniejszy dokument ... } & \verb?\normalsize? & 12pt & 14.5pt\\
-Nag³ówek strony & {\small\itshape 3.2. Czcionka wiod¹ca ...} & \verb?\small\itshape? & 11pt & 13.6pt \\
-Stopka strony & {\small Imiê Nazwisko: ...} & \verb?\small? & 11pt & 13.6pt\\
+Element & PrzykÅ‚ad & Czcionka & Rozm. & Odst. \\ \hline\hline
+Nr rozdziaÅ‚u & {\huge\bfseries RozdziaÅ‚ 1 } & \verb?\huge\bfseries? & 25pt & 30pt \\
+TytuÅ‚ rozdziaÅ‚u & {\Huge\bfseries WstÄ™p } & \verb?\Huge\bfseries? & 30pt & 37pt\\
+Nr i tytuÅ‚ sekcji & {\Large\bfseries 1.1. Wprowadzenie } & \verb?\Large\bfseries? & 17pt & 22pt \\
+Nr i tytuÅ‚ podsekcji & {\large\bfseries 1.1.1. Cel szczegÃ³Å‚owy } & \verb?\large\bfseries? &14.5pt & 18pt\\
+TytuÅ‚ podpodsekcji  & {\normalsize\bfseries ZaÅ‚oÅ¼enia } & \verb?\normalsize\bfseries? & 12pt & 14.5pt\\
+TytuÅ‚ paragrafu & {\normalsize\bfseries  Podstawy } Opis ... &  \verb?\normalsize\bfseries? & 12pt & 14.5pt\\
+Tekst wiodÄ…cy & {\normalsize Niniejszy dokument ... } & \verb?\normalsize? & 12pt & 14.5pt\\
+NagÅ‚Ã³wek strony & {\small\itshape 3.2. Czcionka wiodÄ…ca ...} & \verb?\small\itshape? & 11pt & 13.6pt \\
+Stopka strony & {\small ImiÄ™ Nazwisko: ...} & \verb?\small? & 11pt & 13.6pt\\
 Podpisy tabel & {\small Tab.~3.1: Zestawienie ...} & \verb?\small? & 11pt & 13.6pt \\
-Podpisy rysunków & {\small Rys.~3.1: Oficjalny ...} & \verb?\small? & 11pt & 13.6pt\\\hline
+Podpisy rysunkÃ³w & {\small Rys.~3.1: Oficjalny ...} & \verb?\small? & 11pt & 13.6pt\\\hline
 \end{tabularx}
 \end{table}
 %\texttt{fontsize}: \showFontSize
 
-Jeœli w pracy zostan¹ u¿yte otoczenia matematyczne, to w dokumencie wynikowym pojawi¹ siê dodatkowe czcionki (domyœlne latexowe czcionki do wyra¿eñ matematycznych). Dziêki zastosowaniu opcji \texttt{extrafontsizes} w klasie \texttt{memoir} nie doœæ, ¿e otrzymuje siê wiêksze czcionki (30pt), to jeszcze zamiast \texttt{Computer Modern} do wzorów matematycznych jest stosowana czcionka \texttt{Latin Modern} (wywodz¹ca siê z \texttt{Computer Modern}).
-St¹d lista wszystkich u¿ytych czcionek mo¿e byæ nastêpuj¹ca:
+JeÅ›li w pracy zostanÄ… uÅ¼yte otoczenia matematyczne, to w dokumencie wynikowym pojawiÄ… siÄ™ dodatkowe czcionki (domyÅ›lne latexowe czcionki do wyraÅ¼eÅ„ matematycznych). DziÄ™ki zastosowaniu opcji \texttt{extrafontsizes} w klasie \texttt{memoir} nie doÅ›Ä‡, Å¼e otrzymuje siÄ™ wiÄ™ksze czcionki (30pt), to jeszcze zamiast \texttt{Computer Modern} do wzorÃ³w matematycznych jest stosowana czcionka \texttt{Latin Modern} (wywodzÄ…ca siÄ™ z \texttt{Computer Modern}).
+StÄ…d lista wszystkich uÅ¼ytych czcionek moÅ¼e byÄ‡ nastÄ™pujÄ…ca:
 \begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
 EBGaramond12-Regular
 GaramondNo8-Reg-Norml
@@ -124,28 +124,28 @@ LMMathExtension10-Regular
 LMRoman8-Regular
 \end{lstlisting}
 
-Aby wykorzystaæ te czcionki poza systemem LaTeX, wystarczy pobraæ je spod adresów (wa¿nych na dzieñ
+Aby wykorzystaÄ‡ te czcionki poza systemem LaTeX, wystarczy pobraÄ‡ je spod adresÃ³w (waÅ¼nych na dzieÅ„
 1.04.2016): 
 \url{https://www.ctan.org/tex-archive/fonts/cm/ps-type1/bakoma/ttf/?lang=en}, \url{http://www.gust.org.pl/projects/e-foundry/latin-modern}, \url{http://www.gust.org.pl/projects/e-foundry/tex-gyre}, \url{https://bitbucket.org/georgd/eb-garamond/downloads},
-a nastêpnie zainstalowaæ w systemie. Dziêki temu mo¿na bêdzie np.~edytowaæ rysunki u¿ywaj¹c dok³adnie tej samej czcionki, co czcionka u¿yta w dokumencie.
+a nastÄ™pnie zainstalowaÄ‡ w systemie. DziÄ™ki temu moÅ¼na bÄ™dzie np.~edytowaÄ‡ rysunki uÅ¼ywajÄ…c dokÅ‚adnie tej samej czcionki, co czcionka uÅ¼yta w dokumencie.
 
-\section{Formatowanie bloków tekstu}
-Ka¿dy rozdzia³ pracy powinien rozpoczynaæ siê od nowej strony. Jej wygl¹d powinien byæ kontrolowany parametrami pokazanymi na rysunku~\ref{fig:LayChap}.
+\section{Formatowanie blokÃ³w tekstu}
+KaÅ¼dy rozdziaÅ‚ pracy powinien rozpoczynaÄ‡ siÄ™ od nowej strony. Jej wyglÄ…d powinien byÄ‡ kontrolowany parametrami pokazanymi na rysunku~\ref{fig:LayChap}.
 \begin{figure}[t]
 \setlayoutscale{0.6}
 \centering
 \chapterdiagram
-\caption{Parametry steruj¹ce wielkoœciami odstêpów na stronie z tytu³em rozdzia³u} 
+\caption{Parametry sterujÄ…ce wielkoÅ›ciami odstÄ™pÃ³w na stronie z tytuÅ‚em rozdziaÅ‚u} 
 \label{fig:LayChap}
 \end{figure}
-W niniejszym szablonie (dokument klasy \texttt{memoir} z opcj¹ \texttt{[12pt]}) przyjêto nastêpuj¹ce wartoœci tych parametrów:
+W niniejszym szablonie (dokument klasy \texttt{memoir} z opcjÄ… \texttt{[12pt]}) przyjÄ™to nastÄ™pujÄ…ce wartoÅ›ci tych parametrÃ³w:
 \begin{itemize}
 \item \verb?\beforechapskip? (\printlength{\beforechapskip}) + \verb?\baselineskip? of \verb+\huge+ (30pt) + \verb+\topskip+ (\printlength{\topskip}) = 92pt (3.246cm)
 \item \verb?\midchapskip? (\printlength{\midchapskip}) + \verb?\baselineskip? of \verb+\Huge+ (37pt) = 57 pt (2.011cm)
 \item \verb?\afterchapskip? (\printlength{\afterchapskip}) + \verb+\baselineskip+ of \verb+\normalsize+ (14.5pt) = 54.5pt (1.923cm)
 \end{itemize}
 
-Nieco k³opotów mo¿e sprawiæ dobre ustawienie na stronie tytu³ów nienumerowanych rozdzia³ów oraz list generowanych automatycznie (Skróty, Spis treœci, Spis rysunków, Spis tabel, Indeks rzeczowy). W szablonie w tym celu zdefiniowano nowy styl rozdzia³u komendami jak ni¿ej (w szablonie s¹ to komendy zamarkowane)
+Nieco kÅ‚opotÃ³w moÅ¼e sprawiÄ‡ dobre ustawienie na stronie tytuÅ‚Ã³w nienumerowanych rozdziaÅ‚Ã³w oraz list generowanych automatycznie (SkrÃ³ty, Spis treÅ›ci, Spis rysunkÃ³w, Spis tabel, Indeks rzeczowy). W szablonie w tym celu zdefiniowano nowy styl rozdziaÅ‚u komendami jak niÅ¼ej (w szablonie sÄ… to komendy zamarkowane)
 \begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
 \newlength{\linespace}
 \setlength{\linespace}{-\beforechapskip-\topskip+\headheight+\topsep}
@@ -153,18 +153,18 @@ Nieco k³opotów mo¿e sprawiæ dobre ustawienie na stronie tytu³ów nienumerowanych 
 \renewcommand\chapterheadstart{\vspace*{\linespace}}
 }
 \end{lstlisting}
-oraz dokonano prze³¹czenia stylów rozdzia³ów komendami \verb?\chapterstyle{nonumbered}? oraz \verb?\chapterstyle{default}? podczas do³¹czania do dokumentu wymienionych nienumerowanych rozdzia³ów i list. Aby ,,podnieœæ do góry'' tytu³y nienumerowanych rozdzia³ów (gdy jest to rzeczywiœcie konieczne) wystarczy odmarkowaæ wspomniane komendy.
+oraz dokonano przeÅ‚Ä…czenia stylÃ³w rozdziaÅ‚Ã³w komendami \verb?\chapterstyle{nonumbered}? oraz \verb?\chapterstyle{default}? podczas doÅ‚Ä…czania do dokumentu wymienionych nienumerowanych rozdziaÅ‚Ã³w i list. Aby ,,podnieÅ›Ä‡ do gÃ³ry'' tytuÅ‚y nienumerowanych rozdziaÅ‚Ã³w (gdy jest to rzeczywiÅ›cie konieczne) wystarczy odmarkowaÄ‡ wspomniane komendy.
 
-Tytu³y rozdzia³ów, sekcji, podsekcji itd.\ nie powinny koñczyæ siê kropk¹. Odleg³oœci pomiêdzy tekstem wiod¹cym a tytu³em sekcji powinien byæ regulowany parametrami pokazanymi na rysunku~\ref{fig:LaySec}. 
+TytuÅ‚y rozdziaÅ‚Ã³w, sekcji, podsekcji itd.\ nie powinny koÅ„czyÄ‡ siÄ™ kropkÄ…. OdlegÅ‚oÅ›ci pomiÄ™dzy tekstem wiodÄ…cym a tytuÅ‚em sekcji powinien byÄ‡ regulowany parametrami pokazanymi na rysunku~\ref{fig:LaySec}. 
 \begin{figure}[t]
 %\setlayoutscale{1}
 \runinheadfalse
 \drawparameterstrue
 \drawheading{\Large\bfseries}
-\caption{Kontrola ustawieñ odleg³oœci w tytu³ach kolejnych sekcji} 
+\caption{Kontrola ustawieÅ„ odlegÅ‚oÅ›ci w tytuÅ‚ach kolejnych sekcji} 
 \label{fig:LaySec}
 \end{figure}
-Rozmiar \verb?\baselineskip? zale¿y od rozmiaru czcionki (zobacz tabela~\ref{tab:secfonts}), zaœ \texttt{beforeskip} i \texttt{secskip} od poziomu sekcji. W niniejszym szablonie przyjêto nastêpuj¹ce wartoœci tych parametrów (s¹ to wartoœci dobierane elastycznie podczas kompilacji):
+Rozmiar \verb?\baselineskip? zaleÅ¼y od rozmiaru czcionki (zobacz tabela~\ref{tab:secfonts}), zaÅ› \texttt{beforeskip} i \texttt{secskip} od poziomu sekcji. W niniejszym szablonie przyjÄ™to nastÄ™pujÄ…ce wartoÅ›ci tych parametrÃ³w (sÄ… to wartoÅ›ci dobierane elastycznie podczas kompilacji):
 \begin{itemize}
 \item \texttt{indent = 14.5pt}
 \item \texttt{parskip = \printlength{\parskip}}
@@ -176,23 +176,23 @@ Rozmiar \verb?\baselineskip? zale¿y od rozmiaru czcionki (zobacz tabela~\ref{tab
 \item \texttt{aftersubsubsecskip = \printlength{\aftersubsecskip}}
 \end{itemize}
 
-W szablonie obowi¹zuj¹ równie¿ nastêpuj¹ce wartoœci parametrów odpowiedzialnych za odstêpy pomiêdzy p³ywaj¹cymi figurami, tekstami oraz tekstem i figur¹:
+W szablonie obowiÄ…zujÄ… rÃ³wnieÅ¼ nastÄ™pujÄ…ce wartoÅ›ci parametrÃ³w odpowiedzialnych za odstÄ™py pomiÄ™dzy pÅ‚ywajÄ…cymi figurami, tekstami oraz tekstem i figurÄ…:
 \begin{itemize}
 \item \texttt{floatsep = \printlength{\floatsep}}
 \item \texttt{intextsep = \printlength{\intextsep}}
 \item \texttt{textfloatsep = \printlength{\textfloatsep}}
 \end{itemize}
 
-Pierwsza linia pierwszego akapitu w bloku (po tytule rozdzia³u, sekcji, podsekcji, podpodsekcji) nie mo¿e mieæ wciêcia. Pierwsze linie w kolejnych akapitach ju¿ powinny mieæ wciêcie równe \texttt{14.5pt}. Tekst w akapitach powinien byæ wyrównany z obu stron. 
+Pierwsza linia pierwszego akapitu w bloku (po tytule rozdziaÅ‚u, sekcji, podsekcji, podpodsekcji) nie moÅ¼e mieÄ‡ wciÄ™cia. Pierwsze linie w kolejnych akapitach juÅ¼ powinny mieÄ‡ wciÄ™cie rÃ³wne \texttt{14.5pt}. Tekst w akapitach powinien byÄ‡ wyrÃ³wnany z obu stron. 
 
 
-Strony powinny byæ numerowane numeracj¹ ci¹g³¹ (sekwencja arabskich cyfr). Numery stron powinny byæ umieszczone w ich stopkach (tj.\ tak jak w niniejszym dokumencie). Wyj¹tkiem s¹ tutaj pierwsze strony rozdzia³ów oraz strona tytu³owa -- na nich numery nie powinny siê pojawiæ.
+Strony powinny byÄ‡ numerowane numeracjÄ… ciÄ…gÅ‚Ä… (sekwencja arabskich cyfr). Numery stron powinny byÄ‡ umieszczone w ich stopkach (tj.\ tak jak w niniejszym dokumencie). WyjÄ…tkiem sÄ… tutaj pierwsze strony rozdziaÅ‚Ã³w oraz strona tytuÅ‚owa -- na nich numery nie powinny siÄ™ pojawiÄ‡.
 
-\section{Opisy tabel i rysunków}
-Podpisy powinny byæ umieszczane pod rysunkami lub nad tabelami wraz z etykiet¹ sk³adaj¹c¹ siê ze skrótu Rys.\ lub Tab.\ oraz numeru. Podpisy te nie powinny mieæ koñcowej kropki. Numery wystêpuj¹cy w podpisach powinny zaczynaæ siê numerem rozdzia³u, po którym nastêpuje kolejny numer rysunku lub tabeli w obrêbie rozdzia³u. Etykieta powinna koñczyæ siê dwukropkiem, po którym nastêpuje tekst podpisu. Numer rozdzia³u powinien byæ rozdzielony kropk¹ od kolejnego numeru w rysunku b¹dŸ tabeli w rozdziale (liczniki tabel i rysunków s¹ roz³¹czne). Nale¿y pamiêtaæ o tym, ¿eby w ca³ej pracy tabele mia³y podobny wygl¹d (rodzaj czcionki, ewentualne pogrubienia w nag³ówku itp.). %ród³a nale¿y podawaæ pod tabel¹.
+\section{Opisy tabel i rysunkÃ³w}
+Podpisy powinny byÄ‡ umieszczane pod rysunkami lub nad tabelami wraz z etykietÄ… skÅ‚adajÄ…cÄ… siÄ™ ze skrÃ³tu Rys.\ lub Tab.\ oraz numeru. Podpisy te nie powinny mieÄ‡ koÅ„cowej kropki. Numery wystÄ™pujÄ…cy w podpisach powinny zaczynaÄ‡ siÄ™ numerem rozdziaÅ‚u, po ktÃ³rym nastÄ™puje kolejny numer rysunku lub tabeli w obrÄ™bie rozdziaÅ‚u. Etykieta powinna koÅ„czyÄ‡ siÄ™ dwukropkiem, po ktÃ³rym nastÄ™puje tekst podpisu. Numer rozdziaÅ‚u powinien byÄ‡ rozdzielony kropkÄ… od kolejnego numeru w rysunku bÄ…dÅº tabeli w rozdziale (liczniki tabel i rysunkÃ³w sÄ… rozÅ‚Ä…czne). NaleÅ¼y pamiÄ™taÄ‡ o tym, Å¼eby w caÅ‚ej pracy tabele miaÅ‚y podobny wyglÄ…d (rodzaj czcionki, ewentualne pogrubienia w nagÅ‚Ã³wku itp.). %Å¹rÃ³dÅ‚a naleÅ¼y podawaÄ‡ pod tabelÄ….
 
 \section{Przypisy dolne}
-Istnieje mo¿liwoœæ zamieszczania przypisów na dole strony, choæ nie jest to zalecane (przyk³adowo~\footnote{Tekst przypisu}). Sposób parametryzowania ich wygl¹du pokazano na rysunku~\ref{fig:fp}. W szablonie wykorzystano nastêpuj¹ce, domyœlne wartoœci tych parametrów:
+Istnieje moÅ¼liwoÅ›Ä‡ zamieszczania przypisÃ³w na dole strony, choÄ‡ nie jest to zalecane (przykÅ‚adowo~\footnote{Tekst przypisu}). SposÃ³b parametryzowania ich wyglÄ…du pokazano na rysunku~\ref{fig:fp}. W szablonie wykorzystano nastÄ™pujÄ…ce, domyÅ›lne wartoÅ›ci tych parametrÃ³w:
 \begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
 \footins = 12pt \footnotesep = 8pt
 \baselineskip = 10pt note separation = 40pt
@@ -202,7 +202,7 @@ rule length = 0.25 times the \textwidth
 \begin{figure}[htb]
 \setlayoutscale{0.3}
 \drawfootnote
-\caption{Parametry steruj¹ce przypisami dolnymi} \label{fig:fp}
+\caption{Parametry sterujÄ…ce przypisami dolnymi} \label{fig:fp}
 \end{figure}
 %\tryfootins
 %\tryfootnotesep
@@ -215,8 +215,8 @@ rule length = 0.25 times the \textwidth
 %rule thickness = 0.4pt
 %rule length = 0.25 times the \textwidth
 
-\section{Formatowanie spisu treœci}
-W klasie \texttt{memoir} istniej¹ komendy pozwalaj¹ce doœæ dobrze zarz¹dzaæ wygl¹dem spisu treœci. Na rysunku~\ref{fig:ltoc} pokazano, za pomoc¹ jakich parametrów mo¿na wp³ywaæ na finaln¹ jego postaæ. W szablonie wykorzystano nastêpuj¹ce, domyœlne ich wartoœci:
+\section{Formatowanie spisu treÅ›ci}
+W klasie \texttt{memoir} istniejÄ… komendy pozwalajÄ…ce doÅ›Ä‡ dobrze zarzÄ…dzaÄ‡ wyglÄ…dem spisu treÅ›ci. Na rysunku~\ref{fig:ltoc} pokazano, za pomocÄ… jakich parametrÃ³w moÅ¼na wpÅ‚ywaÄ‡ na finalnÄ… jego postaÄ‡. W szablonie wykorzystano nastÄ™pujÄ…ce, domyÅ›lne ich wartoÅ›ci:
 \begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
 indent = 18pt 
 numwidth = 28pt
@@ -228,7 +228,7 @@ numwidth = 28pt
 \begin{figure}[h]
 \setlayoutscale{0.5}
 \drawtoc
-\caption{Parametryzacja wygl¹du spisu treœci} \label{fig:ltoc}
+\caption{Parametryzacja wyglÄ…du spisu treÅ›ci} \label{fig:ltoc}
 \end{figure}
 
 %\begin{figure}
@@ -236,11 +236,11 @@ numwidth = 28pt
 %\currenttoc
 %\drawparametersfalse
 %\drawtoc
-%\caption{Parametry definiuj¹ce postaæ spisu treœci w niniejszym szablonie} \label{fig:thistoc}
+%\caption{Parametry definiujÄ…ce postaÄ‡ spisu treÅ›ci w niniejszym szablonie} \label{fig:thistoc}
 %\end{figure}
 
-\section{Formatowanie list wyliczeniowych i wypunktowañ}
-Standardowo sposób formatowania list mo¿na parametryzowaæ jak pokazano na rysunku~\ref{fig:listlay}. Jednak czasem trudno poradziæ sobie z niektórymi rzeczami, jak np.~znakami wypunktowania. Dlatego w szablonie wykorzystano pakiet \texttt{enumi}. Pozwala on na ³atwe zarz¹dzanie wygl¹dem list. W szablonie zastosowano nastêpuj¹ce globalne ustawienia dla tego pakietu:
+\section{Formatowanie list wyliczeniowych i wypunktowaÅ„}
+Standardowo sposÃ³b formatowania list moÅ¼na parametryzowaÄ‡ jak pokazano na rysunku~\ref{fig:listlay}. Jednak czasem trudno poradziÄ‡ sobie z niektÃ³rymi rzeczami, jak np.~znakami wypunktowania. Dlatego w szablonie wykorzystano pakiet \texttt{enumi}. Pozwala on na Å‚atwe zarzÄ…dzanie wyglÄ…dem list. W szablonie zastosowano nastÄ™pujÄ…ce globalne ustawienia dla tego pakietu:
 \begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
 \usepackage{enumitem} 
 \setlist{noitemsep,topsep=4pt,parsep=0pt,partopsep=4pt,leftmargin=*} 
@@ -257,13 +257,13 @@ Standardowo sposób formatowania list mo¿na parametryzowaæ jak pokazano na rysunk
 \setlayoutscale{0.4}
 \drawparameterstrue
 \drawlist
-\caption{Parametryzacja list wyliczeniowych i wypunktowañ}\label{fig:listlay}
+\caption{Parametryzacja list wyliczeniowych i wypunktowaÅ„}\label{fig:listlay}
 \end{figure}
 
-W~podrozdziale~\ref{sec:Styl} pokazano przyk³ad wykorzystania mo¿liwoœci komend oferowanych w~pakiecie \texttt{enumi}.
+W~podrozdziale~\ref{sec:Styl} pokazano przykÅ‚ad wykorzystania moÅ¼liwoÅ›ci komend oferowanych w~pakiecie \texttt{enumi}.
 
 \section{Wzory matematyczne}
-Wzory matematyczne, jeœli maj¹ byæ osobnymi formu³ami, powinny byæ wycentrowane, z~numeracj¹ umieszczon¹ na koñcu linii i ujêt¹ w okr¹g³e nawiasy (zobacz równanie (\ref{eq:xdx})). Numery równañ powinny zawieraæ numer rozdzia³u oraz kolejny numer równania w obrêbie rozdzia³u (podobnie jak przy numerowaniu rysunków i tabel). Spe³nienie tych warunków zapewnia otoczenie \verb?equation?. Nie wszystkie formu³y trzeba numerowaæ (nienumerowane wzory mo¿na osi¹gn¹æ stosuj¹c otoczenie \verb?\equation*?). W³aœciwie nale¿y numerowaæ tylko te, do których tworzy siê jakieœ odniesienia w tekœcie. Jeœli wzory umieszczane s¹ w linijce tekstu, to mo¿na zastosowaæ otoczenie matematyczne inline, jak w~przyk³adzie $\int_{0}^{10\nu\sum i}{x dx}$ (wyprodukowanym komend¹ \verb?$\int_{0}^{10\nu\sum i}{x dx}$?). Tylko ¿e wtedy mo¿e dojœæ do rozszerzenia odstêpów pomiêdzy liniami tekstu (aby zmieœci³ siê wzór).
+Wzory matematyczne, jeÅ›li majÄ… byÄ‡ osobnymi formuÅ‚ami, powinny byÄ‡ wycentrowane, z~numeracjÄ… umieszczonÄ… na koÅ„cu linii i ujÄ™tÄ… w okrÄ…gÅ‚e nawiasy (zobacz rÃ³wnanie (\ref{eq:xdx})). Numery rÃ³wnaÅ„ powinny zawieraÄ‡ numer rozdziaÅ‚u oraz kolejny numer rÃ³wnania w obrÄ™bie rozdziaÅ‚u (podobnie jak przy numerowaniu rysunkÃ³w i tabel). SpeÅ‚nienie tych warunkÃ³w zapewnia otoczenie \verb?equation?. Nie wszystkie formuÅ‚y trzeba numerowaÄ‡ (nienumerowane wzory moÅ¼na osiÄ…gnÄ…Ä‡ stosujÄ…c otoczenie \verb?\equation*?). WÅ‚aÅ›ciwie naleÅ¼y numerowaÄ‡ tylko te, do ktÃ³rych tworzy siÄ™ jakieÅ› odniesienia w tekÅ›cie. JeÅ›li wzory umieszczane sÄ… w linijce tekstu, to moÅ¼na zastosowaÄ‡ otoczenie matematyczne inline, jak w~przykÅ‚adzie $\int_{0}^{10\nu\sum i}{x dx}$ (wyprodukowanym komendÄ… \verb?$\int_{0}^{10\nu\sum i}{x dx}$?). Tylko Å¼e wtedy moÅ¼e dojÅ›Ä‡ do rozszerzenia odstÄ™pÃ³w pomiÄ™dzy liniami tekstu (aby zmieÅ›ciÅ‚ siÄ™ wzÃ³r).
 \begin{equation}\label{eq:xdx}
 \int_{0}^{10\nu\sum i}{x dx}
 \end{equation}

@@ -1,20 +1,20 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  Zawartoœæ: G³ówny plik szablonu pracy dyplomowej (magisterskiej/in¿ynierskiej). 
-%  Opracowa³: Tomasz Kubik <tomasz.kubik@pwr.edu.pl>
-%  Data: 28 grudnia 2022
-%  Wersja: 0.8
+%  ZawartoÅ›Ä‡: GÅ‚Ã³wny plik szablonu pracy dyplomowej (magisterskiej/inÅ¼ynierskiej). 
+%  OpracowaÅ‚: Tomasz Kubik <tomasz.kubik@pwr.edu.pl>
+%  Data: styczeÅ„ 2023
+%  Wersja: 0.9
 %  Wymagania: kompilator pdflatex
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \documentclass[a4paper,onecolumn,oneside,12pt,extrafontsizes]{memoir}
-%  W celu przygotowania wydruku do archiwum mo¿na:
-%  a) przygotowaæ pdf, w którym dwie strony zostan¹ wstawione na jedn¹ fizyczn¹ stronê i taki dokument wydrukowaæ dwustronnie (podejœcie zalecane)
+%  W celu przygotowania wydruku do archiwum moÅ¼na:
+%  a) przygotowaÄ‡ pdf, w ktÃ³rym dwie strony zostanÄ… wstawione na jednÄ… fizycznÄ… stronÄ™ i taki dokument wydrukowaÄ‡ dwustronnie (podejÅ›cie zalecane)
 %
-%   Taki dokument mo¿na przygotowaæ poprzez
-%   - wydruk z Adobe Acrobat Reader z opcj¹ "Wiele" - sekcja "Rozmiar i obs³uga stron"
-%   - wykorzystanie narzêdzi psutils
+%   Taki dokument moÅ¼na przygotowaÄ‡ poprzez
+%   - wydruk z Adobe Acrobat Reader z opcjÄ… "Wiele" - sekcja "Rozmiar i obsÅ‚uga stron"
+%   - wykorzystanie narzÄ™dzi psutils
 %
-%      Windows (zak³adaj¹c, ¿e w dystrybucji MiKTeX jest pakiet miktex-psutils-bin-x64-2.9):
+%      Windows (zakÅ‚adajÄ…c, Å¼e w dystrybucji MiKTeX jest pakiet miktex-psutils-bin-x64-2.9):
 %        "c:\Program Files\MiKTeX 2.9\miktex\bin\x64\pdf2ps.exe" Dyplom.pdf Dyplom.ps
 %        "c:\Program Files\MiKTeX 2.9\miktex\bin\x64\psnup.exe" -2 Dyplom.ps Dyplom2.ps
 %        "c:\Program Files\MiKTeX 2.9\miktex\bin\x64\ps2pdf.exe" Dyplom2.ps Dyplom2.pdf
@@ -23,32 +23,32 @@
 %     Linux:
 %        pdf2ps Dyplom.pdf - | psnup -2 | ps2pdf - Dyplom2.pdf
 %
-%  b) przekomplilowaæ dokument zmniejszaj¹c czcionkê (podejœcie niezalecane, bo zmienia formatowanie dokumentu)
+%  b) przekomplilowaÄ‡ dokument zmniejszajÄ…c czcionkÄ™ (podejÅ›cie niezalecane, bo zmienia formatowanie dokumentu)
 %
-%    Do tego wystarczy pos³u¿yæ siê poni¿szymi komendami (zamiast documentclass z pierwszej linijki):
+%    Do tego wystarczy posÅ‚uÅ¼yÄ‡ siÄ™ poniÅ¼szymi komendami (zamiast documentclass z pierwszej linijki):
 %   \documentclass[a4paper,onecolumn,twoside,10pt]{memoir} 
 %   \renewcommand{\normalsize}{\fontsize{8pt}{10pt}\selectfont}
 
-\usepackage[cp1250]{inputenc} % Proszê zostawiæ, jeœli kodowanie edytowanych plików to cp1250 
-%\usepackage[utf8]{inputenc} % Proszê u¿yæ zamiast powy¿szego, jeœli kodowanie edytowanych plików to UTF8
+%\usepackage[cp1250]{inputenc} % ProszÄ™ zostawiÄ‡, jeÅ›li kodowanie edytowanych plikÃ³w to cp1250 
+\usepackage[utf8]{inputenc} % ProszÄ™ uÅ¼yÄ‡ zamiast powyÅ¼szego, jeÅ›li kodowanie edytowanych plikÃ³w to UTF8
 \usepackage[T1]{fontenc}
-\usepackage[english,polish]{babel} % Tutaj wa¿na jest kolejnoœæ atrybutów (dla pracy po polsku polish powinno byæ na koñcu)
+\usepackage[english,polish]{babel} % Tutaj waÅ¼na jest kolejnoÅ›Ä‡ atrybutÃ³w (dla pracy po polsku polish powinno byÄ‡ na koÅ„cu)
 %\DisemulatePackage{setspace}
 \usepackage{setspace}
 \usepackage{color,calc}
-%\usepackage{soul} % pakiet z komendami do podkreœlania, przekreœlania, podœwietlania tekstu (raczej niepotrzebny)
-\usepackage{ebgaramond} % pakiet z czcionkami garamond, potrzebny tylko do strony tytu³owej, musi wyst¹piæ przed pakietem tgtermes
+%\usepackage{soul} % pakiet z komendami do podkreÅ›lania, przekreÅ›lania, podÅ›wietlania tekstu (raczej niepotrzebny)
+\usepackage{ebgaramond} % pakiet z czcionkami garamond, potrzebny tylko do strony tytuÅ‚owej, musi wystÄ…piÄ‡ przed pakietem tgtermes
 
-%% Aby uzyskaæ polskie literki w pdfie (a nie zlepki) korzystamy z pakietu czcionek tgterms. 
-%% W pakiecie tym s¹ zdefiniowane klony czcionek Times o kszta³tach: normalny, pogrubiony, italic, italic pogrubiony.
-%% W pakiecie tym brakuje czcionki o kszta³cie: slanted (podobny do italic). 
-%% Jeœli w dokumencie gdzieœ zostanie zastosowana czcionka slanted (np. po u¿yciu komendy \textsl{}), to
-%% latex dokona podstawienia na czcionkê standardow¹ i zg³osi to w ostrze¿eniu (warningu).
-%% Ponadto tgtermes to czcionka do tekstu. Wszelkie matematyczne wzory bêd¹ sformatowane domyœln¹ czcionk¹ do wzorów.
-%% Jeœli wzory maj¹ byæ sformatowane z wykorzystaniem innych czcionek, trzeba to jawnie zadeklarowaæ.
+%% Aby uzyskaÄ‡ polskie literki w pdfie (a nie zlepki) korzystamy z pakietu czcionek tgterms. 
+%% W pakiecie tym sÄ… zdefiniowane klony czcionek Times o ksztaÅ‚tach: normalny, pogrubiony, italic, italic pogrubiony.
+%% W pakiecie tym brakuje czcionki o ksztaÅ‚cie: slanted (podobny do italic). 
+%% JeÅ›li w dokumencie gdzieÅ› zostanie zastosowana czcionka slanted (np. po uÅ¼yciu komendy \textsl{}), to
+%% latex dokona podstawienia na czcionkÄ™ standardowÄ… i zgÅ‚osi to w ostrzeÅ¼eniu (warningu).
+%% Ponadto tgtermes to czcionka do tekstu. Wszelkie matematyczne wzory bÄ™dÄ… sformatowane domyÅ›lnÄ… czcionkÄ… do wzorÃ³w.
+%% JeÅ›li wzory majÄ… byÄ‡ sformatowane z wykorzystaniem innych czcionek, trzeba to jawnie zadeklarowaÄ‡.
 
-%% Po zainstalowaniu pakietu tgtermes mo¿e bêdzie trzeba zauktualizowaæ informacje 
-%% o dostêpnych fontach oraz mapy. Mo¿na to zrobiæ z konsoli (jako administrator)
+%% Po zainstalowaniu pakietu tgtermes moÅ¼e bÄ™dzie trzeba zauktualizowaÄ‡ informacje 
+%% o dostÄ™pnych fontach oraz mapy. MoÅ¼na to zrobiÄ‡ z konsoli (jako administrator)
 %% initexmf --admin --update-fndb
 %% initexmf --admin --mkmaps
 
@@ -57,14 +57,14 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Ustawienia odpowiedzialne za sposób ³amania dokumentu
-%% i u³o¿enie elementów p³ywaj¹cych
+%% Ustawienia odpowiedzialne za sposÃ³b Å‚amania dokumentu
+%% i uÅ‚oÅ¼enie elementÃ³w pÅ‚ywajÄ…cych
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\hyphenpenalty=10000		% nie dziel wyrazów zbyt czêsto
+%\hyphenpenalty=10000		% nie dziel wyrazÃ³w zbyt czÄ™sto
 \clubpenalty=10000      % kara za sierotki
-\widowpenalty=10000     % nie pozostawiaj wdów
-%\brokenpenalty=10000		% nie dziel wyrazów miêdzy stronami - trzeba by³o wy³¹czyæ, bo nie ³ama³y siê linie w lstlisting
-%\exhyphenpenalty=999999		% nie dziel s³ów z myœlnikiem - trzeba by³o wy³¹czyæ, bo nie ³ama³y siê linie w lstlisting
+\widowpenalty=10000     % nie pozostawiaj wdÃ³w
+%\brokenpenalty=10000		% nie dziel wyrazÃ³w miÄ™dzy stronami - trzeba byÅ‚o wyÅ‚Ä…czyÄ‡, bo nie Å‚amaÅ‚y siÄ™ linie w lstlisting
+%\exhyphenpenalty=999999		% nie dziel sÅ‚Ã³w z myÅ›lnikiem - trzeba byÅ‚o wyÅ‚Ä…czyÄ‡, bo nie Å‚amaÅ‚y siÄ™ linie w lstlisting
 \righthyphenmin=3			  % dziel minimum 3 litery
 
 %\tolerance=4500
@@ -78,11 +78,11 @@
 \renewcommand{\floatpagefraction}{0.35}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%  Ustawienia rozmiarów: tekstu, nag³ówka i stopki, marginesów
-%%  dla dokumentów klasy memoir 
+%%  Ustawienia rozmiarÃ³w: tekstu, nagÅ‚Ã³wka i stopki, marginesÃ³w
+%%  dla dokumentÃ³w klasy memoir 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \setlength{\headsep}{10pt} 
-\setlength{\headheight}{13.6pt} % wartoœæ baselineskip dla czcionki 11pt tj. \small wynosi 13.6pt
+\setlength{\headheight}{13.6pt} % wartoÅ›Ä‡ baselineskip dla czcionki 11pt tj. \small wynosi 13.6pt
 \setlength{\footskip}{\headsep+\headheight}
 \setlength{\uppermargin}{\headheight+\headsep+1cm}
 \setlength{\textheight}{\paperheight-\uppermargin-\footskip-1.5cm}
@@ -93,28 +93,28 @@
 \setlength{\marginparwidth}{2.3mm}
 %\settrimmedsize{297mm}{210mm}{*}
 %\settrims{0mm}{0mm}	
-\checkandfixthelayout[fixed] % konieczne, aby siê dobrze wszystko poustawia³o
+\checkandfixthelayout[fixed] % konieczne, aby siÄ™ dobrze wszystko poustawiaÅ‚o
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%  Ustawienia odleg³oœci linii, wciêæ, odstêpów
+%%  Ustawienia odlegÅ‚oÅ›ci linii, wciÄ™Ä‡, odstÄ™pÃ³w
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \linespread{1}
 %\linespread{1.241}
 \setlength{\parindent}{14.5pt}
 
 
-\usepackage{multicol} % pakiet umo¿liwiaj¹cy stworzenie wielokolumnowego tekstu
+\usepackage{multicol} % pakiet umoÅ¼liwiajÄ…cy stworzenie wielokolumnowego tekstu
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Pakiety do formatowania tabel
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{tabularx}
-% Proszê u¿ywaæ tylko tabularx. Innych pakietów proszê nie stosowaæ !!!
-% Dokument na pewno da siê zredagowaæ bez ich u¿ycia.
+% ProszÄ™ uÅ¼ywaÄ‡ tylko tabularx. Innych pakietÃ³w proszÄ™ nie stosowaÄ‡ !!!
+% Dokument na pewno da siÄ™ zredagowaÄ‡ bez ich uÅ¼ycia.
 %\usepackage{longtable}
 %\usepackage{ltxtable}
 %\usepackage{tabulary}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Pakiet do wstawiania fragmentów kodu
+%% Pakiet do wstawiania fragmentÃ³w kodu
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{listings} 
 \usepackage{xpatch}
@@ -122,17 +122,17 @@
 \xpatchcmd\l@lstlisting{1.5em}{0em}{}{}
 \makeatother
 % Pakiet dostarcza otoczenia lstlisting. Jest ono wysoce konfigurowalne. 
-% Konfigurowaæ mo¿na indywidualnie ka¿dy z listingów lub globalnie, w poleceniu \lstset{}.
+% KonfigurowaÄ‡ moÅ¼na indywidualnie kaÅ¼dy z listingÃ³w lub globalnie, w poleceniu \lstset{}.
 
-% Zalecane jest, by kod Ÿród³owy by³ wyprowadzany z u¿yciem czcionki maszynowej \ttfamily
-% Poniewa¿ kod Ÿród³owy, nawet po obciêciu do interesuj¹cych fragmentów, bywa obszerny, nale¿y zmniejszyæ czcionkê.
-% Zalecane jest \small (dla krótkich fragmentów) oraz \footnotesize (dla d³u¿szych fragmentów).
+% Zalecane jest, by kod ÅºrÃ³dÅ‚owy byÅ‚ wyprowadzany z uÅ¼yciem czcionki maszynowej \ttfamily
+% PoniewaÅ¼ kod ÅºrÃ³dÅ‚owy, nawet po obciÄ™ciu do interesujÄ…cych fragmentÃ³w, bywa obszerny, naleÅ¼y zmniejszyÄ‡ czcionkÄ™.
+% Zalecane jest \small (dla krÃ³tkich fragmentÃ³w) oraz \footnotesize (dla dÅ‚uÅ¼szych fragmentÃ³w).
 
-% Ponadto podczas konfiguracji mo¿na zadeklarowaæ sposób numerowania linii. Numerowanie linii zalecane jest jednak 
-% tylko w przypadkach, gdy w redagowanym tekœcie znajduj¹ siê jakieœ odwo³ania do konkretnych linii.
-% Jeœli takich odwo³añ nie ma, numerowanie linii jest zbêdne. Proszê wtedy go nie stosowaæ.
-% Przy w³¹czaniu numerowania linii nale¿y zwróciæ uwagê na to, gdzie pojawi¹ siê te numery.
-% Bez zmiany dodatkowych parametrów pojawiaj¹ siê one na marginesie strony (co jest niepo¿¹dane).
+% Ponadto podczas konfiguracji moÅ¼na zadeklarowaÄ‡ sposÃ³b numerowania linii. Numerowanie linii zalecane jest jednak 
+% tylko w przypadkach, gdy w redagowanym tekÅ›cie znajdujÄ… siÄ™ jakieÅ› odwoÅ‚ania do konkretnych linii.
+% JeÅ›li takich odwoÅ‚aÅ„ nie ma, numerowanie linii jest zbÄ™dne. ProszÄ™ wtedy go nie stosowaÄ‡.
+% Przy wÅ‚Ä…czaniu numerowania linii naleÅ¼y zwrÃ³ciÄ‡ uwagÄ™ na to, gdzie pojawiÄ… siÄ™ te numery.
+% Bez zmiany dodatkowych parametrÃ³w pojawiajÄ… siÄ™ one na marginesie strony (co jest niepoÅ¼Ä…dane).
 
 \lstset{
   basicstyle=\small\ttfamily, % lub basicstyle=\footnotesize\ttfamily
@@ -141,7 +141,7 @@
 	%%showspaces=false,
   breaklines=true,
   postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}, 
-  %%numbers=left,  % ta i poni¿sze linie dotycz¹ ustawienia numerowania i sposobu jego wyprowadzania
+  %%numbers=left,  % ta i poniÅ¼sze linie dotyczÄ… ustawienia numerowania i sposobu jego wyprowadzania
   %%firstnumber=1, 
   %%numberfirstline=true, 
 	%%xleftmargin=17pt,
@@ -149,40 +149,40 @@
   %%framexrightmargin=5pt,
   %%framexbottommargin=4pt,
 	belowskip=.5\baselineskip,
-	literate={\_}{{\_\allowbreak}}1 % ta deklaracja przydaje siê, jeœli na listingu maj¹ byæ ³amane nazwy zawieraj¹ce podkreœlniki
+	literate={\_}{{\_\allowbreak}}1 % ta deklaracja przydaje siÄ™, jeÅ›li na listingu majÄ… byÄ‡ Å‚amane nazwy zawierajÄ…ce podkreÅ›lniki
 }
 
-% Jeœli edytowany plik nie jest w kodowaniu cp1250, to jest problem z polskimi znakami wystêpuj¹cymi we wstawianym kodzie.
-% Dlatego podczas pracy na plikach w kodowaniu UTF8 trzeba zadeklarowaæ mapowanie jak ni¿ej (wystarczy odmarkowaæ).
-% Niestety, jak siê zastosuje to mapowanie mog¹ pojawiæ siê problemy z podœwietlaniem sk³adni (patrz dalej).
-%%\lstset{literate=%-
-%%{¹}{{\k{a}}}1 {æ}{{\'c}}1 {ê}{{\k{e}}}1 {³}{{\l{}}}1 {ñ}{{\'n}}1 {ó}{{\'o}}1 {œ}{{\'s}}1 {¿}{{\.z}}1 {Ÿ}{{\'z}}1 {¥}{{\k{A}}}1 {Æ}{{\'C}}1 {Ê}{{\k{E}}}1 {£}{{\L{}}}1 {Ñ}{{\'N}}1 {Ó}{{\'O}}1 {Œ}{{\'S}}1 {¯}{{\.Z}}1 {}{{\'Z}}1 
-    %%{Ö}{{\"O}}1
-    %%{Ä}{{\"A}}1
-    %%{Ü}{{\"U}}1
-    %%{ß}{{\ss}}1
-    %%{ü}{{\"u}}1
-    %%{ä}{{\"a}}1
-    %%{ö}{{\"o}}1
-    %%{~}{{\textasciitilde}}1
-		%%{—}{{{\textemdash} }}1
-%%}%{\ \ }{{\ }}1}
+% JeÅ›li edytowany plik nie jest w kodowaniu cp1250, to jest problem z polskimi znakami wystÄ™pujÄ…cymi we wstawianym kodzie.
+% Dlatego podczas pracy na plikach w kodowaniu UTF8 trzeba zadeklarowaÄ‡ mapowanie jak niÅ¼ej (wystarczy odmarkowaÄ‡).
+% Niestety, jak siÄ™ zastosuje to mapowanie mogÄ… pojawiÄ‡ siÄ™ problemy z podÅ›wietlaniem skÅ‚adni (patrz dalej).
+\lstset{literate=%-
+{Ä…}{{\k{a}}}1 {Ä‡}{{\'c}}1 {Ä™}{{\k{e}}}1 {Å‚}{{\l{}}}1 {Å„}{{\'n}}1 {Ã³}{{\'o}}1 {Å›}{{\'s}}1 {Å¼}{{\.z}}1 {Åº}{{\'z}}1 {Ä„}{{\k{A}}}1 {Ä†}{{\'C}}1 {Ä˜}{{\k{E}}}1 {Å}{{\L{}}}1 {Åƒ}{{\'N}}1 {Ã“}{{\'O}}1 {Åš}{{\'S}}1 {Å»}{{\.Z}}1 {Å¹}{{\'Z}}1 
+    {Ã–}{{\"O}}1
+    {Ã„}{{\"A}}1
+    {Ãœ}{{\"U}}1
+    {ÃŸ}{{\ss}}1
+    {Ã¼}{{\"u}}1
+    {Ã¤}{{\"a}}1
+    {Ã¶}{{\"o}}1
+    {~}{{\textasciitilde}}1
+		{â€”}{{{\textemdash} }}1
+}%{\ \ }{{\ }}1}
 
 
-%% lstlisting pozwala na ostylowania podœwietlania sk³adni wybranych jêzyków.
-%% Dzia³a to na zasadzie zdefiniowania s³ów kluczowych oraz sposobu ich wyœwietlania.
-%% Poniewa¿ jest to prosty mechanizm, czasem trudno osi¹gn¹æ takie efekty, jakie daj¹ narzêdzia IDE. 
-%% Jednak w wiêkszoœci przypadku osi¹gane rezutlaty s¹ zadowalaj¹ce.
+%% lstlisting pozwala na ostylowania podÅ›wietlania skÅ‚adni wybranych jÄ™zykÃ³w.
+%% DziaÅ‚a to na zasadzie zdefiniowania sÅ‚Ã³w kluczowych oraz sposobu ich wyÅ›wietlania.
+%% PoniewaÅ¼ jest to prosty mechanizm, czasem trudno osiÄ…gnÄ…Ä‡ takie efekty, jakie dajÄ… narzÄ™dzia IDE. 
+%% Jednak w wiÄ™kszoÅ›ci przypadku osiÄ…gane rezutlaty sÄ… zadowalajÄ…ce.
 
 
-%% lstlisting obs³uguje domyœlnie kilka najpopularniejszych jêzyków.
+%% lstlisting obsÅ‚uguje domyÅ›lnie kilka najpopularniejszych jÄ™zykÃ³w.
 %%\lstloadlanguages{% Check Dokumentation for further languages ...
 %%C,
 %%C++,
 %%csh,
 %%Java
 %%}
-%% Inne jêzyki musz¹ byæ dodefiniowane. Poni¿ej podano przyk³ady definicji jêzyków i styli.
+%% Inne jÄ™zyki muszÄ… byÄ‡ dodefiniowane. PoniÅ¼ej podano przykÅ‚ady definicji jÄ™zykÃ³w i styli.
 
 \definecolor{lightgray}{rgb}{.9,.9,.9}
 \definecolor{darkgray}{rgb}{.4,.4,.4}
@@ -208,8 +208,8 @@
 }
 \lstdefinestyle{JavaScriptStyle}{
 	language=JavaScript,
-	commentstyle=\color{javagreen}, % niestety, jeœli w linii komentarza pojawi¹ siê s³owa kluczowe, to zostan¹ pokolorowane
-	backgroundcolor=,%\color{lightgray}, % mo¿na ustwiæ kolor t³a, ale jest to niezalecane
+	commentstyle=\color{javagreen}, % niestety, jeÅ›li w linii komentarza pojawiÄ… siÄ™ sÅ‚owa kluczowe, to zostanÄ… pokolorowane
+	backgroundcolor=,%\color{lightgray}, % moÅ¼na ustwiÄ‡ kolor tÅ‚a, ale jest to niezalecane
 	extendedchars=true,
 	basicstyle=\footnotesize\ttfamily,
 	showstringspaces=false,
@@ -263,9 +263,9 @@ captionpos=t
 	\lst@DefSaveDef{`:}\colon@json{\processColon@json},
 	basicstyle          = \footnotesize\ttfamily,
 	keywordstyle        = \ttfamily\bfseries,
-	numbers				= left, % zakomentowaæ, jeœli numeracja linii jest niepotrzebna
+	numbers				= left, % zakomentowaÄ‡, jeÅ›li numeracja linii jest niepotrzebna
 	numberstyle={\footnotesize\ttfamily\color{dark-grey}},
-	xleftmargin			= 2em % zakomentowaæ, jeœli numeracja linii jest niepotrzebna
+	xleftmargin			= 2em % zakomentowaÄ‡, jeÅ›li numeracja linii jest niepotrzebna
 }
 
 \newcommand\processColon@json{%
@@ -361,35 +361,35 @@ captionpos=t
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%  Pakiety i komendy zastosowane tylko do zamieszczenia informacji o u¿ytych komendach i fontach w tym szablonie.
-%%  Normalnie nie s¹ one potrzebne. Proszê poni¿sze deklaracje zamarkowaæ podczas redakcji pracy !!!!
+%%  Pakiety i komendy zastosowane tylko do zamieszczenia informacji o uÅ¼ytych komendach i fontach w tym szablonie.
+%%  Normalnie nie sÄ… one potrzebne. ProszÄ™ poniÅ¼sze deklaracje zamarkowaÄ‡ podczas redakcji pracy !!!!
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage{memlays}     % extra layout diagrams, zastosowane w szblonie do 'debuggowania', u¿ywa pakietu layouts
+\usepackage{memlays}     % extra layout diagrams, zastosowane w szblonie do 'debuggowania', uÅ¼ywa pakietu layouts
 %\usepackage{layouts}
-\usepackage{printlen} % pakiet do wyœwietlania wartoœci zdefiniowanych d³ugoœci, stosowany do 'debuggowania'
+\usepackage{printlen} % pakiet do wyÅ›wietlania wartoÅ›ci zdefiniowanych dÅ‚ugoÅ›ci, stosowany do 'debuggowania'
 \usepackage{enumitem} % pakiet do numerowania 1.1 1.2 w sekcji enumrate
 \uselengthunit{pt}
 \makeatletter
-\newcommand{\showFontSize}{\f@size pt} % makro wypisuj¹ce wielkoœæ bie¿¹cej czcionki
+\newcommand{\showFontSize}{\f@size pt} % makro wypisujÄ…ce wielkoÅ›Ä‡ bieÅ¼Ä…cej czcionki
 \makeatother
-% do pokazania ramek mo¿na by³oby u¿yæ:
+% do pokazania ramek moÅ¼na byÅ‚oby uÅ¼yÄ‡:
 %\usepackage{showframe} 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%  Formatowanie list wyliczeniowych, wypunktowañ i w³asnych otoczeñ
+%%  Formatowanie list wyliczeniowych, wypunktowaÅ„ i wÅ‚asnych otoczeÅ„
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Domyœlnie wypunktowania maj¹ zadeklarowane znaki, które nie wystêpuj¹ w tgtermes
-% Aby latex nie podstawia³ w ich miejsca znaków z czcionki standardowej mo¿na zrobiæ podstawienie:
+% DomyÅ›lnie wypunktowania majÄ… zadeklarowane znaki, ktÃ³re nie wystÄ™pujÄ… w tgtermes
+% Aby latex nie podstawiaÅ‚ w ich miejsca znakÃ³w z czcionki standardowej moÅ¼na zrobiÄ‡ podstawienie:
 %    \DeclareTextCommandDefault{\textbullet}{\ensuremath{\bullet}}
 %    \DeclareTextCommandDefault{\textasteriskcentered}{\ensuremath{\ast}}
 %    \DeclareTextCommandDefault{\textperiodcentered}{\ensuremath{\cdot}}
-% Jednak jeszcze lepszym pomys³em jest zdefiniowanie otoczeñ z wykorzystaniem enumitem
-\usepackage{enumitem} % pakiet pozwalaj¹cy zarz¹dzaæ formatowaniem list wyliczeniowych
-\setlist{noitemsep,topsep=4pt,parsep=0pt,partopsep=4pt,leftmargin=*} % zadeklarowane parametry pozwalaj¹ uzyskaæ 'zwart¹' postaæ wypunktowania b¹dŸ wyliczenia
-\setenumerate{labelindent=0pt,itemindent=0pt,leftmargin=!,label=\arabic*.} % mo¿na zmieniæ \arabic na \alph, jeœli wyliczenia maj¹ byæ z literkami
-\setlistdepth{4} % definiujemy g³êbokoœæ zagnie¿d¿enia list wyliczeniowych do 4 poziomów
-\setlist[itemize,1]{label=$\bullet$}  % definiujemy, jaki symbol ma byæ u¿yty w wyliczeniu na danym poziomie
+% Jednak jeszcze lepszym pomysÅ‚em jest zdefiniowanie otoczeÅ„ z wykorzystaniem enumitem
+\usepackage{enumitem} % pakiet pozwalajÄ…cy zarzÄ…dzaÄ‡ formatowaniem list wyliczeniowych
+\setlist{noitemsep,topsep=4pt,parsep=0pt,partopsep=4pt,leftmargin=*} % zadeklarowane parametry pozwalajÄ… uzyskaÄ‡ 'zwartÄ…' postaÄ‡ wypunktowania bÄ…dÅº wyliczenia
+\setenumerate{labelindent=0pt,itemindent=0pt,leftmargin=!,label=\arabic*.} % moÅ¼na zmieniÄ‡ \arabic na \alph, jeÅ›li wyliczenia majÄ… byÄ‡ z literkami
+\setlistdepth{4} % definiujemy gÅ‚Ä™bokoÅ›Ä‡ zagnieÅ¼dÅ¼enia list wyliczeniowych do 4 poziomÃ³w
+\setlist[itemize,1]{label=$\bullet$}  % definiujemy, jaki symbol ma byÄ‡ uÅ¼yty w wyliczeniu na danym poziomie
 \setlist[itemize,2]{label=\normalfont\bfseries\textendash}
 \setlist[itemize,3]{label=$\ast$}
 \setlist[itemize,4]{label=$\cdot$}
@@ -434,14 +434,14 @@ captionpos=t
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%  Pakiet i komendy do generowania indeksu 
-%% (wa¿ne, by pojawi³y siê przed pakietem hyperref)
+%% (waÅ¼ne, by pojawiÅ‚y siÄ™ przed pakietem hyperref)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% pdftex jest w stanie wygenerowaæ indeks (czyli spis hase³ z referencjami do stron, na których te has³a siê pojawi³y).
-% Generalnie z indeksem jest sporo problemów, zw³aszcza, gdy pojawiaj¹ siê polskie literki.
-% Trzeba wtedy korzystaæ z xindy.
-% Zwykle w pracach dyplomowych indeksy nie s¹ wykorzystywane. Dlatego s¹ zamarkowane.
+% pdftex jest w stanie wygenerowaÄ‡ indeks (czyli spis haseÅ‚ z referencjami do stron, na ktÃ³rych te hasÅ‚a siÄ™ pojawiÅ‚y).
+% Generalnie z indeksem jest sporo problemÃ³w, zwÅ‚aszcza, gdy pojawiajÄ… siÄ™ polskie literki.
+% Trzeba wtedy korzystaÄ‡ z xindy.
+% Zwykle w pracach dyplomowych indeksy nie sÄ… wykorzystywane. Dlatego sÄ… zamarkowane.
 %\DisemulatePackage{imakeidx}
-%\usepackage[makeindex,noautomatic]{imakeidx} % tutaj mówimy, ¿eby indeks nie generowa³ siê automatycznie, 
+%\usepackage[makeindex,noautomatic]{imakeidx} % tutaj mÃ³wimy, Å¼eby indeks nie generowaÅ‚ siÄ™ automatycznie, 
 %\makeindex
 %
 %\makeatletter
@@ -465,13 +465,13 @@ captionpos=t
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%  Sprawy metadanych w wynikowym pdf, hyperlinków itp.
+%%  Sprawy metadanych w wynikowym pdf, hyperlinkÃ³w itp.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Szablon przygotowano g³ównie dla pdflatex. Specyficzne komendy dla pdf-owej kompilacj wstawiono 
-% w instrukcjê warunkow¹ dostarczan¹ przez pakiet ifpdf 
-% Jeœli metadane zawieraj¹ przecinki lub œredniki, domyœlnie metadane te otaczane s¹ apostrofami.
-% Pisz¹ o tym na stronie: https://tex.stackexchange.com/questions/3708/hyperref-enquotes-metadata
-% Aby pozbyæ siê tych apostrofów u¿yto pakietu hyperxmp (³aduj¹cego kilka innych pakietów)
+% Szablon przygotowano gÅ‚Ã³wnie dla pdflatex. Specyficzne komendy dla pdf-owej kompilacj wstawiono 
+% w instrukcjÄ™ warunkowÄ… dostarczanÄ… przez pakiet ifpdf 
+% JeÅ›li metadane zawierajÄ… przecinki lub Å›redniki, domyÅ›lnie metadane te otaczane sÄ… apostrofami.
+% PiszÄ… o tym na stronie: https://tex.stackexchange.com/questions/3708/hyperref-enquotes-metadata
+% Aby pozbyÄ‡ siÄ™ tych apostrofÃ³w uÅ¼yto pakietu hyperxmp (Å‚adujÄ…cego kilka innych pakietÃ³w)
 \usepackage{hyperxmp}
 \usepackage{ifpdf}
 %\newif\ifpdf \ifx\pdfoutput\undefined
@@ -483,46 +483,46 @@ captionpos=t
  \usepackage{datetime2} % INFO: pakiet potrzeby do uzyskania i sformatowania daty 
  \usepackage[pdftex,bookmarks,breaklinks,unicode]{hyperref}
  \usepackage[pdftex]{graphicx}
- \DeclareGraphicsExtensions{.pdf,.jpg,.mps,.png} % po zadeklarowaniu rozszerzeñ mo¿na bêdzie wstawiaæ pliki z grafik¹ bez koniecznoœci podawania tych rozszerzeñ w ich nazwach
+ \DeclareGraphicsExtensions{.pdf,.jpg,.mps,.png} % po zadeklarowaniu rozszerzeÅ„ moÅ¼na bÄ™dzie wstawiaÄ‡ pliki z grafikÄ… bez koniecznoÅ›ci podawania tych rozszerzeÅ„ w ich nazwach
 \pdfcompresslevel=9
 \pdfoutput=1
 
-% Dobrze przygotowany dokument pdf to taki, który zawiera metadane.
-% Poni¿ej zadeklarowano pola metadanych, jakie bêd¹ w³¹czone do dokumentu pdf.
-% Mo¿na je zmodyfikowaæ w zale¿noœci od potrzeb
+% Dobrze przygotowany dokument pdf to taki, ktÃ³ry zawiera metadane.
+% PoniÅ¼ej zadeklarowano pola metadanych, jakie bÄ™dÄ… wÅ‚Ä…czone do dokumentu pdf.
+% MoÅ¼na je zmodyfikowaÄ‡ w zaleÅ¼noÅ›ci od potrzeb
 \makeatletter
 \AtBeginDocument{  
   \hypersetup{
 	pdfinfo={
     Title = {\@title},
     Author = {\@author},
-    Subject={Praca dyplomowa \ifMaster magisterska\else in¿ynierska\fi},  
+    Subject={Praca dyplomowa \ifMaster magisterska\else inÅ¼ynierska\fi},  
     Keywords={\@kvpl}, 
 		Producer={}, 
-	  CreationDate= {}, % nale¿y wstawiaæ zgodnie ze sk³adni¹: {D:yyyymmddhhmmss}, np. D:20210208175600
-    ModDate={\pdfcreationdate},   % data modyfikacji bêdzie dat¹ kompilacji
+	  CreationDate= {}, % naleÅ¼y wstawiaÄ‡ zgodnie ze skÅ‚adniÄ…: {D:yyyymmddhhmmss}, np. D:20210208175600
+    ModDate={\pdfcreationdate},   % data modyfikacji bÄ™dzie datÄ… kompilacji
 		Creator={pdftex},
 	}}
 }
 \pdftrailerid{} %Remove ID
 \pdfsuppressptexinfo15 %Suppress PTEX.Fullbanner and info of imported PDFs
 \makeatother
-\else             % jeœli kompilacja jest inna ni¿ pdflatex
+\else             % jeÅ›li kompilacja jest inna niÅ¼ pdflatex
 \usepackage{graphicx}
 \DeclareGraphicsExtensions{.eps,.ps,.jpg,.mps,.png}
 \fi
 \sloppy
 
-% INFO: dodane by lepiej ³amaæ urle 
+% INFO: dodane by lepiej Å‚amaÄ‡ urle 
 \def\UrlBreaks{\do\/\do-\do_} 
-% INFO: choæ mo¿na zadeklarowaæ foldery, w jakich pojawiaæ siê maj¹ pliki z grafik¹, zaleca siê jednak, by tego nie robiæ
+% INFO: choÄ‡ moÅ¼na zadeklarowaÄ‡ foldery, w jakich pojawiaÄ‡ siÄ™ majÄ… pliki z grafikÄ…, zaleca siÄ™ jednak, by tego nie robiÄ‡
 %\graphicspath{{rys01/}{rys02/}}  
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%  Formatowanie dokumentu
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% INFO: Deklaracja g³êbokoœciu numeracji
+% INFO: Deklaracja gÅ‚Ä™bokoÅ›ciu numeracji
 \setcounter{secnumdepth}{2}
 \setcounter{tocdepth}{2}
 \setsecnumdepth{subsection} 
@@ -531,19 +531,19 @@ captionpos=t
 \def\@seccntformat#1{\csname the#1\endcsname.\quad}
 \def\numberline#1{\hb@xt@\@tempdima{#1\if&#1&\else.\fi\hfil}}
 \makeatother
-% INFO: Numeracja rozdzia³ów i separatory
+% INFO: Numeracja rozdziaÅ‚Ã³w i separatory
 \renewcommand{\chapternumberline}[1]{#1.\quad}
 \renewcommand{\cftchapterdotsep}{\cftdotsep}
 
 
-%\usepackage{etoolbox} % odstêpy w spisie treœci (jeden ze sposobów ustawiania)
+%\usepackage{etoolbox} % odstÄ™py w spisie treÅ›ci (jeden ze sposobÃ³w ustawiania)
 %%\makeatletter
 %%\pretocmd{\chapter}{\addtocontents{toc}{\protect\addvspace{-1\p@}}}{}{}
 %%\pretocmd{\section}{\addtocontents{toc}{\protect\addvspace{-1\p@}}}{}{}
 %%\pretocmd{\subsection}{\addtocontents{toc}{\protect\addvspace{-1\p@}}}{}{}
 %%\makeatother
 
-\makeatletter % odstêpy w spisie pomiêdzy rozdzia³ami
+\makeatletter % odstÄ™py w spisie pomiÄ™dzy rozdziaÅ‚ami
 \renewcommand*{\insertchapterspace}{%
   \addtocontents{lof}{\protect\addvspace{3pt}}%
   \addtocontents{lot}{\protect\addvspace{3pt}}%
@@ -552,7 +552,7 @@ captionpos=t
 \makeatother 
 
 
-\setlength{\cftbeforechapterskip}{0pt} % odstêpy w spisie treœci przed rozdzia³em, dzia³a w korelacji z:
+\setlength{\cftbeforechapterskip}{0pt} % odstÄ™py w spisie treÅ›ci przed rozdziaÅ‚em, dziaÅ‚a w korelacji z:
 \renewcommand{\aftertoctitle}{\afterchaptertitle\vspace{-4pt}} % 
 % https://stackoverflow.com/questions/3029271/latex-make-listoffigures-look-like-listoftables-or-lstlistoflistings
 %\renewcommand{\memchapinfo}[4]{%
@@ -569,20 +569,20 @@ captionpos=t
 %\setlength\intextsep{12pt plus 2pt minus 2pt} 
 %\setlength\textfloatsep{12pt plus 2pt minus 2pt} 
 
-% Ustawienie odstêpu od góry w nienumerowanych rozdzia³ach oraz wykazach:
-% Spis treœci, Spis tabel, Spis rysunków, Indeks rzeczowy
+% Ustawienie odstÄ™pu od gÃ³ry w nienumerowanych rozdziaÅ‚ach oraz wykazach:
+% Spis treÅ›ci, Spis tabel, Spis rysunkÃ³w, Indeks rzeczowy
 %\newlength{\linespace}
 %\setlength{\linespace}{-\beforechapskip-\topskip+\headheight+\topsep}
 %%%\makechapterstyle{noNumbered}{%
 %%%\renewcommand\chapterheadstart{\vspace*{\linespace}}
 %%%}
-%% powy¿sza komenda za³atwia to, co robi¹ komendy poni¿sze dla spisów
+%% powyÅ¼sza komenda zaÅ‚atwia to, co robiÄ… komendy poniÅ¼sze dla spisÃ³w
 %\renewcommand*{\tocheadstart}{\vspace*{\linespace}}
 %\renewcommand*{\lotheadstart}{\vspace*{\linespace}}
 %\renewcommand*{\lofheadstart}{\vspace*{\linespace}}
 
 
-% INFO: Czcionka do podpisów tabel, rysunków, listingów
+% INFO: Czcionka do podpisÃ³w tabel, rysunkÃ³w, listingÃ³w
 \captionnamefont{\small}
 \captiontitlefont{\small}
 
@@ -598,20 +598,20 @@ Listing \thelstlisting: #1\hfill%\hfill%
 
 
 
-% INFO: Pomocnicze marko do wyró¿niania tekstu w jêzyku angielskim
+% INFO: Pomocnicze marko do wyrÃ³Å¼niania tekstu w jÄ™zyku angielskim
 \newcommand{\eng}[1]{(ang.~\emph{#1})}
-% IFNO: Pomocnicze makro do do³¹czania podpisów do rysunków ze wskazaniem Ÿród³a (bez wypisywania tego Ÿród³a w spisie rysunków)
+% IFNO: Pomocnicze makro do doÅ‚Ä…czania podpisÃ³w do rysunkÃ³w ze wskazaniem ÅºrÃ³dÅ‚a (bez wypisywania tego ÅºrÃ³dÅ‚a w spisie rysunkÃ³w)
 \newcommand*{\captionsource}[2]{%
   \caption[{#1}]{%
-    #1 \emph{ród³o:} #2%
+    #1 \emph{Å¹rÃ³dÅ‚o:} #2%
   }%
 }
 
 
-% INFO: Makro pozwalaj¹ce zmieniæ sposób wypisywania rozdzia³u (proszê z niego nie korzystaæ)
+% INFO: Makro pozwalajÄ…ce zmieniÄ‡ sposÃ³b wypisywania rozdziaÅ‚u (proszÄ™ z niego nie korzystaÄ‡)
 %\def\printchaptertitle##1{\fonttitle \space \thechapter.\space ##1} 
 
-% INFO: definicje etykiet i tytu³ów spisów
+% INFO: definicje etykiet i tytuÅ‚Ã³w spisÃ³w
 
 %\AtBeginDocument{% 
         \addto\captionspolish{% 
@@ -620,18 +620,18 @@ Listing \thelstlisting: #1\hfill%\hfill%
 
 %\AtBeginDocument{% 
 %        \addto\captionspolish{% 
-%        \renewcommand{\chaptername}{Rozdzia³}% INFO: Przedefiniowanie nazwy rozdzia³u, niepotrzebne, bo przy polskich ustawieniach jêzykowych jest 'Rozdzia³'
+%        \renewcommand{\chaptername}{RozdziaÅ‚}% INFO: Przedefiniowanie nazwy rozdziaÅ‚u, niepotrzebne, bo przy polskich ustawieniach jÄ™zykowych jest 'RozdziaÅ‚'
 %}} 
 
-% Przedefiniowanie etykiet oraz nazw wykazu literatury, spisów, indeksu
+% Przedefiniowanie etykiet oraz nazw wykazu literatury, spisÃ³w, indeksu
 %\AtBeginDocument{% 
         \addto\captionspolish{% 
-        \renewcommand{\figurename}{Rys.}%% INFO: Przedefiniowanie etykiet w podpisach rysunków 
+        \renewcommand{\figurename}{Rys.}%% INFO: Przedefiniowanie etykiet w podpisach rysunkÃ³w 
 }%}
 
 %\AtBeginDocument{% 
         \addto\captionspolish{% 
-        \renewcommand{\lstlistlistingname}{Spis listingów}%% INFO: Przedefiniowanie nazwy spisu listingów
+        \renewcommand{\lstlistlistingname}{Spis listingÃ³w}%% INFO: Przedefiniowanie nazwy spisu listingÃ³w
 }%} 
 \newlistof{lstlistoflistings}{lol}{\lstlistlistingname}
 
@@ -643,7 +643,7 @@ Listing \thelstlisting: #1\hfill%\hfill%
 
 %\AtBeginDocument{% 
         \addto\captionspolish{% 
-        \renewcommand{\listfigurename}{Spis rysunków}%% INFO: Przedefiniowanie nazwy spisu rysunków 
+        \renewcommand{\listfigurename}{Spis rysunkÃ³w}%% INFO: Przedefiniowanie nazwy spisu rysunkÃ³w 
 }%}
 
 %\AtBeginDocument{% 
@@ -658,7 +658,7 @@ Listing \thelstlisting: #1\hfill%\hfill%
 
 %\AtBeginDocument{% 
 %    \addto\captionspolish{
-%\renewcommand\abstractname{Streszczenie}%% INFO: Przedefiniowanie nazwy strzeszczenia, niepotrzebne, bo przy polskich ustawieniach jêzykowych jest 'Streszczenie'
+%\renewcommand\abstractname{Streszczenie}%% INFO: Przedefiniowanie nazwy strzeszczenia, niepotrzebne, bo przy polskich ustawieniach jÄ™zykowych jest 'Streszczenie'
 %}%}
 
 %\AtBeginDocument{% 
@@ -671,7 +671,7 @@ Listing \thelstlisting: #1\hfill%\hfill%
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Definicje stopek i nag³ówków
+%% Definicje stopek i nagÅ‚Ã³wkÃ³w
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \addtopsmarks{headings}{%
 \nouppercaseheads % added at the beginning
@@ -704,35 +704,35 @@ Listing \thelstlisting: #1\hfill%\hfill%
 \makeevenfoot{empty}{}{}{}
 \makeoddfoot{empty}{}{}{}
 
-% INFO: deklaracja zmiennej logicznej wykorzystywanej do rozró¿nienia pracy in¿ynierskiej i magisterskiej
-\newif\ifMaster% domyœlnie false (czyli domyœlnie mamy pracê in¿yniersk¹)
+% INFO: deklaracja zmiennej logicznej wykorzystywanej do rozrÃ³Å¼nienia pracy inÅ¼ynierskiej i magisterskiej
+\newif\ifMaster% domyÅ›lnie false (czyli domyÅ›lnie mamy pracÄ™ inÅ¼ynierskÄ…)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Definicja strony tytu³owej 
+%% Definicja strony tytuÅ‚owej 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \makeatletter
 %Uczelnia
 \newcommand\uczelnia[1]{\renewcommand\@uczelnia{#1}}
 \newcommand\@uczelnia{}
-%Wydzia³
+%WydziaÅ‚
 \newcommand\wydzial[1]{\renewcommand\@wydzial{#1}}
 \newcommand\@wydzial{}
 %Kierunek
 \newcommand\kierunek[1]{\renewcommand\@kierunek{#1}}
 \newcommand\@kierunek{}
-%Specjalnoœæ
+%SpecjalnoÅ›Ä‡
 \newcommand\specjalnosc[1]{\renewcommand\@specjalnosc{#1}}
 \newcommand\@specjalnosc{}
-%Tytu³ po angielsku
+%TytuÅ‚ po angielsku
 \newcommand\titleEN[1]{\renewcommand\@titleEN{#1}}
 \newcommand\@titleEN{}
-%Tytu³ krótki
+%TytuÅ‚ krÃ³tki
 \newcommand\titleShort[1]{\renewcommand\@titleShort{#1}}
 \newcommand\@titleShort{}
 %Promotor
 \newcommand\promotor[1]{\renewcommand\@promotor{#1}}
 \newcommand\@promotor{}
-%S³owa kluczowe
+%SÅ‚owa kluczowe
 \newcommand\kvpl[1]{\renewcommand\@kvpl{#1}}
 \newcommand\@kvpl{}
 \newcommand\kven[1]{\renewcommand\@kven{#1}}
@@ -740,41 +740,41 @@ Listing \thelstlisting: #1\hfill%\hfill%
 %Komenda wykorzystywana w streszczeniu
 \newcommand\mykeywords{\hspace{\absleftindent}%
 \parbox{\linewidth-2.0\absleftindent}{
-       \iflanguage{polish}{\textbf{S³owa kluczowe:} \@kvpl}{%
+       \iflanguage{polish}{\textbf{SÅ‚owa kluczowe:} \@kvpl}{%
 			 \iflanguage{english}{\textbf{Keywords:} \@kven}}{}}
 				}
 
 \def\maketitle{%
   \pagestyle{empty}%
 %%\garamond 
-	\fontfamily{\ebgaramond@family}\selectfont % na stronie tytu³owej czcionka garamond
+	\fontfamily{\ebgaramond@family}\selectfont % na stronie tytuÅ‚owej czcionka garamond
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
-%% Poni¿ej, w otoczniu picture, wstawiono tytu³ i autora. 
-%% Tytu³ (z autorem) musi znaleŸæ siê w obszarze 
-%% odpowiadaj¹cym okienku 110mmx75mm, którego lewy górny róg 
-%% jest w po³o¿eniu 77mm od lewej i 111mm od górnej  krawêdzi strony 
-%% (tak wynika z wyciêcia na ok³adce). 
-%% Poni¿szy kod musi byæ u¿yty dok³adnie w miejscu gdzie jest.
-%% Jeœli tytu³ nie mieœci siê w okienku, to nale¿y tak pozmieniaæ 
-%% parametry u¿ytych komend, aby ten przyd³ugi tytu³ jednak 
-%% upakowaæ do okienka.
+%% PoniÅ¼ej, w otoczniu picture, wstawiono tytuÅ‚ i autora. 
+%% TytuÅ‚ (z autorem) musi znaleÅºÄ‡ siÄ™ w obszarze 
+%% odpowiadajÄ…cym okienku 110mmx75mm, ktÃ³rego lewy gÃ³rny rÃ³g 
+%% jest w poÅ‚oÅ¼eniu 77mm od lewej i 111mm od gÃ³rnej  krawÄ™dzi strony 
+%% (tak wynika z wyciÄ™cia na okÅ‚adce). 
+%% PoniÅ¼szy kod musi byÄ‡ uÅ¼yty dokÅ‚adnie w miejscu gdzie jest.
+%% JeÅ›li tytuÅ‚ nie mieÅ›ci siÄ™ w okienku, to naleÅ¼y tak pozmieniaÄ‡ 
+%% parametry uÅ¼ytych komend, aby ten przydÅ‚ugi tytuÅ‚ jednak 
+%% upakowaÄ‡ do okienka.
 %%
-%% Sama ok³adka (kolorowa strona z wyciêciem, kiedyœ by³a do pobrania z dydaktyki) 
-%% powinna byæ przyciêta o 3mm od ka¿dej z krawêdzi.
-%% Te 3mm pewnie zostawiono na ewentualne spady czy te¿ specjaln¹ oprawê.
+%% Sama okÅ‚adka (kolorowa strona z wyciÄ™ciem, kiedyÅ› byÅ‚a do pobrania z dydaktyki) 
+%% powinna byÄ‡ przyciÄ™ta o 3mm od kaÅ¼dej z krawÄ™dzi.
+%% Te 3mm pewnie zostawiono na ewentualne spady czy teÅ¼ specjalnÄ… oprawÄ™.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newlength{\tmpfboxrule}
 \setlength{\tmpfboxrule}{\fboxrule}
 \setlength{\fboxsep}{2mm}
 \setlength{\fboxrule}{0mm} 
-%\setlength{\fboxrule}{0.1mm} %% INFO: Jeœli chcemy zobaczyæ ramkê, wystarczy odmarkowaæ tê linijkê
+%\setlength{\fboxrule}{0.1mm} %% INFO: JeÅ›li chcemy zobaczyÄ‡ ramkÄ™, wystarczy odmarkowaÄ‡ tÄ™ linijkÄ™
 \setlength{\unitlength}{1mm}
 \begin{picture}(0,0)
-%\put(26,-124){\fbox{% ustawienie do "wyciêtego okienka"
-\put(20,-124){\fbox{% ustawienie na œrodku
+%\put(26,-124){\fbox{% ustawienie do "wyciÄ™tego okienka"
+\put(20,-124){\fbox{% ustawienie na Å›rodku
 \parbox[c][71mm][c]{104mm}{\centering%\lineskip=34pt 
 {\fontsize{18pt}{20pt}\bfseries\selectfont \@title}\\[5mm]
-{\fontsize{18pt}{20pt}\bfseries\selectfont \@titleEN}\\[10mm] % INFO: wstawiono tytu³ w jêzyku angielskim, choæ w obecnych oficjalnych zaleceniach tego nie ma
+{\fontsize{18pt}{20pt}\bfseries\selectfont \@titleEN}\\[10mm] % INFO: wstawiono tytuÅ‚ w jÄ™zyku angielskim, choÄ‡ w obecnych oficjalnych zaleceniach tego nie ma
 %\fontsize{16pt}{18pt}\selectfont AUTOR:\\[2mm]
 {\fontsize{16pt}{18pt}\selectfont \@author}}
 }
@@ -782,8 +782,8 @@ Listing \thelstlisting: #1\hfill%\hfill%
 \end{picture}
 \setlength{\fboxrule}{\tmpfboxrule} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Reszta strony z nazw¹ uczelni, wydzia³u, kierunkiem, specjalnoœci¹
-%% promotorem, ocen¹ pracy (zakomentowane), miastem i rokiem
+%% Reszta strony z nazwÄ… uczelni, wydziaÅ‚u, kierunkiem, specjalnoÅ›ciÄ…
+%% promotorem, ocenÄ… pracy (zakomentowane), miastem i rokiem
 	{\vskip 9pt\centering
 		{\fontsize{20pt}{22pt}\bfseries\selectfont \@uczelnia}\\[5pt]
 		{\fontsize{16pt}{18pt}\bfseries\selectfont \@wydzial}\\[1pt]
@@ -792,23 +792,23 @@ Listing \thelstlisting: #1\hfill%\hfill%
 {\vskip 24pt\raggedright\fontsize{14pt}{16pt}\selectfont%
 \begin{tabular}{@{}ll}
 Kierunek: & {\bfseries \@kierunek}\\
-Specjalnoœæ: & {\bfseries \@specjalnosc}\\
+SpecjalnoÅ›Ä‡: & {\bfseries \@specjalnosc}\\
 \end{tabular}\\[1.3cm]
 }
 {\vskip 29pt\centering{\fontsize{24pt}{26pt}\selectfont%
 {\fontsize{26pt}{28pt}\selectfont P}RACA {\fontsize{26pt}{24pt}\selectfont D}YPLOMOWA\\[7pt]
 \ifMaster \selectfont{\fontsize{26pt}{28pt}\selectfont M}AGISTERSKA\\[2.5cm]%
-\else \selectfont{\fontsize{26pt}{28pt}\selectfont I}N¯YNIERSKA\\[2.5cm]\fi
+\else \selectfont{\fontsize{26pt}{28pt}\selectfont I}NÅ»YNIERSKA\\[2.5cm]\fi
 }}
 	\vfill
 {\centering
 		{\fontsize{14pt}{16pt}\selectfont Opiekun pracy}\\[2mm] 
 		{\fontsize{14pt}{16pt}\bfseries\selectfont \@promotor}\\[10mm]%INFO: tutaj wstawiane ejst nazwisko promotora
 %		&{\fontsize{16pt}{18pt}\selectfont OCENA PRACY:}\\[20mm] 
-% INFO: liniê powy¿sz¹ zakomentowano, gdy¿ od czasu pandemii COVID-19 prace mog¹ byæ dostarczane bez podpisu promotora
+% INFO: liniÄ™ powyÅ¼szÄ… zakomentowano, gdyÅ¼ od czasu pandemii COVID-19 prace mogÄ… byÄ‡ dostarczane bez podpisu promotora
 }
 \vspace{4cm}\noindent
-{\fontsize{12pt}{14pt}\selectfont S³owa kluczowe: \@kvpl}% INFO: na stronê tytu³ow¹ trafiaj¹ tylko s³owa kluczowe w jêzyku polskim (w jakim napisana jest praca)
+{\fontsize{12pt}{14pt}\selectfont SÅ‚owa kluczowe: \@kvpl}% INFO: na stronÄ™ tytuÅ‚owÄ… trafiajÄ… tylko sÅ‚owa kluczowe w jÄ™zyku polskim (w jakim napisana jest praca)
 \vspace{1.3cm}
 \hrule\vspace*{0.3cm}
 {\centering
@@ -824,50 +824,50 @@ Specjalnoœæ: & {\bfseries \@specjalnosc}\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   Pocz¹tek strefy do nanoszenia zmian 
+%   PoczÄ…tek strefy do nanoszenia zmian 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Metadane dokumentu
-%%  - tutaj nale¿y wstawiæ w³asne dane
+%%  - tutaj naleÅ¼y wstawiÄ‡ wÅ‚asne dane
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\Mastertrue % INFO: odkomentuj, jeœli to praca magisterska
-\title{Szablon pracy dyplomowej in¿ynierskiej/magisterskiej, wersja 0.9} % INFO: tytu³ pracy w jêzyku polskim 
-\titleShort{Szablon pracy dyplomowej ...}  % INFO: krótki tytu³ pracy (do zamieszczenia w stopce, sklejony z imieniem i nazwiskiem autora nie powinien zaj¹æ wiêcej ni¿ jedn¹ linijkê)
-\titleEN{Engineering/master thesis template, version 0.9} % INFO: tytu³ pracy w jêzyku angielskim
-\author{Imiê Nazwisko}  % INFO: imiê i nazwisko autora
-\uczelnia{Politechnika Wroc³awska} % INFO: nazwa uczelni
-\wydzial{Wydzia³ Informatyki i Telekomunikacji} % INFO: nazwa wydzia³u
+%\Mastertrue % INFO: odkomentuj, jeÅ›li to praca magisterska
+\title{Szablon pracy dyplomowej inÅ¼ynierskiej/magisterskiej, wersja 0.9} % INFO: tytuÅ‚ pracy w jÄ™zyku polskim 
+\titleShort{Szablon pracy dyplomowej ...}  % INFO: krÃ³tki tytuÅ‚ pracy (do zamieszczenia w stopce, sklejony z imieniem i nazwiskiem autora nie powinien zajÄ…Ä‡ wiÄ™cej niÅ¼ jednÄ… linijkÄ™)
+\titleEN{Engineering/master thesis template, version 0.9} % INFO: tytuÅ‚ pracy w jÄ™zyku angielskim
+\author{ImiÄ™ Nazwisko}  % INFO: imiÄ™ i nazwisko autora
+\uczelnia{Politechnika WrocÅ‚awska} % INFO: nazwa uczelni
+\wydzial{WydziaÅ‚ Informatyki i Telekomunikacji} % INFO: nazwa wydziaÅ‚u
 \kierunek{Informatyka techniczna (ITE)} % IFO: nazwa kierunku
-\specjalnosc{In¿ynieria systemów informatycznych (INS)} % INFO: nazwa specjalnoœci
-\promotor{tytu³/stopieñ naukowy, Imiê Nazwisko} % INFO: dane promotora 
-\kvpl{raz, dwa, trzy} % INFO: s³owa kluczowe po polsku
-\kven{one, two, three} % INFO: s³owa kluczowe po angielsku
-\date{WROC£AW, 2022} % INFO: miejscowoœæ, rok z³o¿enia pracy dyplomowej
+\specjalnosc{InÅ¼ynieria systemÃ³w informatycznych (INS)} % INFO: nazwa specjalnoÅ›ci
+\promotor{tytuÅ‚/stopieÅ„ naukowy, ImiÄ™ Nazwisko} % INFO: dane promotora 
+\kvpl{raz, dwa, trzy} % INFO: sÅ‚owa kluczowe po polsku
+\kven{one, two, three} % INFO: sÅ‚owa kluczowe po angielsku
+\date{WROCÅAW, 2022} % INFO: miejscowoÅ›Ä‡, rok zÅ‚oÅ¼enia pracy dyplomowej
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Struktura dokumentu
-%%  - tutaj nale¿y wstawiæ w³asne rozdzia³y
+%%  - tutaj naleÅ¼y wstawiÄ‡ wÅ‚asne rozdziaÅ‚y
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% INFO: Za pomoc¹ polecenia \includeonly{} mo¿na dokonaæ selekcji  
-%       tych czêœci (plików z latexowym kodem), które maj¹ byæ kompilowane. 
-%       Przydaje siê to szczególnie podczas pracy nad du¿ymi dokumentami. 
-%       Bo im mniej czêœci zostanie wyselekcjonowanych, tym szybsza bêdzie kompilacja.
-%       Proszê nie myliæ tej komendy z poleceniem \include{}, któr¹ u¿ywa siê 
-%       do zadeklarowania pe³nej struktury dokumentu (plików z latexowym kodem).
+% INFO: Za pomocÄ… polecenia \includeonly{} moÅ¼na dokonaÄ‡ selekcji  
+%       tych czÄ™Å›ci (plikÃ³w z latexowym kodem), ktÃ³re majÄ… byÄ‡ kompilowane. 
+%       Przydaje siÄ™ to szczegÃ³lnie podczas pracy nad duÅ¼ymi dokumentami. 
+%       Bo im mniej czÄ™Å›ci zostanie wyselekcjonowanych, tym szybsza bÄ™dzie kompilacja.
+%       ProszÄ™ nie myliÄ‡ tej komendy z poleceniem \include{}, ktÃ³rÄ… uÅ¼ywa siÄ™ 
+%       do zadeklarowania peÅ‚nej struktury dokumentu (plikÃ³w z latexowym kodem).
 %\includeonly{skroty,rozdzial01}  
 
 \begin{document}
-% Komendami poni¿ej mo¿na prze³¹czyæ odstêp miêdzy liniami. Proszê jednak tego nie robiæ !!!
+% Komendami poniÅ¼ej moÅ¼na przeÅ‚Ä…czyÄ‡ odstÄ™p miÄ™dzy liniami. ProszÄ™ jednak tego nie robiÄ‡ !!!
 %\SingleSpacing
 %\OnehalfSpacing
 %\DoubleSpacing
@@ -876,41 +876,41 @@ Specjalnoœæ: & {\bfseries \@specjalnosc}\\
 %\typeoutstandardlayout    % wypisuje na stdout informacje o ustawieniach
 
 %\frontmatter
-\pdfbookmark[0]{Tytu³}{Tytul.1}
+\pdfbookmark[0]{TytuÅ‚}{Tytul.1}
 \maketitle
 \clearpage
-% INFO: Strona z licencj¹ CC zdefiniowana poni¿ej dotyczy tylko zredagowanej treœci. 
-%       Z samego szablon mo¿na korzystywaæ bez koniecznoœci cytowania jego autora.
-%       Podczas pisania pracy dyplomowej stronê tê mo¿na usun¹æ (a nawet nale¿y).
+% INFO: Strona z licencjÄ… CC zdefiniowana poniÅ¼ej dotyczy tylko zredagowanej treÅ›ci. 
+%       Z samego szablon moÅ¼na korzystywaÄ‡ bez koniecznoÅ›ci cytowania jego autora.
+%       Podczas pisania pracy dyplomowej stronÄ™ tÄ™ moÅ¼na usunÄ…Ä‡ (a nawet naleÅ¼y).
 \thispagestyle{empty}
 \mbox{}\vfill
-\noindent\begin{tabular}{@{}ll} Opracowa³: & Tomasz Kubik \texttt{<tomasz.kubik@pwr.edu.pl>}\\
- Data: & styczeñ 2023 
+\noindent\begin{tabular}{@{}ll} OpracowaÅ‚: & Tomasz Kubik \texttt{<tomasz.kubik@pwr.edu.pl>}\\
+ Data: & styczeÅ„ 2023 
  \end{tabular}\\[15mm]
 \noindent\includegraphics[width=3cm]{by-nc-sa}\newline
 {\normalfont 
-Tekst zawarty w niniejszym szablonie jest udostêpniany na licencji Creative Commons: \emph{Uznanie autorstwa -- U¿ycie niekomercyjne -- Na tych samych warunkach, 3.0 Polska}, Wroc³aw 2023. \\[2pt]
-Oznacza to, ¿e wszystkie przekazane treœci mo¿na kopiowaæ i  wykorzystywaæ do celów niekomercyjnych, a tak¿e tworzyæ na ich podstawie utwory zale¿ne pod warunkiem podania autora i~nazwy licencjodawcy oraz udzielania na utwory zale¿ne takiej samej licencji. Tekst licencji jest dostêpny pod adresem: \url{http://creativecommons.org/licenses/by-nc-sa/3.0/pl/}.\\[2pt]
-Licencja nie dotyczy latexowego kodu szablonu. Sam szablon (tj.\ zbiór przygotowanych komend formatuj¹cych dokument) mo¿na wykorzystywaæ bez wzmiankowania o jego autorze. Dlatego podczas redakcji pracy dyplomowej niniejsz¹ stronê mo¿na usun¹æ. 
+Tekst zawarty w niniejszym szablonie jest udostÄ™pniany na licencji Creative Commons: \emph{Uznanie autorstwa -- UÅ¼ycie niekomercyjne -- Na tych samych warunkach, 3.0 Polska}, WrocÅ‚aw 2023. \\[2pt]
+Oznacza to, Å¼e wszystkie przekazane treÅ›ci moÅ¼na kopiowaÄ‡ i  wykorzystywaÄ‡ do celÃ³w niekomercyjnych, a takÅ¼e tworzyÄ‡ na ich podstawie utwory zaleÅ¼ne pod warunkiem podania autora i~nazwy licencjodawcy oraz udzielania na utwory zaleÅ¼ne takiej samej licencji. Tekst licencji jest dostÄ™pny pod adresem: \url{http://creativecommons.org/licenses/by-nc-sa/3.0/pl/}.\\[2pt]
+Licencja nie dotyczy latexowego kodu szablonu. Sam szablon (tj.\ zbiÃ³r przygotowanych komend formatujÄ…cych dokument) moÅ¼na wykorzystywaÄ‡ bez wzmiankowania o jego autorze. Dlatego podczas redakcji pracy dyplomowej niniejszÄ… stronÄ™ moÅ¼na usunÄ…Ä‡. 
 }
 \clearpage
 
-% Kolejne czêœci dokumentu: streszczenie, spisy, skróty, rozdzia³y, dodatki
+% Kolejne czÄ™Å›ci dokumentu: streszczenie, spisy, skrÃ³ty, rozdziaÅ‚y, dodatki
 %\chapterstyle{noNumbered}
-% STRESZCZENIE (proszê zajrzeæ do œrodka na zakomentowane komendy)
+% STRESZCZENIE (proszÄ™ zajrzeÄ‡ do Å›rodka na zakomentowane komendy)
 \include{streszczenie}
 \pagestyle{outer}
 \clearpage
-% SPIS TREŒCI (zostanie wygenerowany automatycznie)
-\pdfbookmark[0]{Spis treœci}{spisTresci.1}%
+% SPIS TREÅšCI (zostanie wygenerowany automatycznie)
+\pdfbookmark[0]{Spis treÅ›ci}{spisTresci.1}%
 %%\phantomsection
-%%\addcontentsline{toc}{chapter}{Spis treœci}
+%%\addcontentsline{toc}{chapter}{Spis treÅ›ci}
 \tableofcontents* 
 \clearpage
-% SPIS RYSUNKÓW (zostanie wygenerowany automatycznie)
-\pdfbookmark[0]{Spis rysunków}{spisRysunkow.1} % jeœli chcemy mieæ w spisie treœci, to zamarkowaæ tê liniê, a odmarkowaæ linie poni¿sze
+% SPIS RYSUNKÃ“W (zostanie wygenerowany automatycznie)
+\pdfbookmark[0]{Spis rysunkÃ³w}{spisRysunkow.1} % jeÅ›li chcemy mieÄ‡ w spisie treÅ›ci, to zamarkowaÄ‡ tÄ™ liniÄ™, a odmarkowaÄ‡ linie poniÅ¼sze
 %%\phantomsection
-%%\addcontentsline{toc}{chapter}{Spis rysunków}
+%%\addcontentsline{toc}{chapter}{Spis rysunkÃ³w}
 \listoffigures*
 \clearpage
 % SPIS TABEL (zostanie wygenerowany automatycznie)
@@ -919,15 +919,15 @@ Licencja nie dotyczy latexowego kodu szablonu. Sam szablon (tj.\ zbiór przygotow
 %%\addcontentsline{toc}{chapter}{Spis tabel}
 \listoftables*
 \clearpage
-% SPIS LISTINGÓW (zostanie wygenerowany automatycznie)
-\pdfbookmark[0]{Spis listingów}{spisListingow.1} %
+% SPIS LISTINGÃ“W (zostanie wygenerowany automatycznie)
+\pdfbookmark[0]{Spis listingÃ³w}{spisListingow.1} %
 %%\phantomsection
-%%\addcontentsline{toc}{chapter}{Spis listingów}
+%%\addcontentsline{toc}{chapter}{Spis listingÃ³w}
 \lstlistoflistings*
 \clearpage
-% SKRÓTY (to opcjonalna czêœæ pracy)
+% SKRÃ“TY (to opcjonalna czÄ™Å›Ä‡ pracy)
 \include{skroty} 
-% ROZDZIA£Y (kolejne rozdzia³y do³¹czane s¹ z kolejnych plików)
+% ROZDZIAÅY (kolejne rozdziaÅ‚y doÅ‚Ä…czane sÄ… z kolejnych plikÃ³w)
 \chapterstyle{default}
 \include{rozdzial01}
 \include{rozdzial02}
@@ -936,26 +936,26 @@ Licencja nie dotyczy latexowego kodu szablonu. Sam szablon (tj.\ zbiór przygotow
 \include{rozdzial05}
 \include{rozdzial06}
 % LITERATURA (zostanie wygenerowana automatycznie)
-%UWAGA: bibliotekê referencji nale¿y przygotowaæ samemu. Dobrym do tego narzêdziem jest JabRef.
-%       JabRef oferuje jednak wiêksz¹ liczbê typów rekordów ni¿ obs³uguje BibTeX.
-%       Proszê nie deklarowaæ rekordów o typach nieobs³ugiwanych przez BibTeX.
-%       Formatowania wykazu literatury i cytowañ odbywaæ siê ma zgodnie z zadeklarowanym stylem.
-%       Zalecane s¹ style produkuj¹ce numeryczne cytowania (w postaci [1], [2,3]).
+%UWAGA: bibliotekÄ™ referencji naleÅ¼y przygotowaÄ‡ samemu. Dobrym do tego narzÄ™dziem jest JabRef.
+%       JabRef oferuje jednak wiÄ™kszÄ… liczbÄ™ typÃ³w rekordÃ³w niÅ¼ obsÅ‚uguje BibTeX.
+%       ProszÄ™ nie deklarowaÄ‡ rekordÃ³w o typach nieobsÅ‚ugiwanych przez BibTeX.
+%       Formatowania wykazu literatury i cytowaÅ„ odbywaÄ‡ siÄ™ ma zgodnie z zadeklarowanym stylem.
+%       Zalecane sÄ… style produkujÄ…ce numeryczne cytowania (w postaci [1], [2,3]).
 %       Takim stylem jest np. plabbrv
 \bibliographystyle{plabbrv}
-%       Aby zapanowaæ nad odstêpami w wykazie literatury mo¿na pos³u¿yæ siê poni¿sz¹ komend¹
-\setlength{\bibitemsep}{2pt} % - zacieœnia wykaz
-%       Pozycja Literatura pojawia siê w spisie treœci nieco inaczej ni¿ spisy rysunków, tabel itp.
-%       Aby zachowaæ w³aœciwe odstêpy nale¿y u¿yæ poni¿szej komendy
-\addtocontents{toc}{\addvspace{2pt}} % ustawiamy odstêp w spisie treœci przed pozycj¹ Literatura 
-%       Nazwê pliku przygotowanej biblioteki wpisuje siê bez rozszerzenia .bib
-%       (linia poni¿ej za³aduje rekordy z pliku "dokumentacja.bib")
+%       Aby zapanowaÄ‡ nad odstÄ™pami w wykazie literatury moÅ¼na posÅ‚uÅ¼yÄ‡ siÄ™ poniÅ¼szÄ… komendÄ…
+\setlength{\bibitemsep}{2pt} % - zacieÅ›nia wykaz
+%       Pozycja Literatura pojawia siÄ™ w spisie treÅ›ci nieco inaczej niÅ¼ spisy rysunkÃ³w, tabel itp.
+%       Aby zachowaÄ‡ wÅ‚aÅ›ciwe odstÄ™py naleÅ¼y uÅ¼yÄ‡ poniÅ¼szej komendy
+\addtocontents{toc}{\addvspace{2pt}} % ustawiamy odstÄ™p w spisie treÅ›ci przed pozycjÄ… Literatura 
+%       NazwÄ™ pliku przygotowanej biblioteki wpisuje siÄ™ bez rozszerzenia .bib
+%       (linia poniÅ¼ej zaÅ‚aduje rekordy z pliku "dokumentacja.bib")
 \bibliography{dokumentacja}
 \appendix
 \include{dodatekA}
 \include{dodatekB}
 
-% Jeœli w pracy pojawiaæ siê ma indeks, nale¿y odkomentowaæ poni¿sze linie
+% JeÅ›li w pracy pojawiaÄ‡ siÄ™ ma indeks, naleÅ¼y odkomentowaÄ‡ poniÅ¼sze linie
 %%\chapterstyle{noNumbered}
 %%\phantomsection % sets an anchor
 %%\addcontentsline{toc}{chapter}{Indeks rzeczowy}
