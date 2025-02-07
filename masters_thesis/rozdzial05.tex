@@ -1,0 +1,440 @@
+\chapter{Uwagi techniczne}% 
+\section{Zasady redakcji}
+W pracy nale¿y dbaæ o poprawnoœæ redakcyjn¹ zgodnie z zaleceniami:
+\begin{itemize}
+\item nie zostawiaæ znaku spacji przed znakami interpunkcji (zamiast ,,powiedziano , ¿e ...'' powinno byæ ,,powiedziano, ¿e ...''),
+\item kropki po skrótach, które nie s¹ jednoczeœnie kropkami koñcz¹cymi zdanie sklejaæ z kolejnym wyrazem znakiem tyldy, np.~jak tutaj (\verb?np.~jak tutaj?) lub wstawiaæ za nimi ukoœnik, np.\ jak tutaj (\verb?np.\ jak tutaj?),
+\item nie zapominaæ o formatowaniu wyliczenia (nale¿y zaczynaæ ma³ymi literami lub du¿ymi oraz koñczyæ przecinkami, œrednikami i kropkami -- w zale¿noœci od kontekstu danego wyliczenia),
+\item nie zostawiaæ samotnych literek na koñcach linii  (mo¿na je ,,skleiæ'' z wyrazem nastêpnym stosuj¹c znaczek tyldy, jak \verb+w~przyk³adzie+),
+\item nie zostawiaæ pojedynczych wierszy na koñcu lub pocz¹tku strony (nale¿y kontrolowaæ ,,sieroty'' i ,,wdowy''),
+\item nie zostawiaæ odstêpu pomiêdzy tekstem a nawiasami czy znakami cudzys³owów (znaki te powinny przylegaæ do tekstu, który obejmuj¹ ,,jak w tym przyk³adzie''),
+\item wyrazy obcojêzyczne powinny byæ pisane czcionk¹ pochy³¹ (preferowane \verb|\emph{}|) wraz ze skrótem oznaczaj¹cym jêzyk, w szczególnoœci ma to zastosowanie przy rozwijaniu skrótów, np.~OGC (ang.~\emph{Open Geospatial Consortium}) (w kodzie latexowym wygl¹da to tak: \verb|np.~OGC (ang.~\emph{Open Geospatial Consortium})|),
+\item ka¿dy zastosowany skrót powinien zostaæ rozwiniêty podczas pierwszego u¿ycia, póŸniej mo¿e ju¿ wystêpowaæ bez rozwiniêcia (skrót i jego rozwiniêcie powinny trafiæ równie¿ do wykazu \emph{Skróty}, jeœli taki wykaz jest do³¹czany do dokumentu),
+\item nie wolno zostawiaæ zbyt du¿o bia³ej przestrzeni bez ¿adnego uzasadnienia. 
+\end{itemize}
+
+Odnosz¹c siê do ostatniej zasady, to przek³ada siê ona na gospodarowanie bia³¹ przestrzeni¹. Poni¿ej przedstawiono przyk³ad z³ego u¿ycia listy wyliczeniowej. Jeœli bowiem elementy na liœcie s¹ reprezentowane przez krótki tekst, to wtedy powstaje bia³a plama. Widaæ to szczególnie przy d³ugich listach.
+\begin{quotation}
+	\noindent Moje ulubione kolory to:
+	\begin{itemize}
+	\item bia³y,
+	\item niebieski,
+	\item czerwony.
+	\end{itemize}
+\end{quotation}
+
+Du¿o lepiej w takim przypadku albo po prostu wyliczyæ wartoœci po przecinkach:
+\begin{quotation}
+	\noindent Moje ulubione kolory to: bia³y, niebieski, czerwony.
+\end{quotation}
+albo wypisaæ listê w kilku kolumnach:
+\begin{quotation}
+	\noindent Moje ulubione kolory to:
+\begin{multicols}{3}
+	\begin{itemize}
+	\item bia³y,
+	\item niebieski,
+	\item czerwony.
+	\end{itemize}
+\end{multicols}
+\end{quotation}
+
+
+
+\section{Rysunki}
+W niniejszym szablonie numeracja rysunków odbywa siê automatycznie wed³ug nastêpuj¹cych regu³: rysunki powinny mieæ numeracjê ci¹g³¹ w obrêbie danego rozdzia³u, sam zaœ numer powinien sk³adaæ siê z dwóch liczb rozdzielonych kropk¹. Pierwsza liczb¹ ma byæ numer rozdzia³u, drug¹ -- kolejny numer rysunku w rozdziale. Przyk³adowo: pierwszy rysunek w rozdziale 1 powinien mieæ numer 1.1, drugi -- numer 1.2 itd., pierwszy rysunek w rozdziale 2 powinien mieæ numer 2.1, drugi -- numer 1.2 itd. Wszystko to za³atwia szablon. 
+
+Rysunki powinny byæ wyœrodkowane na stronie wraz z podpisem umieszczonym na dole. Podpisy nie powinny koñczyæ siê kropk¹. Czcionka podpisu powinna byæ mniejsza od czcionki tekstu wiod¹cego o 1 lub 2 pkt (w szablonie jest to czcionka rozmiaru \texttt{small}). Ponadto nale¿y zachowywaæ odpowiedni odstêp miêdzy rysunkiem, podpisem rysunku a tekstem rozdzia³u. Przyk³ady, jak to zrobiæ, zamieszczono w szablonie.
+
+W~przypadku korzystania z szablon odstêpy te regulowane s¹ automatycznie. Podpis i grafika musz¹ stanowiæ jeden obiekt. Chodzi o to, ¿e w edytorach tekstu typu Office podpis nie scala siê z grafik¹ i czasem trafia na nastêpn¹ stronê, osieracaj¹c grafikê. Korzystaj¹cym z niniejszego szablonu i otoczenia \verb?\figure? takie osierocenie nigdy siê nie zdarzy.  
+
+Do ka¿dego rysunku musi istnieæ odwo³anie w tekœcie (inaczej mówi¹c: niedopuszczalne jest wstawienie do pracy rysunku bez opisu). Odwo³ania do rysunków powinny mieæ postaæ: ,,Na rysunku~3.3 przedstawiono...'' lub ,,... co ujêto na odpowiednim schemacie (rys.~1.7)''. 
+
+Jeœli odwo³anie stanowi czêœæ zdania, to wtedy wyraz ,,rysunek'' powinien pojawiæ siê w ca³oœci. Jeœli zaœ odwo³anie jest ujête w nawias (jak w przyk³adzie), wtedy nale¿y zastosowaæ skrót ,,rys.''. Jeœli do stworzenia obrazka wykorzystano jakieœ Ÿród³a, to powinny one byæ zacytowane w podpisie tego¿ rysunku. 
+
+Nale¿y pamiêtaæ o tym, ¿e ,,rysunki'' to twory nie¿ywotne. W zwi¹zku z tym nie mog¹ ''pokazywaæ''. Dlatego ,,rysunek~1.1 pokazuje ...'' jest stylistycznie niepoprawne. Zamiast tego zwrotu trzeba u¿yæ ,, na rysunku~1.1 pokazano ...''.
+
+Rysunki mo¿na wstawiaæ do pracy u¿ywaj¹c polecenia \verb|\includegraphics|. Zalecane jest, aby pliki z grafikami by³y umieszczane w katalogach 
+odpowiadaj¹cych numerom rozdzia³ów czy literom dodatków: \verb|rys01|, \verb|rysA| itd. Sposób wstawiania rysunków do pracy zademonstrowano na przyk³adze rysunków~\ref{fig:kanji-giri} i \ref{fig:alfabeta}.
+
+\begin{lstlisting}[label=list:includegraphics,caption=Kod Ÿród³owy przyk³adów wstawiania rysunków do pracy,basicstyle=\footnotesize\ttfamily]
+\begin{figure}[ht]
+ \centering
+  \includegraphics[width=0.3\linewidth]{rys05/kanji-giri}
+ \caption{Dwa znaki kanji - giri}
+ \label{fig:kanji-giri}
+\end{figure}
+
+\begin{figure}[htb]
+ \centering
+  \begin{tabular}{@{}ll@{}}
+  a) & b) \\
+  \includegraphics[width=0.475\textwidth]{rys05/alfa1} & 
+  \includegraphics[width=0.475\textwidth]{rys05/beta1}
+	% jeœli obraki s¹ ró¿nej wysokoœci, mo¿na je wyrównaæ do góry stosuj¹c vtop jak ni¿ej
+	% \vtop{\vskip-2ex\hbox{{\includegraphics[width=0.475\textwidth]{rys05/beta1}}}} &
+	% \vtop{\vskip-2ex\hbox{{\includegraphics[width=0.475\textwidth]{rys05/alfa1}}}} 
+  \end{tabular}
+ a) trzy podejœcia, b) podejœcie praktyczne}
+ \label{fig:alfabeta}
+\end{figure}
+\end{lstlisting}
+
+\begin{figure}[ht]
+	\centering
+		\includegraphics[width=0.3\linewidth]{rys05/kanji-giri}
+	\caption{Dwa znaki kanji -- giri}
+	\label{fig:kanji-giri}
+\end{figure}
+
+\begin{figure}[htb]
+  \centering
+	\begin{tabular}{@{}ll@{}}
+	a) & b) \\
+  \includegraphics[width=0.475\textwidth]{rys05/beta1} & 
+	\includegraphics[width=0.475\textwidth]{rys05/alfa1}
+	% jeœli obraki s¹ ró¿nej wysokoœci, mo¿na je wyrównaæ do góry stosuj¹c vtop jak ni¿ej
+	% \vtop{\vskip-2ex\hbox{{\includegraphics[width=0.475\textwidth]{rys05/beta1}}}} &
+	% \vtop{\vskip-2ex\hbox{{\includegraphics[width=0.475\textwidth]{rys05/alfa1}}}}  \caption{Wyznaczanie trajektorii lotu rakiety: 
+	\end{tabular}
+  \caption{Wyznaczanie trajektorii lotu rakiety: a) trzy podejœcia, b) podejœcie praktyczne}
+  \label{fig:alfabeta}
+\end{figure}
+
+Grafiki wektorowe powinny byæ dostarczone w plikach pdf. Rozmiar strony w~pliku pdf powinien byæ równy lub minimalnie wiêkszy od rozmiaru znajduj¹cej siê na nim grafiki (proszê spojrzeæ na przyk³ady grafik wykorzystanych w niniejszym szablonie). Chodzi o to, aby na rysunku nie pojawia³a siê niepotrzebna bia³a przestrzeñ (rozmiar p³ótna ma odpowiadaæ rozmiarowi grafiki bez ¿adnych marginesów, elementy grafiki powinny byæ ciasno u³o¿one). Grafiki rastrowe (g³ównie zrzuty z ekranu b¹dŸ zdjêcia) powinny byæ dostarczane w plikach o formacie \texttt{png} z~kompresj¹ bezstratn¹. Zastosowanie kompresji stratnej, jak \texttt{jpg}, wprowadza niepotrzebne artefakty. Podobnie jak w przypadku grafik wektorowych, grafiki rastrowe nie powinny mieæ bia³ych marginesów.
+
+Niez³ym sposobem generowanie ³adnej grafiki wektorowej, w szczególnoœci diagramów, jest pos³u¿enie siê, kolejno, nastêpuj¹cymi darmowymi narzêdziami:
+\begin{itemize}
+\item w \texttt{diagrams.net} (dawniej \texttt{draw.io}): narysowanie diagramu i wyeksportowanie do pdf (bezpoœrednio lub poœrednio, poprzez zapisanie pliku w formacie \texttt{svg}, a potem jego wyœwietlenie w~przegl¹darce internetowej i wydrukowanie do \texttt{pdf}),
+\item w \texttt{inkscape}: zaimportowanie \texttt{pdf}, rozdzielenie grupy, wykasowanie niepotrzebnych elementów (t³a), zaznaczenie wszystkiego, przyciêcie strony do zaznaczonych (Ctr-Shift-R), zapisanie jako \texttt{pdf}. 
+\end{itemize}
+
+Na rysunku~\ref{fig:diagramy} pokazano przyk³ad dobrze i Ÿle (od strony technicznej) narysowanego diagramu. Celowo pokazano ramki, by by³o widaæ marginesy. Normalnie ramek tych nie nale¿y stosowaæ.
+\begin{figure}[htb]
+  \centering
+	\begin{tabular}{@{}ll@{}}
+	a) & b) \\
+  \vtop{\vskip-2ex\hbox{\fbox{\includegraphics[width=0.4\linewidth]{rys05/diagram1}}}} & 
+	\vtop{\vskip-2ex\hbox{\fbox{\includegraphics[width=0.4\linewidth]{rys05/diagram2}}}}
+	% jeœli obraki s¹ ró¿nej wysokoœci, mo¿na je wyrównaæ do góry stosuj¹c vtop jak ni¿ej
+	% \vtop{\vskip-2ex\hbox{{\includegraphics[width=0.475\textwidth]{rys05/beta1}}}} &
+	% \vtop{\vskip-2ex\hbox{{\includegraphics[width=0.475\textwidth]{rys05/alfa1}}}}  \caption{Wyznaczanie trajektorii lotu rakiety: 
+	\end{tabular}
+  \caption{Przyk³ad diagramu: a) z³ego, b) w miarê dobrego}
+  \label{fig:diagramy}
+\end{figure}
+
+Elementy na rysunkach nie powinny byæ wype³nione 100\% czerni¹ poniewa¿ na wydrukach tworz¹ siê plamy przebijaj¹ce siê przez kartkê. Zamiast tego wype³nienie elementów powinno byæ ustawione na ok.\ 90\% czerni.
+
+Czcionka na rysunkach nie mo¿e byæ wiêksza od czcionki wiod¹cej tekstu (jedyny wyj¹tek to np.\ jakieœ nag³ówki).
+Nale¿y stosowaæ czcionkê kroju Arial, Helvetica b¹dŸ tego samego kroju co czcionka dokumentu (\texttt{texgyre-termes}). 
+
+Jeœli na jednym rysunku pojawiæ siê ma kilka grafik, to zamiast stosowaæ \texttt{subfigure} lub inne otoczenia nale¿y: dostarczyæ tabelê z wstawionymi do niej rysunkami, opcjonalnie adnotowaæ jej czêœci (np.~a) i b)), odnieœæ siê do tych czêœci w podpisie (pos³uguj¹c siê adnotacjami, jak to zrobiono na rysunkach~\ref{fig:alfabeta} i \ref{fig:diagramy}, lub opisem s³ownym, np.~,,z lewej strony pokazano ...'', ,,po prawej zamieszczono ...'').
+
+Jeœli na rysunku zamieszczono w tabeli kilka grafik, to ich pozycjonowaniem (wyjustowaniem od góry) mo¿na manipulowaæ za pomoc¹ komendy:
+\verb+\vtop{\vskip-2ex\hbox{\includegraphics[width=0.475\textwidth]{nazwa}}}+
+
+Na rysunkach nie wolno nadu¿ywaæ kolorów oraz ozdobników (wiele narzêdzi do tworzenia diagramów dostarcza grafikê z cieniowaniem, gradacj¹ kolorów itp.\  co niekoniecznie przek³ada siê na czytelnoœæ rysunku).
+Jeœli rysunki s¹ kolorowe, to kolory te powinny byæ rozró¿nialne po konwersji do poziomów szaroœci (chodzi o to, aby na wydrukach wykonanych na drukarkach monochromatycznych mo¿na by³o dostrzec ró¿nice).
+
+Podczas robienia zrzutów z ekranu nale¿y zadbaæ o to, by taki zrzut by³ czytelny po wydrukowaniu. Czyli aby pojawiaj¹ce siê literki by³y wystarczaj¹co du¿e, a przestrzenie bez treœci -- relatywnie ma³e. Przystêpuj¹c do robienia zrzutu trzeba odpowiednio wyskalowaæ elementy na ekranie. Na przyk³ad robi¹c zrzut z przegl¹darki FF najpierw nale¿y wcisn¹æ CTR--0 (domyœlne skalowanie), potem CTR--{}- (zmniejszenie skali o stopieñ). Potem dobrze jest zawêziæ okno przegl¹darki tak, by interesuj¹ca treœæ wype³ni³a je w ca³oœci. Jeœli na obserwowanej stronie jest zbyt du¿o pustych obszarów, to nale¿y je jakoœ zawêziæ (steruj¹c wielkoœci¹ okna przegl¹darki lub aktywnymi elementami interfejsu u¿ytkownika). Zrzut bowiem wcale nie musi byæ odzwierciedleniem 1:1 domyœlnego uk³adu obserwowanych elementów. Wa¿ne jest, by na zrzucie pokazaæ interesuj¹cy, opisywany fragment i ¿eby ten fragment by³ czytelny. Nie trzeba te¿ zawsze robiæ zrzutów w uk³adzie 16:9 (lub innym panoramicznym). Czasem lepiej jest zrobiæ zrzuty okien niemal kwadratowych, bo lepiej siê uk³adaj¹ w wynikowym dokumencie. Poza tym mo¿na je przeskalowaæ (powiêkszyæ) by zajmowa³y ca³¹ szerokoœæ strony, a wtedy czcionka na wydrukach bêdzie wiêksza. Takie skalowanie dla zrzutów panoramicznych zwykle siê nie udaje. Na rysunku~\ref{fig:zrzuty} pokazano przyk³ady dobrze i Ÿle zrobionych zrzutów (w celu oszczêdzenia miejsca zrzuty umieszczono obok siebie).
+	
+\begin{figure}[htb]
+  \centering
+	\begin{tabular}{@{}ll@{}}
+	a) & b) \\
+  \vtop{\vskip-2ex\hbox{\includegraphics[width=0.475\textwidth]{rys05/zrzut1}}} & 
+	\vtop{\vskip-2ex\hbox{\includegraphics[width=0.475\textwidth]{rys05/zrzut2}}}
+	% jeœli obraki s¹ ró¿nej wysokoœci, mo¿na je wyrównaæ do góry stosuj¹c vtop jak ni¿ej
+	% \vtop{\vskip-2ex\hbox{{\includegraphics[width=0.475\textwidth]{rys05/beta1}}}} &
+	% \vtop{\vskip-2ex\hbox{{\includegraphics[width=0.475\textwidth]{rys05/alfa1}}}}  \caption{Wyznaczanie trajektorii lotu rakiety: 
+	\end{tabular}
+  \caption{Przyk³ady zrzutów z ekranu: a) z³y (nieczytelny, zrobiony przy zbyt szerokim oknie, z niepotrzebnymi marginesami, niepotrzebnym paskiem menu), b) w miarê dobry (w miarê czytelny, zrobiony przy zawê¿onym oknie, by³oby wskazane jeszcze usuniêcie z niego beleczki z faviconem (jeœli nic nie wnosi) oraz przyciêcie od do³u (jeœli treœci tam pokazywane nie s¹ istotne))}
+  \label{fig:zrzuty}
+\end{figure}
+
+	
+Czasem problemem jest tworzenie zrzutów z ekranu, gdy wystêpuj¹ na nim dane wra¿liwe. Istniej¹ dwa sposoby na radzenie sobie z tym problemem.
+Pierwszy polega na zast¹pieniu w~systemie danych danych rzeczywistych danymi testowymi -- wygenerowanymi tylko do celów prezentacji.
+Zrzut robi siê wtedy na bazie danych testowych.
+Drugi polega na wykonaniu zrzutu z~ekranu, na którym pokazano dane rzeczywiste, i nastêpnie zamianie tych danych ju¿ w pliku graficznym
+za pomoc¹ odpowiedniego edytora (np.~\texttt{gimp}). Czyli oryginalny zrzut z ekranu nale¿y otworzyæ w edytorze, a potem
+nadpisaæ oryginalny tekst w³asnym tekstem. Konieczne jest wtedy dobranie odpowiednich czcionek aby nie by³o widaæ
+wprowadzonych zmian. 
+\begin{quotation}
+Uwaga: takie manipulowanie zrzutami jest usprawiedliwione jedynie w przypadku koniecznoœci ochrony danych wra¿liwych czy te¿ lepszego pokazania wybranych elementów. Nie mo¿e to prowadziæ generowania fa³szywych rezultatów!!!
+\end{quotation}
+
+\section{Wstawianie kodu Ÿród³owego}
+Kod Ÿród³owy mo¿na wstawiaæ jako blok tekstu pisany czcionk¹ maszynow¹. U¿ywa siê do tego otoczenie \verb?\lstlisting?. W atrybutach otoczenia mo¿na zdefiniowaæ tekst podpisu wstawianego wraz z numerem nad blokiem, etykietê do tworzenia odwo³añ, sposób formatowania i~inne ustawienia. Zaleca siê stosowanie w tym otoczeniu nastêpuj¹cych parametrów:
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+\begin{lstlisting}[label=list:req1,caption=Initial HTTP Request,
+                   basicstyle=\footnotesize\ttfamily]
+\end{lstlisting}
+Szczególnie przydatne podczas wstawiania wiêkszej iloœci kodu Ÿród³owego jest zastosowanie parametru \verb+basicstyle=\footnotesize\ttfamily+. Dziêki niemu zmniejsza siê czcionka, a~przez to na stronie mo¿na zmieœciæ d³u¿sze linijki kodu. U¿ycie tak zdefiniowanego parametru nie jest jednak sztywnym zaleceniem. Wielkoœæ czcionki mo¿na dobieraæ do potrzeb. 
+{\belowcaptionskip=-10pt
+\begin{lstlisting}[label=list:req1,caption=Initial HTTP Request,
+                   basicstyle=\footnotesize\ttfamily]
+GET /script/Articles/Latest.aspx HTTP/1.1
+Host: www.codeproject.com
+Connection: keep-alive
+Cache-Control: max-age=0
+Accept: text/html,application/xhtml+xml,application/xml
+User-Agent: Mozilla/5.0 ...
+Accept-Encoding: gzip,deflate,sdch
+Accept-Language: en-US...
+Accept-Charset: windows-1251,utf-8...
+\end{lstlisting}
+}
+Mo¿na te¿ sformatowaæ kod bez stosowania numerowanego podpisu (wtedy nie zamieszcza siê \texttt{caption} na liœcie atrybutów).
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+GET /script/Articles/Latest.aspx HTTP/1.1
+Host: www.codeproject.com
+Connection: keep-alive
+Cache-Control: max-age=0
+Accept: text/html,application/xhtml+xml,application/xml
+User-Agent: Mozilla/5.0 ...
+Accept-Encoding: gzip,deflate,sdch
+Accept-Language: en-US...
+Accept-Charset: windows-1251,utf-8...
+\end{lstlisting}
+
+Ponadto istnieje kilka sposobów wstawiania kodu Ÿród³owego w bie¿¹cej linijce tekstu:
+\begin{itemize} 
+\item korzystaj¹c z polecenia \verb?\texttt? ustawiaj¹cego czcionkê maszynow¹, jak w przyk³adzie \texttt{tutaj} (efekt zastosowania komendy \verb?\texttt{tutaj}?). Problemem jednak mog¹ okazaæ siê znaki podkreœlenia i inne znaki kontrolne.
+\item korzystaj¹ z otoczenia \verb?\verb? zapewniaj¹cego wypisanie kodu czcionk¹ maszynow¹ jak w~przyk³adzie \verb|tutaj| (efekt zastosowania komendy \verb?\verb|tutaj|?). Problemem jest to, ¿e polecenie \verb?\verb? nie potrafi ³amaæ d³u¿szego tekstu.
+\item korzystaj¹c z polecenia \verb?\lstin? umo¿liwiaj¹cego wypisanie kodu czcionk¹ ustawian¹ w~opcjach jak w przyk³adzie
+\lstset{basicstyle=\ttfamily}\lstinline{tutaj} (efekt komendy \verb+\lstset{basicstyle=\ttfamily}\lstinline{tutaj}+) lub \lstinline[basicstyle=\ttfamily]=tutaj= (efekt komendy \verb+\lstinline[basicstyle=\ttfamily]=tutaj=+).
+\end{itemize}
+
+Poni¿ej zamieszczono przyk³ady kodów Ÿród³owych z podœwietleniem sk³adni.
+
+\begin{lstlisting}[language=Java,style=JavaStyle,caption=Opis 1, label=lst:pierwszy]
+package pl.mrbarozoit.backend;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class BackendApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(BackendApplication.class, args);
+    }
+
+}
+\end{lstlisting}
+
+Jeœli w kodzie Ÿród³owym jest jakiœ nieistotny fragment wzglêdem omawianego problemu, to mo¿na go wykropkowaæ (patrz listing~\ref{lst:drugi}).
+
+{\belowcaptionskip=-9pt % To polecenie zmniejszy odleg³oœæ podpisu od pokazywanego kodu (jego stosowanie jest zalecane)
+\begin{lstlisting}[language=JavaScript,style=JavaScriptStyle,caption=Opis 2, label=lst:drugi]
+// Karma configuration file, see link for more information
+// https://karma-runner.github.io/1.0/config/configuration-file.html
+
+module.exports = function (config) {
+  config.set({
+    basePath: '',
+    frameworks: ['jasmine', '@angular-devkit/build-angular'],
+    plugins: [
+      require('karma-jasmine'),
+      require('karma-chrome-launcher'),
+      require('karma-jasmine-html-reporter'),
+      require('karma-coverage-istanbul-reporter'),
+      require('@angular-devkit/build-angular/plugins/karma')
+    ],
+    ... // opuszczony kod
+    autoWatch: true,
+    browsers: ['Chrome'],
+    singleRun: false,
+    restartOnFileChange: true
+  });
+};
+\end{lstlisting}
+}
+
+Jeœli kod jest w¹ski, to mo¿na sformatowaæ go w dwóch kolumnach jak na listingu~\ref{lst:kontrakt-board-move-in}.
+
+% Trzeba zacz¹æ po linijce przerwy
+\begingroup 
+\listingcaption{Kontrakt na model wejœciowy endpointu \texttt{/api/v1/chess/board/move}}
+\setlength\multicolsep{0pt plus 2pt}%
+\begin{lstlisting}[style=json-style, multicols=2, label=lst:kontrakt-board-move-in]
+{
+   "lastPosition": {
+      "fenDescription": "string"
+   },
+   "image": {
+      ...
+   },
+   "positions": {
+      "chessboardCorners": [
+         ...
+      ],
+      "tilesCornerPoints": [
+         ...
+      ]
+   },
+   "referenceColors": {
+      ...
+   },
+}
+\end{lstlisting}
+\vspace{6pt plus 2pt}
+\endgroup
+
+\section{Wykaz literatury oraz cytowania}
+\label{sec:literatura}
+Cytowania powinny byæ zamieszczane w tekœcie z u¿yciem komendy \verb+\cite{}+. Jej argumentem powinien byæ klucz cytowanej pozycji (lub lista kluczy  rozdzielonych przecinkiem bez spacji, jeœli takich pozycji w danym miejscu cytuje siê wiêcej) jaki jest u¿ywany w bazie danych bibliograficznych (plik \texttt{dokumentacja.bib}). Po kompilacji \texttt{bibtex} i \texttt{pdflatex} w tekœcie pojawia siê w³aœciwy odsy³acz do pozycji w wykazie literatury (ujêty w kwadratowe nawiasy -- zgodnie z~tym, co definiuje styl \texttt{plabbrv.bst}), zaœ w samym wykazie (rozdzia³ Literatura) -- zacytowana pozycja. Przyk³adem cytowania jest: ,,dobrze to opisano w pracach~\cite{JS07,SQL2}'' (gdzie zastosowano komendê \verb?\cite{JS07,SQL2}?).
+
+Co do zawartoœci rekordów bibliograficznych - style bibtexowe potrafi¹ ,,skracaæ'' imiona (czyli wstawiaæ, jeœli taka wola, inicja³y zamiast pe³nych imion). Niemniej dobrze jest od razu przyj¹æ jak¹œ konwencjê. Proponuje siê, aby w rekordach od razu wstawiane by³y inicja³y zamiast pe³nych imion.
+
+Niekiedy tytu³y prac zawieraj¹ wyrazy z du¿ymi i ma³ymi literami. Takie tytu³y nale¿y braæ w podwójne nawiasy klamrowe, aby \texttt{bibtex} nie zamieni³ ich na postaæ, w której poza pierwsz¹ liter¹ pozosta³e s¹ ma³e.
+
+Jeœli jakiœ cytowany zasób pochodzi z Internetu, to jego rekord w pliku \texttt{bib} powinien wygl¹daæ jak ni¿ej.
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+@INPROCEEDINGS{SQL2, 
+  title={{A MySQL-based data archiver: preliminary results}}, 
+  author={Bickley, M. and Slominski, Ch.},
+  booktitle = {{Proceedings of ICALEPCS07}},
+	month = oct,
+	day = {15--19},
+	year={2007}, 
+  note={\url{http://www.osti.gov/scitech/servlets/purl/922267} 
+	[dostêp dnia 20 czerwca 2015]}
+}
+\end{lstlisting}
+A to inny przyk³ad rekordu danych bibliograficznych:
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+@TechReport{JS07,
+	author = {Jêdrzejczyk, J. and Œródka, B.},
+	title  ={Segmentacja obrazów metod¹ drzew decyzyjnych},
+	year = {2007},
+	institution = {Politechnika Wroc³awska, Wydzia³ Elektroniki}
+}
+\end{lstlisting}
+
+\section{Indeks rzeczowy}
+\label{sec:indeks}
+Generowanie indeksu \index{generowanie!-- indeksu} po trosze wygl¹da jak generowanie wykazu literatury \index{generowanie!-- wykazu literatury}-- wymaga kilku kroków. Podczas pierwszej kompilacji \texttt{pdflatex} generowany jest plik z rozszerzeniem \texttt{*.idx} (zawieraj¹cy ,,surowy indeks''). Nastêpnie, bazuj¹c na tym pliku, generowany jest plik z rozszerzeniem \texttt{*.ind} zawieraj¹cy sformatowane dane. Ten krok wymaga uruchomienia odpowiedniego narzêdzia oraz zastosowania plik z definicj¹ stylu \texttt{Dyplom.ist}. W kroku ostatnim dokonuje siê kolejnej kompilacji \texttt{pdflatex} (dziêki niej w wynikowym dokumencie pojawi siê Indeks rzeczowy). Domyœlnie Indeks rzeczowy zostanie sformatowany w~uk³adzie dwukolumnowym.
+
+Oczywiœcie aby to wszystko zadzia³a³o w kodzie szablonu nale¿y umieœciæ odpowiednie komendy definiuj¹ce elementy indeksu rzeczowego (\verb?\index?) oraz wstawiaj¹ce sformatowany Indeks rzeczowy do dokumentu wynikowego (\verb?\printindex?). Wiêcej informacji o tworzeniu indeksu rzeczowego mo¿na znaleŸæ na stronie \url{https://en.wikibooks.org/wiki/LaTeX/Indexing}. Poni¿ej przedstawiono przyk³ady komend u¿ytych w szablonie do zdefiniowania elementów indeksu rzeczowego:
+\begin{itemize}
+\item \verb?\index{linia komend}? -- pozycji g³ówna.
+\item \verb?\index{generowanie!-- indeksu}? -- podpozycja.
+\end{itemize}
+
+Generowanie pliku \texttt{*.ind} mo¿na inicjowaæ na kilka sposobów:
+\begin{itemize}
+\item poprzez wydanie odpowiedniego polecenia bezpoœrednio w linii komend \index{linia komend}
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+makeindex Dyplom.idx -t Dyplom.ilg -o Dyplom.ind -s Dyplom.ist
+\end{lstlisting}
+\item poprzez odpalenie odpowiedniego narzêdzia œrodowiska. Na przyk³ad w \texttt{TeXnicCenter} definiuje siê tzw. \texttt{output profiles}: 
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+makeindex "%tm.idx" -t "%tm.ilg" -o "%tm.ind" -s "%tm.ist"
+\end{lstlisting}
+a samo generowanie pliku \texttt{*.ind} zapewni wybranie pozycji menu \texttt{Build/Makeindex}.
+\item korzystaj¹c z odpowiednio sparametryzowanych pakietów i komend wewn¹trz kompilowanego dokumentu (czyli od razu przy okazji jego kompilacji).
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+\DisemulatePackage{imakeidx}
+\usepackage[noautomatic]{imakeidx} 
+% jeœli chcemy, by indeks by generowany automatycznie programem makeindex:
+%\usepackage[makeindex]{imakeidx} 
+% a tak ponoæ mo¿na przekazaæ opcje do programu generuj¹cego indeks:
+%\makeindex[options=-s podrecznik -L polish -M lang/polish/utf8] 
+%\makeindex[options=-s podrecznik]
+\makeindex
+\end{lstlisting}
+
+Niestety, \texttt{makeindex} jest narzêdziem, które umieszcza czêœæ pozycji w grupie \texttt{Symbols}, a~nie w grupach zwi¹zanych z literkami alfabetu. W zwi¹zku z czym indeksowany element zaczynaj¹cy siê od polskiej literki trafia do grupy \texttt{Symbols}, jak np.~\verb?\index{Œwiat³o}?\index{Œwiat³o}. Jeœli chce siê zamieszczaæ w indeksie symbole matematyczne, to dobrze jest to robiæ jak w nastêpuj¹cym przyk³adzie: \verb?\index{$asterisk@$\ast$}? \index{$asterisk@$\ast$} czy te¿ \verb?\index{c@$\mathcal{C}$}?\index{c@$\mathcal{C}$}, tj.~dostarczaj¹c przy okazji klucz do sortowania.
+Lepiej w tym wzglêdzie radz¹ sobie inne narzêdzia, jak \texttt{texindy} lub \texttt{xindy} dostêpne pod linuxem. Korzystaj¹c z nich uzyskuje siê grupy polskich literek w indeksie rzeczowym (has³a zaczynaj¹ce siê od polskich literek ju¿ nie trafiaj¹ do grupy Symbols). Przyk³ad polecenia wydanego z linii komend, w którym wykorzystano \texttt{texindy} zamieszczono poni¿ej (zak³adamy kodowanie plików w UTF8, mo¿na dla niniejszego szablonu zmieniæ na cp1250):
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+texindy -L polish -M lang/polish/utf8 Dyplom.idx
+\end{lstlisting}
+
+To polecenie wygeneruje \texttt{Dyplom.ind} o zawartoœci:
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+\begin{theindex}
+  \providecommand*\lettergroupDefault[1]{}
+  \providecommand*\lettergroup[1]{%
+      \par\textbf{#1}\par
+      \nopagebreak
+  }
+
+  \lettergroup{G}
+  \item generowanie
+    \subitem -- indeksu, 27
+    \subitem -- wykazu literatury, 27
+
+  \indexspace
+
+  \lettergroup{L}
+  \item linia komend, 27
+
+  \indexspace
+
+  \lettergroup{Œ}
+  \item \'Swiat\IeC {\l }o, 28
+
+\end{theindex}
+\end{lstlisting}
+
+
+\end{itemize}
+
+
+Aby mieæ wiêksz¹ kontrolê automatyczne generowanie indeksu zosta³o w niniejszym szablonie wy³¹czone (indeks trzeba wygenerowaæ samemu, wydaj¹c polecenie \texttt{makeindex} lub zalecane \texttt{texindy}).
+
+\section{Inne uwagi}
+Dobrym sposobem na kontrolê b³êdów wystêpuj¹cych podczas kompilacji jest wstawianie linijki \verb?\end{document}? w wybranym miejscu dokumentu. Jest to szczególnie przydatne w przypadkach, gdy b³êdy te s¹ trudne do zidentyfikowania (gdy wygenerowane przez kompilator numery linii z b³êdami nie s¹ tymi, w których b³êdy wystêpuj¹). Wystarczy wtedy przestawiæ wspomnian¹ linijkê do kolejnych miejsc, a¿ znajdujê to miejsce, gdzie wystêpuje problem.
+
+Aby osi¹gn¹æ apostrofy maszynowe (z³o¿one z samych kresek) nale¿y u¿yæ polecenia \verb?"{}jak tutaj{}"? (podwójny apostrof stoj¹cy bezpoœrednio przed niektórymi literkami zamienia je na literki z akcentami, aby temu zapobiec dostawiono nawiasy klamrowe). W efekcie otrzymamy "{}jak tutaj{}". Jeœli natomiast apostrofy maj¹ byæ drukarskie (z³o¿one z kropek i kresek), to nale¿y u¿yæ polecenia \verb?,,jak tutaj''? (dwa pojedyncze przecinki i dwa pojedyncze apostrofy). W efekcie otrzymamy ,,jak tutaj''. Mo¿na te¿ u¿yæ znaków apostrofów odpowiednio zakodowanych „jak tutaj”, tylko ¿e czasem trudno pisze siê takie apostrofy w œrodowiskach kompilacji projektów latexowych.
+
+
+Oto sposoby ustawienia odstêpów miêdzy liniami:
+\begin{itemize}
+\item u¿ywaj¹c komendy \verb+\linespread{...}+ (akceptowalne), przy czym atrybutem tej metody jest wspó³czynnik zale¿ny od wielkoœci
+czcionki.  Dla czcionki wiod¹cej 12pt odstêp pó³tora linii osi¹gnie siê komend¹ \verb+\linespread{1.241}+. Dla innych czcionek wiod¹cych wartoœci tego parametru s¹ jak w poni¿szym zestawieniu.
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+10pt 1.25 dla \onehalfspacing 
+     1.667 for \doublespacing, 
+		 poniewa¿ ,,basic ratio'' = 1.2 
+		(\normalfont posiada \baselineskip rozmiaru 12pt)
+11pt 1.213 dla \onehalfspacing oraz 1.618 dla \doublespacing, 
+     poniewa¿ ,,basic ratio'' = 1.236 
+		(\normalfont posiada \baselineskip rozmiaru 13.6pt)
+12pt 1.241 dla \onehalfspacing oraz 1.655 dla \doublespacing, 
+     poniewa¿since ''basic ratio'' is 1.208 
+		(\normalfont has a \baselineskip of 14.5pt)
+\end{lstlisting}
+K³opot w tym, ¿e raz ustawiony odstêp bêdzie obowi¹zywa³ do wszystkich czcionek (brak jest mechanizmu zmiany wspó³czynnika w zale¿noœci od wielkoœci czcionki akapitu).
+
+\item u¿ywaj¹c pakietu \texttt{setspace} (niezalecane). Poniewa¿ klasa \texttt{memoir} emuluje pakiet \texttt{setspace}, w preambule dokumentu nale¿a³oby umieœciæ:
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+\DisemulatePackage{setspace}
+\usepackage{setspace}
+\end{lstlisting}
+a potem mo¿na ju¿ sterowaæ odstêp komendami:
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+\singlespacing
+\onehalfspacing
+\doubelspacing
+\end{lstlisting}
+Ten sposób pozwala na korzystanie z mechanizmu automatycznej zmiany odleg³oœci linii w~zale¿noœci od wielkoœci czcionki danego akapitu.
+\item korzystaj¹c bezpoœrednio z komend dostarczonych w klasie \texttt{memoir} (zalecane):
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+\SingleSpacing
+\OnehalfSpacing
+\DoubleSpacing
+\end{lstlisting}
+Ten sposób równie¿ pozwala na korzystanie z mechanizmu automatycznej zmiany odleg³oœci linii w zale¿noœci od wielkoœci czcionki danego akapitu.
+\end{itemize}
+
+Na koniec jeszcze uwaga o rozmiarze pliku wynikowego. Otó¿ \texttt{pdflatex} generuje pliki \texttt{pdf}, które zazwyczaj mog³yby byæ nieco lepiej
+skompresowane. Do lepszego skompresowania tych plików mo¿na u¿yæ programu \texttt{ghostscript}. Wystarczy w tym celu wydaæ komendê (pod windowsami):
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+gswin64 -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET \
+-dSAFER -dBATCH -sOutputFile=Dyplom-compressed.pdf Dyplom.pdf
+\end{lstlisting}
+W poleceniu tym mo¿na równie¿ wstawiæ opcjê \texttt{-dPDFSETTINGS=/prepress} (zapewniaj¹c¹ uzyskanie wysokiej jakoœci, zachowanie kolorów, uzyskanie obrazków w rozdzielczoœci 300 dpi). Ze wzglêdów licencyjnych ghostscript u¿ywa domyœlnie algorytmów z kompresj¹ stratn¹. Przy kompresji mo¿e wiêc dojœæ do utraty jakoœci bitmap.

@@ -1,0 +1,195 @@
+\chapter{Praca z szablonem}
+\section{Œrodowisko}
+Szablon powinien daæ siê skompilowaæ w dowolnym œrodowisku, w którym zainstalowano system \LaTeX. 
+Zalecan¹ konfiguracj¹, która dzia³a w systemie Windows, jest: \texttt{MiKTeX} (windowsowa dystrybucja latexa) + \texttt{TeXnicCenter} (œrodowisko do edycji i kompilacji projektów latexowych) + \texttt{SumatraPDF} (przegl¹darka pdfów z nawigacj¹ zwrotn¹) + \texttt{JabRef} (opcjonalny edytor bazy danych bibliograficznych). Narzêdzia te mo¿na pobraæ ze stron internetowych, których adresy zamieszczono w tabeli~\ref{tab:narzedzia}. 
+\begin{table}[htb] \small
+\centering
+\caption{Wykaz zalecanych narzêdzi do pracy z wykorzystaniem szablonu (na dzieñ 09.02.2021)}
+\label{tab:narzedzia}
+\begin{tabularx}{\linewidth}{|c|c|X|p{5.5cm}|} \hline\
+Narzêdzie & Wersja & Opis & Adres \\ \hline\hline
+\texttt{MiKTeX} & 22.12 & Zalecana jest instalacja \texttt{Basic MiKTeX} 32 lub 64 bitowa. Brakuj¹ce pakiety bêd¹ siê doinstalowywaæ podczas kompilacji projektu &
+\url{http://miktex.org/download} \\ \hline
+\texttt{TeXnicCenter} & 2.02 &  Mo¿na pobraæ 32 lub 64 bitow¹ wersjê & \url{http://www.texniccenter.org/download/} \\ \hline
+\texttt{SumatraPDF} & 3.4.6 & Mo¿na pobraæ 32 lub 64 bitow¹ wersjê & \url{http://www.sumatrapdfreader.org/download-free-pdf-viewer.html} \\ \hline
+\texttt{JabRef} & 5.7	 & Rozwijane w JDK 15, ma w³asny instalator i wersjê przenoœn¹ & \url{http://www.fosshub.com/JabRef.html} \\ \hline
+\end{tabularx}
+\end{table}
+
+Wspomniana nawigacja miêdzy \texttt{TeXnicCenter} a \texttt{SumatraPDF} polega na prze³¹czaniu siê pomiêdzy tymi narzêdziami z zachowaniem kontekstu po³o¿enia kursora. Czyli edytuj¹c tekst w \texttt{TeXnicCenter} po kliku na ikonce podgl¹du mo¿na przeskoczyæ do odpowiedniego miejsca w pdfie wyœwietlanym przez \texttt{SumatraPDF}. Podwójne klikniêcie zaœ w pdfie widocznym w \texttt{SumatraPDF} ustawi kursor we w³aœciwym akapicie w edytorze tekstu \texttt{TeXnicCenter}. O konfiguracji obu narzêdzi do takiej wspó³pracy napisano na stronie \url{http://tex.stackexchange.com/questions/116981/how-to-configure-texniccenter-2-0-with-sumatra-2013-2014-2015-version} (w sieci mo¿na znaleŸæ równie¿ inne materia³y na ten temat).
+
+Szablon mo¿na równie¿ kompilowaæ za pomoc¹ innych narzêdzi i œrodowisk (np.\ za pomoc¹ multiplatformowego \texttt{TexStudio} oraz ró¿nych dystrybucji systemu \LaTeX). Mo¿e to jednak czasem wymagaæ zmiany sposobu kodowania plików i korekty deklaracji kodowania znaków w dokumencie g³ównym (co opisano dalej). 
+Mo¿na go te¿ zaadoptowaæ do wymogów \LaTeX-owych edytorów i kompilatorów dzia³aj¹cych w trybie on-line, oferowanych na przyk³ad w us³udze \texttt{Overleaf} (\url{https://www.overleaf.com/}). 
+
+Choæ us³uga \texttt{Overleaf} ma niew¹tpliwie wiele zalet (pozwala na edycjê kodu przez wielu u¿ytkowników jednoczeœnie), to podczas pracy nad d³ugimi dokumentami przegrywa ona ze wspomnianymi zintegrowanymi œrodowiskami \texttt{TeXnicCenter} czy \texttt{TexStudio}. W \texttt{Overleaf} nie mo¿na wyœwietliæ struktury ca³ego projektu (a jedynie listê plików projektowych oraz strukturê bie¿¹co edytowanego dokumentu), nie mo¿na uruchomiæ wyszukiwania we wszystkich plikach projektowych (nie ma opcji  \texttt{Find in Files ...}, która bardzo siê przydaje, gdy nie wiadomo, w~którym pliku jest wyszukiwany tekst). 
+
+\texttt{Overleaf} wymaga u¿ycia kodowania UTF8. Czyli aby da³o siê wczytaæ niniejszy szablon pracy dyplomowej do tego œrodowiska, pliki szablonu musz¹ byæ przekodowane, musz¹ te¿ byæ zmienione opcje pakietu \texttt{inputenc} oraz odpowiednio zadeklarowane \texttt{literate} (aby da³o siê u¿ywaæ polskich znaków na listingach). Aby sprawê uproœciæ przygotowano dwie wersje szablonu: w kodowaniu ANSI oraz UTF8.
+
+Choæ w \texttt{Overleaf} istnieje mo¿liwoœæ skorzystania z wersjonowania (system ten integruje siê z repozytorium \texttt{git}), to wersjonowanie to nie dzia³a perfekcyjnie. Dlatego \textbf{zaleca siê korzystanie ze œrodowisk zintegrowanych zainstalowanych lokalnie, czemu towarzyszyæ ma wersjonowanie z pomoc¹ wybranego zdalnego repozytorium (\texttt{gitlab}, \texttt{github}, \texttt{bitbucket})}.
+
+\section{Struktura projektu}
+Pisz¹c pracê w systemie \LaTeX zwykle przyjmuje siê jak¹œ konwencjê co do nazewnictwa tworzonych plików, ich po³o¿enia oraz powi¹zañ. Przygotowuj¹c niniejszy szablon za³o¿ono, ¿e projekt bêdzie siê sk³ada³ z pliku g³ównego, plików z kodem kolejnych rozdzia³ów i dodatków (w³¹czanych do kompilacji w dokumencie g³ównym), katalogów z plikami grafik (o nazwach wskazuj¹cych na rozdzia³y, w których grafiki te zostan¹ wstawione), pliku ze skrótami (opcjonalny), pliku z danymi bibliograficznymi (plik \texttt{dokumentacja.bib}). Taki ,,uk³ad'' zapewnia porz¹dek oraz pozwala na selektywn¹ kompilacjê rozdzia³ów. 
+
+Przyjêt¹ konwencjê da siê opisaæ jak nastêpuje:
+\begin{itemize}
+\item Plikiem g³ównym jest plik \texttt{Dyplom.tex}. To w nim znajduj¹ siê deklaracje wszystkich u¿ywanych styli, definicje makr oraz ustawieñ, jak równie¿ polecenie \verb+\begin{document}+. W~nim te¿ nale¿y ustawiæ metadane, które pojawi¹ siê na stronie tytu³owej (oraz w stopkach).
+\item Teksty redagowane s¹ w osobnych plikach. Pliki te zamieszczone s¹ w katalogu g³ównym (tym samym, co plik \texttt{Dyplom.tex}).
+\item W pliku \texttt{streszczenie.tex} powinien pojawiæ siê tekst streszczenia ze s³owami kluczowymi (tekst ten oraz s³owa kluczowe bêdzie mo¿na wykorzystaæ do wype³nienia formularzy pojawiaj¹cych siê podczas wysy³ania pracy do analizy antyplagiatowej w systemie ASAP)
+\item Plik \texttt{skroty.tex} powinien zawieraæ wykaz u¿ytych skrótów. Mo¿na z tego pliku zrezygnowaæ, jeœli liczba stosowanych skrótów jest nieznaczna. 
+\item Tekst kolejnych rozdzia³ów powinien pojawiæ siê w plikach o nazwach zawieraj¹cych numery tych rozdzia³ów. Wed³ug przyjêtej konwencji \texttt{rozdzial01.tex} to plik pierwszego rozdzia³u, \texttt{rozdzial02.tex} to plik z treœci¹ drugiego rozdzia³u itd. 
+\item Teksty dodatków maj¹ byæ zapisywane w osobnych plikach o nazwach zawieraj¹cych literê dodatku. Pliki te, podobnie do plików z tekstem rozdzia³ów, zamieszczane s¹ w katalogu g³ównym. I~tak \texttt{dodatekA.tex} oraz \texttt{dodatekB.tex} to, odpowiednio, pliki z treœci¹ dodatku A oraz dodatku B.
+\item Ka¿demu rozdzia³owi i dodatkowi towarzyszy katalog przeznaczony do sk³adowania do³¹czanych grafik. I tak \texttt{rys01} to katalog na pliki z grafikami do³¹czanymi do rozdzia³u pierwszego, \texttt{rys02} to katalog na pliki z grafikami do³¹czanymi do rozdzia³u drugiego itd.
+Podobnie \texttt{rysA} to katalog na pliki z grafikami do³¹czanymi w dodatku A itd.
+\item W katalogu g³ównym zamieszczany jest plik \texttt{dokumentacja.bib} zawieraj¹cy bazê danych bibliograficznych.
+\item Jeœli praca nad dokumentem odbywa siê w \texttt{TeXnicCenter}, to zgodnie z wymogami tego narzêdzia powinien istnieæ jeszcze dodatkowy plik projektu. Plik ten pe³ni podobn¹ rolê jak plik solucji wykorzystywany w zintegrowanych œrodowiskach programowania. Co prawda plik projektu nie jest wymagany do \LaTeX-owej kompilacji (wystarczy kompilowaæ plik g³ówny), niemniej pozwala zapamiêtaæ ustawienia œrodowiska (w tym ustawienia jêzykowe potrzebne do sprawdzania poprawnoœci wyrazów -- patrz nastêpny podrozdzia³).  Plik projektu dostarczony w szablonie ma nazwê \texttt{Dyplom.tcp}. 
+\end{itemize}
+
+\begin{table}[htb]
+\centering\small
+\caption{Pliki Ÿród³owe szablonu oraz wyniki kompilacji}
+\label{tab:szablon}
+\begin{tabularx}{\linewidth}{|p{.55\linewidth}|X|}\hline
+ród³a & Wyniki kompilacji \\ \hline\hline
+\verb?Dokument.tex? - dokument g³ówny\newline
+\verb?Dokument.tcp? -- plik projektu \verb+TeXnicCenter+\newline
+\verb?streszczenie.tex? -- plik streszczenia\newline
+\verb?skroty.tex? -- plik ze skrótami\newline
+\verb?rozdzial01.tex? -- plik rozdzia³u \texttt{01}\newline
+\verb?...?\newline
+\verb?dodatekA.tex? -- plik dodatku \texttt{A}\newline
+\verb?...?\newline
+\verb?rys01? -- katalog na rysunki do rozdzia³u \texttt{01}\newline
+\verb?   |- fig01.png? -- plik grafiki\newline
+\verb?   |- ...?\newline
+\verb?...?\newline
+\verb?rysA? -- katalog na rysunki do dodatku \texttt{A}\newline
+\verb?   |- fig01.png? -- plik grafiki\newline
+\verb?   |- ...?\newline
+\verb?...?\newline
+\verb?dokumentacja.bib? -- plik danych bibliograficznych\newline
+\verb?Dyplom.ist? -- plik ze stylem indeksu\newline
+\verb?by-nc-sa.png? -- plik z ikonami CC\newline
+ &
+\verb?Dyplom.bbl?\newline
+\verb?Dyplom.blg?\newline
+\verb?Dyplom.ind?\newline
+\verb?Dyplom.idx?\newline
+\verb?Dyplom.lof?\newline
+\verb?Dyplom.log?\newline
+\verb?Dyplom.lot?\newline
+\verb?Dyplom.out?\newline
+\verb?Dyplom.pdf? -- dokument wynikowy\newline
+\verb?Dyplom.syntex?\newline
+\verb?Dyplom.toc?\newline
+\verb?Dyplom.tps?\newline
+\verb?*.aux?\newline 
+\verb?Dyplom.synctex?\newline\\
+\hline
+\end{tabularx}
+\end{table}
+
+\section{Kodowanie znaków}
+System \LaTeX obs³uguje wielojêzycznoœæ. Mo¿na tworzyæ w nim dokumenty z tekstem zawieraj¹cym ró¿ne znaki diakrytyczne. 
+Nale¿y jednak zdawaæ sobie sprawê, w jaki sposób znaki te s¹ obs³ugiwane. Na kodowanie znaków nale¿y patrzeæ z dwóch perspektyw: perspektywy edytowania kodu Ÿród³owego oraz perspektywy kodowania dokumentu wynikowego i u¿ytych czcionek.
+
+Kod latexowy mo¿e byæ edytowany w dowolnym edytorze tekstów. Zastosowane kodowanie znaków w tym edytorze musi byæ znane \LaTeX-owi, inaczej kompilacja tego kodu siê nie powiedzie. Informacjê o tym kodowaniu przekazuje siê w opcjach pakietu \texttt{inputenc}. Niniejszy szablon przygotowano w systemie Windows, a \LaTeX-owe Ÿród³a umieszczono w plikach ANSI z u¿yciem strony kodowej cp1250. Dlatego w poleceniu \verb+\usepackage[cp1250]{inputenc}+ jako opcjê wpisano \texttt{cp1250}.
+
+
+Szablon mo¿na wykorzystaæ równie¿ przy innych kodowaniach i w innych systemach. Jednak wtedy konieczna bêdzie korekta dokumentu \texttt{Dyplom.tex} odpowiednio do wybranego przypadku. Korekta ta polegaæ ma na zamianie polecenia \verb+\usepackage[cp1250]{inputenc}+  na polecenie \verb+\usepackage[utf8]{inputenc}+ oraz konwersji znaków i zmiany kodowania istniej¹cych plików ze Ÿród³em latexowego kodu (plików o rozszerzeniu \texttt{*.tex} oraz \texttt{*.bib}).
+
+Kodowanie znaków jest istotne równie¿ przy edytowaniu bazy danych bibliograficznych (pliku \texttt{dokumentacja.bib}). Aby \texttt{bibtex} poprawnie interpretowa³ polskie znaki plik \texttt{dokumentacja.bib} powinien byæ zakodowany w ANSI, CR+LF (dla ustawieñ jak w szablonie). 
+W szczególnoœci, jeœli omin¹æ chce siê problem kodowania, polskie znaki w bazie danych bibliograficznych mo¿na zast¹piæ odpowiedni¹ notacj¹: \verb|\k{a}| \verb|\'c| \verb|\k{e}| \verb|\l{}| \verb|\'n| \verb|\'o| \verb|\'s| \verb|\'z| \verb|\.z| \verb|\k{A}| \verb|\'C| \verb|\k{E}| \verb|\L{}| \verb|\'N| \verb|\'O| \verb|\'S| \verb|\'Z| \verb|\.Z|. 
+
+Samo kodowanie plików mo¿e byæ Ÿród³em paru problemów. Chodzi o to, ¿e u¿ytkownicy pracuj¹cy z edytorami tekstów pod linuxem mog¹ generowaæ pliki zakodowane w UTF8 bez BOM (lub z BOM -- co nie jest zalecane), a pod windowsem -- pliki ANSI ze znakami ze strony kodewej \texttt{cp1250}. Z takimi plikami ró¿ne edytory ró¿nie sobie radz¹. W szczególnoœci edytor \texttt{TeXnicCenter} podczas otwierania plików mo¿e potraktowaæ jego zawartoœæ jako UTF8 lub ANSI -- prawdopodobnie interpretuje z jakim kodowaniem ma do czynienia na podstawie obecnoœci w pliku znaków specjalnych. Bywa, ¿e choæ wszystko w \texttt{TeXnicCenter} wygl¹da na poprawne, to jednak kompilacja \LaTeX-owa ,,nie idzie''. Problemem mog¹ byæ w³aœnie pierwsze bajty, których nie widaæ w edytorze. 
+
+Do konwersji kodowania mo¿na u¿yæ edytor \texttt{Notepad++} (jest tam opcja ,,konwertuj'' -- nie myliæ z~opcj¹ ,,koduj'', która przekodowuje znaki, jednak nie zmienia sposobu kodowania pliku).
+
+Jeœli chodzi o drug¹ perspektywê, tj.\ kodowanie znaków w dokumencie wynikowym, to sprawa jest bardziej skomplikowana. Wi¹¿e siê z ni¹ zarz¹dzanie czcionkami, definiowanie mapowania itp. 
+\textbf{Szablon przygotowano tak, by wynikowy dokument zawiera³ polskie znaki diakrytyczne, które nie s¹ zlepkami literki i ogonka.}
+
+\section{Kompilacja szablonu}
+Kompilacjê szablonu mo¿na uruchamiaæ na kilka ró¿nych sposobów. Wszystko zale¿y od u¿ywanego systemu operacyjnego, zainstalowanej na nim dystrybucji \LaTeX-a oraz dostêpnych narzêdzi. Zazwyczaj kompilacjê rozpoczyna siê wydaj¹c polecenie z linii komend lub uruchamia siê j¹ za pomoc¹ narzêdzi zintegrowanych œrodowisk.
+
+Kompilacja z linii komend polega na uruchomieniu w katalogu, w którym rozpakowano Ÿród³a szablonu, nastêpuj¹cego polecenia:
+\begin{lstlisting}[basicstyle=\ttfamily]
+> pdflatex Dyplom.tex
+\end{lstlisting}
+gdzie \texttt{pdflatex} to nazwa kompilatora, zaœ \texttt{Dyplom.tex} to nazwa g³ównego pliku redagowanej pracy. 
+W przypadku korzystania ze œrodowiska \texttt{TeXnicCenter} nale¿y otworzyæ dostarczony w~szablonie plik projektu \texttt{Dyplom.tcp}, a nastêpnie uruchomiæ kompilacjê narzêdziami dostêpnymi w pasku narzêdziowym.
+
+Aby poprawnie wygenerowa³y siê wszystkie referencje (spis treœci, odwo³ania do tabel, rysunków, pozycji literaturowych, równañ itd.) kompilacjê \texttt{pdflatex} nale¿y wykonaæ dwukrotnie, a~czasem nawet trzykrotnie. Wynika to z koniecznoœci zapamiêtywania poœrednich wyników kompilacji i ich wykorzystywania w kolejnych przebiegach. Tak dzieje siê przy generowaniu odwo³añ do pozycji literaturowych oraz tworzeniu ich wykazu). 
+
+Wygenerowanie danych bibliograficznych zapewnia kompilacja \texttt{bibtex} uruchamiana po kompilacji \texttt{pdfltex}. Mo¿na to zrobiæ z linii komend:
+\begin{lstlisting}[basicstyle=\ttfamily]
+> bibtex Dyplom
+\end{lstlisting}
+lub wybieraj¹c odpowiedni¹ pozycjê z paska narzêdziowego wykorzystywanego œrodowiska. Po kompilacji za pomoc¹ \texttt{bibtex} na dysku pojawi siê plik \texttt{Dyplom.bbl}. Dopiero po kolejnych dwóch kompilacjach \texttt{pdflatex} dane z tego pliku zostan¹ odpowiednio przetworzone i zrenderowane w wygenerowanym dokumencie. Tak wiêc po ka¿dym wstawieniu nowego cytowania w kodzie dokumentu uzyskanie poprawnego formatowania dokumentu wynikowego wymaga powtórzenia nastêpuj¹cej sekwencji kroków kompilacji:
+\begin{lstlisting}[basicstyle=\ttfamily]
+> pdflatex Document.tex
+> bibtex Document
+> latex Document.tex
+> latex Document.tex
+\end{lstlisting}
+Szczegó³y dotycz¹ce przygotowania danych bibliograficznych oraz zastosowania cytowañ przedstawiono w podrozdziale \ref{sec:literatura}.
+
+W g³ównym pliku zamieszczono polecenia pozwalaj¹ce sterowaæ procesem kompilacji poprzez w³¹czanie b¹dŸ wy³¹czanie kodu Ÿród³owego poszczególnych rozdzia³ów. W³¹czanie kodu do kompilacji zapewniaj¹ instrukcje \verb+\include+ oraz \verb+\includeonly+. Pierwsza z nich pozwala w³¹czyæ do kompilacji kod wskazanego pliku (np.\ kodu Ÿród³owego pierwszego rozdzia³u \verb+\include{rozdzial01.tex}+). Druga, jeœli zostanie zastosowana, pozwala okreœliæ, które z~plików zostan¹ skompilowane w ca³oœci (na przyk³ad kod Ÿród³owy pierwszego i drugiego rozdzia³u \verb+\includeonly{rozdzial01.tex,rozdzial02.tex}+). Brak nazwy pliku na liœcie w poleceniu \verb+\includeonly+ przy jednoczesnym wyst¹pieniu jego nazwy w poleceniu \verb+\include+ oznacza, ¿e w kompilacji zostan¹ uwzglêdnione referencje wygenerowane dla tego pliku wczeœniej, sam zaœ kod Ÿród³owy pliku nie bêdzie kompilowany. 
+
+W szablonie wykorzystano klasê dokumentu \texttt{memoir} oraz wybrane pakiety. Podczas kompilacji szablonu w \texttt{MikTeXu} wszelkie potrzebne pakiety zostan¹ zainstalowane automatycznie (jeœli \texttt{MikTeX} zainstalowano z opcj¹ dynamicznej instalacji brakuj¹cych pakietów). W przypadku innych dystrybucji \LaTeX-a mo¿e okazaæ siê, ¿e pakiety te trzeba doinstalowaæ rêcznie (np.\ pod linuxem z \texttt{TeXLive} trzeba doinstalowaæ dodatkow¹ zbiorcz¹ paczkê, a jeœli ma siê menad¿era pakietów \LaTeX-owych, to pakiety te mo¿na instalowaæ indywidualnie).
+
+Jeœli w szablonie bêdzie wykorzystany indeks rzeczowy, kompilacjê Ÿróde³ trzeba bêdzie rozszerzyæ o kroki potrzebne na wygenerowanie plików poœrednich \texttt{Dokument.idx} oraz \texttt{Dokument.ind} oraz do³¹czenia ich do finalnego dokumentu (podobnie jak to ma miejsce przy generowaniu wykazu literatury).
+Szczegó³y dotycz¹ce generowania indeksu rzeczowego opisano w podrozdziale~\ref{sec:indeks}.
+
+\section{Sprawdzanie poprawnoœci tekstu}
+Wiêkszoœæ œrodowisk u³atwiaj¹cych pisanie \LaTeX-owych dokumentów wspiera sprawdzenie poprawnoœci tekstu (ang.~\emph{spell checking}). Wystarczy odpowiednio je skonfigurowaæ. Niestety, proponowana przez narzêdzia korekta nie jest genialna. Bazuje ona na prostym porównywaniu wyrazów (z koñcówkami). Nie wbudowano w ni¹ ¿adnej wiêkszej inteligencji. Tak wiêc proszê nie porównywaæ jej z korekt¹ oferowan¹ w narzêdziach MS Office (tam jest ona du¿o bardziej zaawansowana).
+
+\texttt{TeXnicCenter} korzysta ze s³owników do pobrania ze strony \texttt{openoffice} (\url{https://extensions.openoffice.org/}).
+Aby sprawê uproœciæ s³owniki dla jêzyka polskiego (pliki \texttt{pl\_PL.aff} oraz \texttt{pl\_PL.dic}) do³¹czono do szablonu (s¹ w katalogu \texttt{Dictionaries}). Pliki te nale¿y umieœciæ w katalogu \texttt{C:\textbackslash{}Program Files\textbackslash{}TeXnicCenter\textbackslash{}Dictionaries}, a w konfiguracji projektu (\texttt{Tools/Options/Spelling}) nale¿y wybraæ \texttt{Language: pl}, \texttt{Dialect: PL}. Jeœli g³ówny tekst pracy pisany jest w innym jêzyku, to trzeba zmieniæ s³ownik.
+
+Zaskakuj¹ce mo¿e jest to, ¿e \emph{spell checker} w \texttt{TeXnicCenter} dzia³a zarówno przy pracy na plikach UTF8, jak i na plikach ANSI. Jeœli by³yby jakieœ problemy ze s³ownikiem wynikaj¹ce z~kodowania znaków, wtedy s³ownik trzeba przekodowaæ. To powinno pomóc.
+
+\section{Wersjonowanie}
+W trakcie edytowania pracy w systemie latex dobr¹ praktyk¹ jest wersjonowanie tworzonego kodu. Do wersjonowania zaleca siê wykorzystaæ system \texttt{git}. Opis sposobu pracy z tym systemem opisano w licznych tutorialach dostêpnych w sieci. Szczególnie godnym polecenia zasobem jest strona domowa projektu \url{https://git-scm.com/}.
+
+Zwykle pracê z systemem wersjonowania rozpoczyna siê od utworzenia repozytorium zdalnego i lokalnego. Lokalne s³u¿y do bie¿¹cej pracy, zdalne -- do wspó³pracy z innymi u¿ytkownikami (z promotorem). 
+
+Po utworzeniu repozytorium lokalnego i roboczej ga³êzi (czy bêdzie to \texttt{master} czy inna ga³¹Ÿ -- ustalaj¹ to sami zainteresowani) nale¿y skopiowaæ do niego wszystkie pliki dostarczone w szablonie, a po ich wstêpnym przeredagowaniu nale¿y je zaznaczyæ do wersjonowania. Potem nale¿y wys³aæ zmiany na repozytorium zdalne (mo¿liwa jest te¿ œcie¿ka odwrotna, mo¿na zacz¹æ od zmian na repozytorium zdalnym, które pobrane bêd¹ do repozytorium lokalnego).
+
+Podczas kompilowania projektu bêd¹ powstawa³y pliki pomocnicze. Plików tych nie nale¿y wersjonowaæ (zabieraj¹ niepotrzebnie miejsce, a przecie¿ zawsze mo¿na je odtworzyæ uruchamiaj¹c kompilacjê na Ÿród³ach). \texttt{git} posiada mechanizm automatycznego odrzucania plików niepodlegaj¹cych wersjonowaniu. Mechanizm ten bazuje na wykorzystaniu pliku konfiguracyjnego \texttt{.gitignore} zamieszczonego w katalogu g³ównym repozytorium. O szczegó³ach \texttt{.gitignore} mo¿na poczytaæ  na stronie \url{https://git-scm.com/docs/gitignore}. 
+
+W sieci mo¿na znaleŸæ liczne propozycje plików konfiguracyjnych \texttt{.gitignore} dopasowanych do potrzeb latexowej kompilacji. Nie trzeba ich jednak szukaæ. W~szablonie zamieszczono przyk³adowy taki plik. Zawiera on, miêdzy innymi, wpis zabraniaj¹cy wersjonowania pliku wynikowego \texttt{Dyplom.pdf}. 
+
+
+Plik \texttt{.gitignore} nale¿y umieœciæ w repozytorium zaraz po jego utworzeniu. Jeœli w repozytorium pojawi³y siê ju¿ jakieœ zmiany zanim pojawi³ siê tam \texttt{.gitignore}, to wtedy nale¿y wykonaæ kroki opisane na stronie: \url{https://stackoverflow.com/questions/38450276/force-git-to-update-gitignore/38451183}
+
+\begin{lstlisting}[basicstyle=\small\ttfamily]
+> > > > You will have to clear the existing git cache first.
+    git rm -r --cached .
+> > > > Once you clear the existing cache, adds/stages all of the files in the current directory and commit
+    git add .
+    git commit -m "Suitable Message"
+> > > > 
+\end{lstlisting}
+
+
+Zalecany schemat wspó³pracy dyplomanta z promotorem polega na wykonywaniu w kolejnych iteracjach nastêpuj¹cych kroków:
+\begin{itemize}
+\item dyplomant edytuje wybran¹ czêœæ pracy, a po skoñczeniu edycji wrzuca zmiany do zdalnego repozytorium,
+\item dyplomant informuje promotora o zakoñczeniu etapu prac,
+\item dyplomant mo¿e zacz¹æ edycjê kolejnego fragmentu pracy, a w tym czasie promotor mo¿e dokonaæ oceny/korekty zmian pobranych ze zdalnego repozytorium,
+\item promotor wrzuca dokonane przez siebie zmiany do zdalnego repozytorium, informuj¹c o tym dyplomanta.
+\end{itemize}
+G³ówna zasada tego schematu polega na niedoprowadzaniu do konfliktów (nadpisywania zmian). Jeœli jednak takie konflikty nast¹pi¹, mo¿na je niwelowaæ poprzez odpowiednie scalanie zmian (merd¿owanie). Swoj¹ drog¹, niez³ym narzêdziem do porównywania zawartoœci plików i~usuwania niezgodnoœci jest \texttt{WinMerge} (\url{https://winmerge.org/}).
+
+
+Do wzajemnych powiadomieñ mo¿na wykorzystaæ pocztê elektroniczn¹. Mo¿na te¿ spróbowaæ wdro¿yæ mechanizm zatwierdzania zmian (ang.~\emph{merge requests}). Mo¿na te¿ umówiæ siê na sprawdzanie zawartoœci repozytorium zgodnie z jakimœ przyjêtym harmonogramem. Wa¿ne, by wiadomo by³o obu stronom, na jakim schemacie wspó³pracy maj¹ bazowaæ.
+
+Dobr¹ praktyk¹ jest te¿ wstawianie w kod komentarzy. Przyjêt¹ powszechnie konwencj¹ jest rozpoczynanie komentarzy od:
+\begin{itemize}
+\item \verb|% TO DO: tekst zalecenia| 
+-- jeœli jest to jakieœ zalecenie promotora, czy te¿ 
+\item \verb|% DONE: tekst wyjaœnienia| 
+-- jeœli jakieœ zalecenie zosta³o wykonane przez dyplomanta. 
+\end{itemize}
+
+Jako zdalne repozytorium mo¿na wykorzystaæ: \texttt{github}, \texttt{bitbucket}, \texttt{gitlab} (s¹ to serwisy, które pozwalaj¹ zarz¹dzaæ repozytoriami \texttt{git}).
+Dobr¹ praktyk¹ jest te¿ uruchomienie klientów git oferuj¹cych graficzny interfejs (jak \texttt{SourceTree}, \texttt{GitCracken} itp.). W narzêdziach tych mo¿na zobaczyæ natychmiast na czym polega³y wprowadzone w repozytorium zmiany. 

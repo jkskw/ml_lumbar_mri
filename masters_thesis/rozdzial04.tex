@@ -1,0 +1,125 @@
+\chapter{Redakcja pracy dyplomowej}
+\section{Uk³ad pracy dyplomowej}
+Istnieje wiele sposobów organizacji prac dyplomowych. W dokumentacji klasy \texttt{memoir} (\url{http://tug.ctan.org/tex-archive/macros/latex/contrib/memoir/memman.pdf}) zamieszczono zalecenia odnosz¹ce siê do edytorskiej strony amerykañskich prac dyplomowych. Na stronie 363 mo¿na przeczytaæ, ¿e czêœæ pocz¹tkowa pracy mo¿e zawieraæ:
+\emph{\setlength\multicolsep{0pt}%
+\begin{multicols}{2}
+\begin{enumerate}[topsep=0pt,labelwidth=1.5em]
+\item Title page
+\item Approval page
+\item Abstract
+\item Dedication (optional)
+\item Acknowledgements (optional)
+\item Table of contents
+\item List of tables (if there are any tables)
+\item List of figures (if there are any figures)
+\item Other lists (e.g., nomenclature, definitions, glossary of terms, etc.)
+\item Preface (optional but must be less than ten pages)
+\item Under special circumstances further sections may be allowed
+\end{enumerate}
+\end{multicols}}
+\noindent
+Po czêœci pocz¹tkowej powinna pojawiæ siê g³ówna czêœæ pracy, z³o¿ona z kolejnych rozdzia³ów. Po niej powinna pojawiæ siê czêœæ koñcowa, na któr¹ zwykle sk³adaj¹ siê:
+\emph{\setlength\multicolsep{0pt}%
+\begin{multicols}{2}
+\begin{enumerate}[topsep=0pt,labelwidth=1.5em]
+\item Notes (if you are using endnotes and grouping them at the end)
+\item References (AKA ‘Bibliography’ or ‘Works Cited’)
+\item Appendices
+\item Biographical sketch (optional)
+\end{enumerate}
+\end{multicols}}
+
+
+Prace dyplomowe powstaj¹ce na Wydziale Informatyki i Teleinformatyki Politechniki Wroc³awskiej standardowo redaguje siê w nastêpuj¹cym uk³adzie:
+\emph{\setlength\multicolsep{0pt}%
+\begin{multicols}{2}
+\begin{quote}
+\item Strona tytu³owa
+\item Streszczenie 
+\item Strona z dedykacj¹ (opcjonalna)
+\item Spis treœci  
+\item Spis rysunków (opcjonalny)
+\item Spis tabel (opcjonalny)
+\item Spis listingów (opcjonalny)
+\item Skróty (wykaz opcjonalny)
+\item Abstrakt 
+\item 1. Wstêp 
+\begin{quote}
+\item 1.1 Wprowadzenie 
+\item 1.2 Cel i zakres pracy 
+\item 1.3 Uk³ad pracy 
+\end{quote}
+\item 2. Kolejny rozdzia³
+\begin{quote}
+\item 2.1 Sekcja
+\begin{quote}
+\item 2.1.1 Podsekcja
+\begin{quote}
+\item Nienumerowana podpodsekcja
+\begin{quote}
+\item Paragraf
+\end{quote}
+\end{quote}
+\end{quote}
+\end{quote}
+\item $\ldots$
+\item \#. Podsumownie i wnioski
+\item Literatura
+\item A. Dodatek
+\begin{quote}
+\item A.1 Sekcja w dodatku
+\end{quote}
+\item $\ldots$
+\item \$. Instrukcja wdro¿eniowa
+\item \$. Zawartoœæ p³yty CD/DVD
+\item Indeks rzeczowy (opcjonalny)
+\end{quote}
+\end{multicols}}
+Poni¿ej zamieszczono opis poszczególnych elementów tego uk³adu.
+\begin{description}[font=\normalfont\itshape,leftmargin=1.em,itemindent=1.em,labelwidth=1.5em]
+\item[Streszczenie] -- syntetyczny opis zawartoœci pracy, zwykle po pó³ strony w~jêzyku polskim i jêzyku angielskim (podczas wysy³ania pracy do analizy antyplagiatowej nale¿y skopiowaæ tekst z tej sekcji do odpowiedniego pola formularza).
+\item[Spis treœci] -- powinien byæ generowany automatycznie, z podaniem tytu³ów rozdzia³ów i podrozdzia³ów wraz numerami stron. Typ czcionki oraz wielkoœæ liter spisu treœci powinny byæ takie same jak w niniejszym wzorcu. Powinna te¿ byæ zachowana zadeklarowana g³êbokoœæ numeracji (patrz ustawienia w kodzie Ÿród³owym szablonu poprzedzone komentarzem \texttt{\% INFO: Deklaracja g³êbokoœci numeracji}).
+\item[Spis rysunków, Spis tabel, Spis listingów] -- powinny byæ generowane automatycznie (podobnie jak \emph{Spis treœci}). Elementy te s¹ opcjonalne, nie zawsze trzeba je deklarowaæ. Na przyk³ad robienie osobnego spisu tabel zawieraj¹cego jedn¹ lub dwie pozycje specjalnie nie ma sensu (taki spis razi³by pust¹ przestrzeni¹ na stronie).
+\item[Skróty] -- jeœli w pracy wystêpuj¹ liczne skróty, to w tej czêœci nale¿y podaæ ich rozwiniêcia.
+\item[Wstêp] -- pierwszy rozdzia³, w którego pierwszej sekcji \emph{Wprowadzenie} powinien znaleŸæ siê opis dziedziny, w jakiej osadzona jest praca, oraz wyjaœnienie motywacji do podjêcia tematu. W~drugiej sekcji \emph{Cel i zakres} powinien znaleŸæ siê opis celu oraz zadañ do wykonania, zaœ w~trzeciej sekcji \emph{Uk³ad pracy} -- opis zawartoœci kolejnych rozdzia³ów.
+
+\item[Rozdzia³] -- logicznie wyró¿niona czêœæ pracy. Tytu³y kolejnych rozdzia³ów mog¹ byæ ró¿ne w~zale¿noœci od charakteru pracy. Inne bêd¹ dla pracy o charakterze analityczno-przegl¹dowym, inne dla pracy o charakterze projektowym. Niemniej zawartoœæ i objêtoœæ rozdzia³ów powinny byæ dobrze wywa¿one. W pracy dyplomowej in¿ynierskiej kolejnymi rozdzia³ami mog¹ byæ: \emph{Za³o¿enia projektowe}, \emph{Analiza wymagañ}, \emph{Szczegó³y implementacji}, \emph{Testy}. W pracy dyplomowej magisterskiej mniej wiêcej jej po³owê powinno poœwiêciæ siê na czêœæ badawcz¹ (analityczn¹). Zwykle w tego typu pracy zaczyna siê od przegl¹du literatury (w wyniku czego powstaæ ma opis bie¿¹cych osi¹gniêæ w danej dziedzinie, ang.~\emph{state of the art}). Potem sprecyzowaæ mo¿na problemy badawcze, rozwi¹zywaniem których zajêto siê w pracy. Kolejne rozdzia³y mog¹ dotyczyæ opracowanego rozwi¹zania, przeprowadzonych eksperymentów i analiz ich wyników itd. Zwykle aspekt praktyczny (in¿ynierski) w pracy magisterskiej nie jest g³ównym celem, a raczej œrodkiem, z pomoc¹ którego d¹¿y siê do zrealizowania celu badañ (czyli podpiera siê nim aspekt badawczy). 
+\item[Podsumowanie] -- w rozdziale tym powinny byæ zamieszczone: podsumowanie uzyskanych efektów oraz wnioski koñcowe wynikaj¹ce z realizacji celu pracy dyplomowej.
+\item[Literatura] -- wykaz Ÿróde³ wykorzystanych w pracy (do ka¿dego Ÿród³a musi istnieæ odpowiednie cytowanie w tekœcie). Wykaz ten powinien byæ generowany automatycznie.
+\item[Dodatek] -- miejsce na informacje dodatkowe, jak: \emph{Instrukcja wdro¿eniowa}, \emph{Instrukcja uruchomieniowa}, \emph{Podrêcznik u¿ytkownika} itp.
+Osobny dodatek powinien byæ przeznaczony na opis zawartoœci do³¹czonej p³yty CD/DVD. Za³o¿ono, ¿e bêdzie to zawsze ostatni dodatek.
+\item[Indeks rzeczowy] -- lista referencji do istotnych fraz, do których czytelnik bêdzie chcia³ siêgn¹æ. Indeks powinien byæ generowany automatycznie. Jego za³¹czanie jest opcjonalne.
+\end{description}
+
+\section{Styl}
+\label{sec:Styl}
+Pisz¹c tekst pracy dyplomowej nale¿y zadbaæ o poprawnoœæ jêzykow¹. Praca powinna byæ napisana jêzykiem formalnym, w stylu akademickim. W liœcie wyliczeniowej zamieszczonej poni¿ej zebrano wybrane regu³y odnosz¹ce siê do zalecanego stylu wypowiedzi. Lista ta nie jest zamkniêta. Mo¿e ona byæ rozszerzona o kolejne zalecenia. 
+(przy okazji proszê zauwa¿yæ, ¿e tworz¹c tê listê wykorzystano mechanizm wyrównania wpisów zale¿nie od d³ugoœci najd³u¿szej etykiety, szczegó³y widaæ w kodzie Ÿród³owym szablonu):
+\begin{enumerate}[labelwidth=\widthof{\ref{last-item}},label=\arabic*.]
+\item Praca dyplomowa powinna byæ napisana w  formie bezosobowej. Co wiêcej, u¿ywane zwroty dobrze jest pisaæ w formie zwartej. Czyli zamiast ,,w pracy zosta³o pokazane ...'' lepiej napisaæ ,,w pracy pokazano ...''. Wynikowy tekst bêdzie wtedy krótszy oraz czytelniejszy. Taki styl wypowiedzi przyjêto na uczelniach w naszym kraju, choæ w krajach anglosaskich preferuje siê redagowanie treœci w pierwszej osobie.
+\item W tekœcie pracy mo¿na odwo³aæ siê do myœli autora, ale nie w pierwszej osobie, tylko poprzez wyra¿enia typu: ,,autor wykaza³, ¿e ...''. 
+\item Odwo³uj¹c siê do rysunków i tabel nale¿y u¿ywaæ zwrotów typu: ,,na rysunku ... pokazano ...'', ,,w tabeli ... zamieszczono ...''.  Tabela i rysunek to twory nie¿ywotne, wiêc nie mog¹ ,,pokazywaæ''. Dlatego te¿ zwroty typu ,,rysunek pokazuje'' uznawane s¹ za niepoprawne.
+\item Praca powinna byæ napisana jêzykiem formalnym, bez wyra¿eñ ¿argonowych (,,sejwowanie'' i ,,downloadowanie''), nieformalnych czy zbyt ozdobnych (,,najznamienitszym przyk³adem tego niebywa³ego postêpu ...'')
+\item Pisz¹c pracê nale¿y dbaæ o poprawnoœæ stylistyczn¹ wypowiedzi, a wiêc: trzeba pamiêtaæ, do czego stosuje siê ,,liczba'', a do czego ,,iloœæ'', zamiast ,,szereg elementów'' powinno siê pisaæ ,,wiele elementów''.
+\item W tekstach dotycz¹cych technologii informacyjnych czêsto dochodzi do zapo¿yczeñ z~jêzyka angielskiego. Zapo¿yczenia te mocno zakotwiczaj¹ siê w jêzyku, staj¹c siê czêœci¹ tzw.\ jêzyka bran¿owego. I trudno zatrzymaæ ten proces, szczególnie gdy w~jêzyku polskim brakuje odpowiedników. Jednak gdy takie odpowiedniki istniej¹, stosowanie zapo¿yczeñ uwa¿ane jest za b³¹d. Podczas redakcji pracy w jêzyku polskim nale¿y unikaæ kalek jêzykowych. Przyk³adem niepoprawnie stosowanej kalki jêzykowej jest termin ,,funkcjonalnoœæ''. Zaczêto go u¿ywaæ w odniesieniu do rzeczy policzalnych (mówi¹c o~,,wielu funkcjonalnoœciach'' czy te¿ o ,,wybranej funkcjonalnoœci'') podczas gdy wed³ug oficjalnych norm jêzykowych ,,funkcjonalnoœæ'' odnosi siê do rzeczy, które ,,dobrze spe³niaj¹cy swoj¹ funkcjê'' (coœ jest ,,funkcjonalne'' jeœli dobrze dzia³a, w przeciwieñstwie do czegoœ ,,niefunkcjonalnego'', czego nie da siê u¿ywaæ). Mówi¹c wiêc o cechach systemów informatycznych powinno siê robiæ odniesienia do ich ,,funkcji'', a nie ,,funkcjonalnoœci''. 
+\item Redagowane zdania nie powinny byæ zbyt d³ugie, by czytelnik by³ w stanie je zapamiêtaæ i zrozumieæ. Dlatego lepiej podzieliæ zdanie wielokrotnie z³o¿one na pojedyncze zdania.
+\item Zawartoœæ rozdzia³ów powinna byæ dobrze wywa¿ona. Nie wolno wiêc generowaæ sekcji i podsekcji, które maj¹ zbyt ma³o tekstu lub znacz¹co ró¿ni¹ siê objêtoœci¹. Zbyt krótkie podrozdzia³y mo¿na zaobserwowaæ w przyk³adowym rozdziale~\ref{chap:podsumowanie}.
+\item Niedopuszczalne jest pozostawienie w pracy b³êdów ortograficznych czy tzw.\ literówek -- mo¿na je przecie¿ znaleŸæ i skorygowaæ automatycznie. \addtocounter{enumi}{1000} 
+\item  Tutaj pokazano, jak mo¿na zarz¹dzaæ marginesem w otoczeniu \texttt{enumerate} (proszê zajrzeæ do Ÿróde³ latexowego kodu tego rozdzia³u). \label{last-item}
+\end{enumerate}
+
+\section{Prowadzenie badañ}
+Od prac magisterskich oczekuje siê wyraŸnie wyró¿nionego aspektu badawczego. Dlatego podczas redakcji pracy nale¿y zadbaæ o wykorzystanie odpowiedniego warsztatu naukowego. Poni¿ej zamieszczono referencje do wybranych materia³ów pomocniczych odnosz¹cych siê do tej kwestii. 
+\begin{description}
+\item[Stawianie hipotez badawczych] -- krótkie wprowadzenia do pojêcia hipotezy badawczej i problemów badawczych mo¿na znaleŸæ pod adresami: 
+\url{https://panstatystyk.pl/2022/10/11/ogarniamy_hipotezy_i_pytania_badawcze_w_pracy_magisterskiej/}, \url{https://obliczeniastatystyczne.pl/hipoteza-badawcza/}.
+Godny szczególnego polecenia, gdy¿ podejmuje siê temat hipotez badawczych dla badañ eksperymentalnych oraz teoretycznych z punktu widzenia informatyki, jest materia³:
+\url{https://troja.uksw.edu.pl/zasoby/praca-dyplomowa.pdf}
+
+\item[Opracowywanie uzyskanych wyników] -- podczas prowadzenia badañ wa¿ne jest zapewnienie ich obiektywnoœci. Na przyk³ad podczas porównywania dzia³ania ró¿nych algorytmów (badañ eksperymentalnych) dobrze jest stosowaæ uznane metody statystyczne i metryki. Przyk³adowe metryki zbierane podczas porównywania algorytmów ewolucyjnych oraz sposoby statystycznego opracowywania uzyskanych wyników znaleŸæ mo¿na w prezentacji Eksperymenty obliczeniowe z algorytmami
+ewolucyjnymi i porównania algorytmów (\url{http://aragorn.pb.bialystok.pl/~wkwedlo/EA9.pdf}).
+
+Ciekawym materia³em zawieraj¹cym ogólne wprowadzenie do testów statystycznych jest: \url{https://panstatystyk.pl/2022/10/27/jaki-test-statystyczny-wybrac-cz-i-czyli-ogarniamy-algorytm-wyboru-testu-statystycznego/}. Warto te¿ spojrzeæ na darmowe narzêdzie do obliczania parametrów wybranych rozk³adów: \texttt{EasyFit} (\url{https://easyfit.soft32.com/}).
+
+W celu wielokryterialnego porównywania rozwi¹zañ systemów informatycznych mo¿na zastosowaæ: \emph{Analityczny Proces Hierarchiczny}, \emph{Wnioskowanie rozmyte}, inne metody \emph{Wielokryterialnego podejmowania decyzji}. Wiêcej materia³ów o statystyczny opracowaniu wyników mo¿na znaleŸæ w literaturze (lub w Internecie) pod has³em \texttt{testowanie hipotez statystycznych}.
+\end{description}
