@@ -15,11 +15,13 @@ class DataPreprocessor:
     cropping, resizing, and stacking them into 3D volumes (tensors) for model training.
 
     Supports two preprocessing modes:
-      - "absolute": Build tensor from all slices in the series and then force the volume
+      - "full_series": Build tensor from all slices in the series and then force the volume
          to have a specific final_depth via padding/interpolation.
-      - "context": Build tensor from a window of slices around the target instance.
+      - "target_window": Build tensor from a window of slices around the target instance.
          For example, with slices_before=2 and slices_after=2, if target instance is 8,
          the tensor will consist of slices [6, 7, 8, 9, 10].
+
+    When "target_window" mode is used, the final_depth parameter is ignored.
 
     The processing parameters are loaded from a YAML configuration file.
     """
@@ -42,19 +44,23 @@ class DataPreprocessor:
             self.config["preprocessing"].get("cropped_size", [512, 512]))
         self.cropping_dict = self.config["preprocessing"].get("cropping", {})
 
-        # Determine which preprocessing mode to use: "absolute" or "context"
+        # Determine which preprocessing mode to use: "full_series" or "target_window"
         self.preprocessing_mode = self.config.get(
-            "preprocessing_mode", "absolute")
-        # For context mode, these parameters determine how many slices before and after the target slice to include
-        context_cfg = self.config.get("context", {})
+            "preprocessing_mode", "full_series")
+        # For target_window mode, these parameters determine how many slices before and after the target slice to include
+        context_cfg = self.config.get("target_window", {})
         self.slices_before = context_cfg.get("slices_before", 0)
         self.slices_after = context_cfg.get("slices_after", 0)
 
-        # Build the output directory name based on parameters
-        self.output_dir = os.path.join(
-            self.tensors_base_path,
-            f"{self.final_depth}_{self.final_size[0]}x{self.final_size[1]}_{self.preprocessing_mode}_{self.slices_before}s{self.slices_after}"
-        )
+        if self.preprocessing_mode == "full_series":
+            output_subdir = f"{self.preprocessing_mode}_{self.final_size[0]}x{self.final_size[1]}_{self.final_depth}D"
+        else:
+            output_subdir = f"{self.preprocessing_mode}_{self.final_size[0]}x{self.final_size[1]}_B{self.slices_before}A{self.slices_after}"
+
+        self.output_dir = os.path.join(self.tensors_base_path, output_subdir)
+
+        os.makedirs(self.output_dir, exist_ok=True)
+        print(f"[INFO] Processed tensors will be saved in: {self.output_dir}")
 
     def load_config(self, config_path: str) -> dict:
         """
@@ -78,19 +84,16 @@ class DataPreprocessor:
             print(f"[INFO] Merged CSV already exists at {merged_csv_path}.")
             return pd.read_csv(merged_csv_path)
 
-        # Load the individual CSV files
         series_csv = os.path.join(
             self.raw_path, "train_series_descriptions.csv")
         labels_csv = os.path.join(self.raw_path, "train_label_coordinates.csv")
         df_series = pd.read_csv(series_csv)
         df_labels = pd.read_csv(labels_csv)
-        # Merge them on study_id and series_id
         merged_df = pd.merge(df_labels, df_series, on=[
                              "study_id", "series_id"], how="inner")
         print(
             f"[INFO] Merged DataFrame shape (before adding DICOM shape): {merged_df.shape}")
 
-        # Compute DICOM shape for each row (using instance_number from labels)
         shapes = []
         for idx, row in tqdm(merged_df.iterrows(), total=len(merged_df), desc="Computing DICOM shapes"):
             h, w = self.get_dicom_shape(
@@ -98,11 +101,9 @@ class DataPreprocessor:
             shapes.append((h, w))
         merged_df["height"] = [s[0] for s in shapes]
         merged_df["width"] = [s[1] for s in shapes]
-        # Drop rows with missing shapes
         merged_df.dropna(subset=["height", "width"], inplace=True)
         merged_df["height"] = merged_df["height"].astype(int)
         merged_df["width"] = merged_df["width"].astype(int)
-        # Save the merged CSV
         merged_df.to_csv(merged_csv_path, index=False)
         print(
             f"[INFO] Merged CSV created at {merged_csv_path} with shape: {merged_df.shape}")
@@ -142,7 +143,7 @@ class DataPreprocessor:
         """
         Resize a 2D image using bilinear interpolation.
         """
-        image = image.unsqueeze(0).unsqueeze(0)  # shape: [1, 1, H, W]
+        image = image.unsqueeze(0).unsqueeze(0)
         resized = F.interpolate(image, size=(
             out_h, out_w), mode='bilinear', align_corners=False)
         return resized.squeeze(0).squeeze(0)
@@ -201,11 +202,14 @@ class DataPreprocessor:
     def get_subfolder_name(self, condition: str) -> str:
         """
         Returns a subfolder name based on the diagnosis condition.
+        Separates left and right Neural Foraminal Narrowing.
         """
         if condition == "Spinal Canal Stenosis":
             return "scs"
-        elif condition in ["Right Neural Foraminal Narrowing", "Left Neural Foraminal Narrowing"]:
-            return "nfn"
+        elif condition == "Right Neural Foraminal Narrowing":
+            return "nfn_right"
+        elif condition == "Left Neural Foraminal Narrowing":
+            return "nfn_left"
         return "other"
 
     def process(self):
@@ -213,15 +217,17 @@ class DataPreprocessor:
         Process raw DICOM data:
           - Merge CSV files (if not already merged) and compute DICOM shapes.
           - Filter data based on target disc and series description.
-          - For each (study_id, series_id) group, process DICOM slices:
+          - For each (study_id, series_id, condition) group, process DICOM slices:
               - Identify the target slice based on instance_number.
-              - Depending on the preprocessing mode:
-                  * "absolute": use all slices in the series and later force the volume to have a final_depth.
-                  * "context": select slices using slices_before and slices_after relative to the target slice.
+              - If final_depth is 1, use only the target slice.
+              - Otherwise, if target_window mode is used, select slices using slices_before and slices_after relative to the target slice.
+                (In target_window mode, final_depth is ignored.)
+              - If full_series mode is used, select all slices.
               - For each selected slice, load, normalize, resize, crop, and stack.
+          - For target_window mode, resize each slice to the final_size.
           - Save the final 3D volume (tensor) to the output directory.
         """
-        # Merge CSV data if needed (this creates/loads merged_train_data.csv in raw_path)
+        # Merge CSV data if needed (creates/loads merged_train_data.csv in raw_path)
         merged_df = self.merge_csv_data()
 
         # Filter target disc and remove unwanted series descriptions
@@ -229,12 +235,11 @@ class DataPreprocessor:
         df_target = df_target[df_target["series_description"] != "Axial T2"]
         print(f"[INFO] After filtering: {df_target.shape}")
 
-        # Process each series group
-        group_cols = ["study_id", "series_id"]
+        # Group by study_id, series_id, and condition (to separate left and right NFN)
+        group_cols = ["study_id", "series_id", "condition"]
         grouped = df_target.groupby(group_cols)
-        for (sid, serid), group in tqdm(grouped, desc="Processing series groups"):
+        for (sid, serid, condition), group in tqdm(grouped, desc="Processing series groups"):
             row0 = group.iloc[0]
-            condition = row0["condition"]
             series_desc = row0["series_description"]
             x_val = row0["x"]
             y_val = row0["y"]
@@ -269,15 +274,21 @@ class DataPreprocessor:
                     f"Warning: Missing target slice for study_id {sid} (instance {target_instance})")
                 continue
 
-            # Determine which slices to use based on preprocessing_mode
-            if self.preprocessing_mode.lower() == "context":
-                # Use a window of slices around the target slice
+            # Determine which slices to use:
+            if self.preprocessing_mode.lower() == "target_window":
+                # In target_window mode, ignore final_depth and select a window around the target slice
                 start_index = max(target_index - self.slices_before, 0)
                 end_index = min(
                     target_index + self.slices_after, len(dcm_paths) - 1)
                 selected_paths = dcm_paths[start_index:end_index + 1]
+            elif self.preprocessing_mode.lower() == "full_series":
+                if self.final_depth == 1:
+                    # Use only the target slice
+                    selected_paths = [dcm_paths[target_index]]
+                else:
+                    # Use all slices from the series
+                    selected_paths = dcm_paths
             else:
-                # "absolute" mode: use all slices from the series
                 selected_paths = dcm_paths
 
             # Process each selected slice
@@ -310,14 +321,17 @@ class DataPreprocessor:
 
             vol_3d = torch.stack(padded_slices, dim=0)  # Shape: [D, H, W]
 
-            if self.preprocessing_mode.lower() == "absolute":
-                # In absolute mode, force the volume to have exactly final_depth slices.
+            if self.preprocessing_mode.lower() == "full_series":
+                # In full_series mode, force the volume to have exactly final_depth slices.
                 vol_3d = self.pad_or_resize_3d(
                     vol_3d, self.final_depth, self.final_size)
             else:
-                # In context mode, the depth is determined by slices_before + slices_after + 1.
-                # Optionally, apply resizing if needed.
-                pass
+                # In target_window mode, resize each slice to the final_size, preserving the current depth.
+                # This ensures each slice is resized to [final_size[0], final_size[1]].
+                vol_3d = F.interpolate(vol_3d.unsqueeze(0).unsqueeze(0),
+                                       size=(
+                                           vol_3d.shape[0], self.final_size[0], self.final_size[1]),
+                                       mode='trilinear', align_corners=False).squeeze(0).squeeze(0)
 
             out_path = os.path.join(out_dir, f"{sid}.pt")
             torch.save(vol_3d, out_path)
@@ -327,6 +341,5 @@ class DataPreprocessor:
 
 
 if __name__ == "__main__":
-    # Example usage: ensure that 'config.yml' is at the root or specify the correct path.
     preprocessor = DataPreprocessor("config.yml")
     preprocessor.process()

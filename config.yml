@@ -10,10 +10,6 @@ data:
   interim_path: "./data/interim"      # Intermediate transformed data
   processed:
     base_path: "./data/processed"     # Final canonical data sets
-    methods:
-      # method1: "processed_1"          # e.g., 1_slice method
-      # method2: "processed_18"         # e.g., 18_slice methods
-      # method3: "processed_32"         # e.g., 32_slice method
   tensors_path: "./data/processed/tensors"  # Final tensors for training
 
 # Kaggle API configuration for dataset download
@@ -24,7 +20,7 @@ kaggle:
 # Preprocessing parameters
 preprocessing:
   target_disc: "L4/L5"              # Target disc level to focus on
-  final_depth: 2                   # Desired depth (number of slices) in the final tensor (can be adjusted)
+  final_depth: 1                   # Desired depth (number of slices) in the final tensor (can be adjusted)
   final_size: [96, 96]              # Final (H, W) size for each processed slice
   cropped_size: [512, 512]          # Intermediate resize dimension before cropping
   cropping:
@@ -42,8 +38,8 @@ preprocessing:
         lower: 40
 
 # Preprocessing mode and context window configuration
-preprocessing_mode: "absolute"       # Options: "absolute" or "context"
-context:
+preprocessing_mode: "full_series"       # Options: "full_series" or "target_window"
+target_window:
   slices_before: 2                  # Number of slices before the target instance
   slices_after: 2                   # Number of slices after the target instance
 
