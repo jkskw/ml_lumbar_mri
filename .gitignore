@@ -1,7 +1,12 @@
 # Custom
-data
+/data/interim/*
+/data/processed/*
+/data/raw/*
+
 scripts
 examples
+temp
+images
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
