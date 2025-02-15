@@ -4,7 +4,7 @@
 Analiza porównawcza algorytmów uczenia maszynowego do analizy obrazów medycznych w celu oceny degeneracyjnych zmian kręgosłupa lędźwiowego. Praca obejmuje eksplorację metod głębokiego uczenia i ich potencjału diagnostycznego w interpretacji obrazów z rezonansu magnetycznego.
 
 ## CEL PRACY:
-Celem pracy jest pracowanie i walidacja modeli uczenia maszynowego do automatycznej identyfikacji i oceny degeneracyjnych zmian kręgosłupa lędźwiowego na podstawie obrazów z rezonansu magnetycznego. Proponowane rozwiązanie ma szansę znacząco wspierać proces diagnostyczny zarówno w ortopedii jaki i reumatologii.
+Celem pracy jest opracowanie i walidacja modeli uczenia maszynowego do automatycznej identyfikacji i oceny degeneracyjnych zmian kręgosłupa lędźwiowego na podstawie obrazów z rezonansu magnetycznego. Proponowane rozwiązanie ma szansę znacząco wspierać proces diagnostyczny zarówno w ortopedii jaki i reumatologii.
 
 ## ZADANIA DO WYKONANIA / ZAKRES PRACY:
 1. Przegląd literatury dotyczącej degeneracyjnych zmian kręgosłupa oraz metod analizy obrazów medycznych.
