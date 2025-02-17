@@ -50,7 +50,7 @@ class DataPreprocessor:
         if self.preprocessing_mode == "full_series":
             output_subdir = f"{self.preprocessing_mode}_{self.final_size[0]}x{self.final_size[1]}_{self.final_depth}D"
         else:
-            output_subdir = f"{self.preprocessing_mode}_{self.final_size[0]}x{self.final_size[1]}_B{self.slices_before}A{self.slices_after}"
+            output_subdir = f"{self.preprocessing_mode}_{self.final_size[0]}x{self.final_size[1]}_{int(self.slices_before) + int(self.slices_after) + 1}D_B{self.slices_before}A{self.slices_after}"
 
         self.output_dir = os.path.join(self.tensors_base_path, output_subdir)
         os.makedirs(self.output_dir, exist_ok=True)
