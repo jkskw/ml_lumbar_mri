@@ -4,25 +4,23 @@ project:
   description: "Automated evaluation of degenerative lumbar spine changes from MRI images using deep learning."
   seed: 42
 
-# Data configuration
-data:
-  raw_path: "./data/raw"            # Original, immutable data dump
-  interim_path: "./data/interim"      # Intermediate transformed data
-  processed:
-    base_path: "./data/processed"     # Final canonical data sets
-  tensors_path: "./data/processed/tensors"  # Final tensors for training
-
-# Kaggle API configuration for dataset download
+# Kaggle API config
 kaggle:
   competition: "rsna-2024-lumbar-spine-degenerative-classification"
-  download_path: "./data"           # Directory where the zip file will be downloaded
+  download_path: "./data"
+
+# Data configuration
+data:
+  raw_path: "./data/raw"
+  interim_path: "./data/interim/"
+  processed_path: "./data/processed"
 
 # Preprocessing parameters
 preprocessing:
-  target_disc: "L4/L5"              # Target disc level to focus on
-  final_depth: 1                   # Desired depth (number of slices) in the final tensor (can be adjusted)
-  final_size: [96, 96]              # Final (H, W) size for each processed slice
-  cropped_size: [512, 512]          # Intermediate resize dimension before cropping
+  target_disc: "L4/L5"
+  final_depth: 1
+  final_size: [96, 96]
+  cropped_size: [512, 512]
   cropping:
     scs:
       sagt2:
@@ -36,51 +34,43 @@ preprocessing:
         right: 32
         upper: 40
         lower: 40
+  mode: "target_window" # or "full_series"
+  target_window:
+    slices_before: 1
+    slices_after: 1
 
-# Preprocessing mode and context window configuration
-preprocessing_mode: "full_series"       # Options: "full_series" or "target_window"
-target_window:
-  slices_before: 2                  # Number of slices before the target instance
-  slices_after: 2                   # Number of slices after the target instance
 
-# Training hyperparameters
+# Model / Training configuration
 training:
-  epochs: 20
-  batch_size: 64
+  # Possible values (4 modes):
+  #  - single_multiclass
+  #  - single_binary
+  #  - multi_multiclass
+  #  - multi_binary
+  classification_mode: "multi_multiclass"  
+  
+  # Disease used for single-disease modes
+  disease: "lnfn"
+
+  # Name of the folder in data/interim containing .pt files
+  selected_tensor_folder: "target_window_128x128_5D_B2A2"
+
+  # Model architecture: "simple_3dcnn", "advanced_single", "advanced_single_improved", "advanced_multi", "resnet3d"
+  model_arch: "resnet3d"
+  
+  # Splitting
+  test_size: 0.2
+  validation_split_of_temp: 0.5
+
+  # Hyperparams
+  batch_size: 32
+  num_epochs: 50
   learning_rate: 0.001
-  optimizer: "adam"                 # Supported optimizers: adam, sgd, etc.
-  device: "cuda"                    # "cuda" for GPU training or "cpu"
-  num_workers: 4                    # For DataLoader
-  pin_memory: true
-
-# Model configuration
-model:
-  name: "AdvancedSpinal3DNet"
-  architecture: "3D CNN with BiLSTM and Attention"
-  input_channels: 1
-  num_classes:
-    scs: 3                        # Number of classes for Spinal Canal Stenosis
-    nfn: 3                        # Number of classes for Neural Foraminal Narrowing
   dropout_prob: 0.3
+  
+  # Early stopping
+  early_stopping_patience: 50
 
-# Evaluation settings
-evaluation:
-  metrics: ["accuracy", "precision", "recall", "f1_score"]
-  generate_confusion_matrix: true
-
-# Logging and experiment tracking configuration
-logging:
-  level: "INFO"
-  log_to_file: true
-  log_file: "./results/train.log"
-
-# MLflow configuration (optional)
-mlflow:
-  tracking_uri: "http://localhost:5000"   # Adjust if using a remote server
-  experiment_name: "LumbarSpineClassification"
-  log_model: true
-
-# Visualization parameters
-visualization:
-  figures_path: "./reports/figures"
-  dpi: 300
+  excluded_studies:
+    - 2780132468
+    - 2492114990
