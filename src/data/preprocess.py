@@ -40,8 +40,8 @@ class DataPreprocessor:
         self.cropping_dict = prep_cfg.get("cropping", {})
 
         # Mode: "full_series" or "target_window"
-        self.preprocessing_mode = self.config.get(
-            "preprocessing_mode", "full_series")
+        self.preprocessing_mode = prep_cfg.get(
+            "mode", "full_series")
         tw_cfg = self.config.get("target_window", {})
         self.slices_before = tw_cfg.get("slices_before", 0)
         self.slices_after = tw_cfg.get("slices_after", 0)
