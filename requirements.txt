@@ -24,3 +24,4 @@ transformers
 pyarrow
 fastparquet
 plotly
+ipywidgets
