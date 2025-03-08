@@ -1,11 +1,13 @@
 import os
 import csv
+import logging
 from datetime import datetime
 
 class TrainingLogger:
     """
     Logs epoch, train/val loss, train/val accuracy, etc., 
-    and saves them to CSV in a designated directory.
+    into a CSV file. Also creates a dedicated folder for 
+    saved models and logs.
     """
     def __init__(self, model_name_prefix="model_logs"):
         """
@@ -56,3 +58,34 @@ class TrainingLogger:
     def get_log_dir(self):
         """Returns the directory where logs and models are saved."""
         return self.log_dir
+
+
+def setup_python_logger(logger: logging.Logger, log_file_path: str):
+    """
+    Attach a file handler to the provided logger, so that 
+    all logging messages go to console and to a file at log_file_path.
+    """
+    # Remove existing handlers to avoid duplicate logs
+    for hdlr in logger.handlers[:]:
+        logger.removeHandler(hdlr)
+
+    logger.setLevel(logging.INFO)
+
+    # Console handler
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+
+    # File handler
+    fh = logging.FileHandler(log_file_path, mode='a')
+    fh.setLevel(logging.INFO)
+
+    # Format
+    formatter = logging.Formatter(
+        "[%(asctime)s %(levelname)s] %(name)s: %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S"
+    )
+    ch.setFormatter(formatter)
+    fh.setFormatter(formatter)
+
+    logger.addHandler(ch)
+    logger.addHandler(fh)
