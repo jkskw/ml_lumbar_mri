@@ -51,7 +51,6 @@ def evaluate_model(model_path: str, config_path: str = "config.yml", split: str 
     folder  = config["training"]["selected_tensor_folder"]
     model_arch = config["training"]["model_arch"]
     batch_size   = config["training"]["batch_size"]
-    dropout_prob = config["training"]["dropout_prob"]
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

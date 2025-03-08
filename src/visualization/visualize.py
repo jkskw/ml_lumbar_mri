@@ -48,22 +48,16 @@ def plot_training_curves(
     plt.show()
 
 
-def plot_confusion_matrix(
-    cm,
-    class_names=None,
-    title="Confusion Matrix",
-    figsize=(6,6)
-):
-    """
-    Plots a confusion matrix using Seaborn heatmap.
+def plot_confusion_matrix(cm, class_names=None, title="Confusion Matrix", figsize=(6,6)):
+    import matplotlib.pyplot as plt
+    import seaborn as sns
     
-    Args:
-        cm (np.ndarray): 2D array (C x C) with confusion matrix counts.
-        class_names (list[str], optional): Names of the classes for axis ticks.
-        title (str): Plot title.
-        figsize (tuple): Figure size.
-    """
     plt.figure(figsize=figsize)
+    
+    # If no class names provided, create default ones from the shape of cm.
+    if class_names is None:
+        class_names = [str(i) for i in range(cm.shape[0])]
+    
     sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", cbar=False,
                 xticklabels=class_names, yticklabels=class_names)
     
