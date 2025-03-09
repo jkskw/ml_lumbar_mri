@@ -15,7 +15,7 @@ from src.model.dataset import SingleDiseaseDataset, MultiLabelSpinalDataset
 from src.model.model_builder import build_model
 from src.utils.logger import TrainingLogger, setup_python_logger
 from src.visualization.visualize import plot_training_curves
-
+from src.model.dataset import custom_collate_filter_none
 
 def load_config(config_path):
     with open(config_path, "r") as f:
@@ -274,12 +274,20 @@ def train_model(config_path="config.yml"):
             sample_weights = [total_multi / multi_counts[label] for label in train_df["multi_label"].tolist()]
         sample_weights_tensor = torch.tensor(sample_weights, dtype=torch.float)
         sampler = torch.utils.data.WeightedRandomSampler(sample_weights_tensor, num_samples=len(sample_weights_tensor), replacement=True)
-        train_loader = DataLoader(train_ds, batch_size=batch_size, sampler=sampler)
+        train_loader = DataLoader(train_ds, batch_size=batch_size, sampler=sampler,
+                                collate_fn=custom_collate_filter_none)
         base_logger.info("Using WeightedRandomSampler for training DataLoader.")
     else:
-        train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
-    val_loader = DataLoader(val_ds, batch_size=batch_size, shuffle=False)
-    test_loader = DataLoader(test_ds, batch_size=batch_size, shuffle=False)
+        train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True,
+                                collate_fn=custom_collate_filter_none)
+    val_loader = DataLoader(val_ds, batch_size=batch_size, shuffle=False,
+                            collate_fn=custom_collate_filter_none)
+    test_loader = DataLoader(test_ds, batch_size=batch_size, shuffle=False,
+                            collate_fn=custom_collate_filter_none)
+
+    skipped_train = sum(1 for i in range(len(train_ds)) if train_ds[i][0] is None)
+    base_logger.info(f"Total training samples skipped due to incorrect dimensions: {skipped_train} out of {len(train_ds)}")
+    print(f"Total training samples skipped: {skipped_train} / {len(train_ds)}")
 
     # 7) Build model and criterion
     model, criterion = build_model(config, in_channels)
@@ -313,7 +321,10 @@ def train_model(config_path="config.yml"):
         running_loss, running_correct = 0.0, 0.0
         total_samples = 0
 
-        for inputs, targets in tqdm(train_loader, desc=f"Epoch {epoch+1}/{num_epochs} [Train]"):
+        for batch in tqdm(train_loader, desc=f"Epoch {epoch+1}/{num_epochs} [Train]"):
+            if batch is None:
+                continue  # Skip batch if no valid samples are present.
+            inputs, targets = batch
             inputs, targets = inputs.to(device), targets.to(device)
             optimizer.zero_grad()
             outputs = model(inputs)
@@ -345,7 +356,10 @@ def train_model(config_path="config.yml"):
         val_running_loss, val_running_correct = 0.0, 0.0
         val_samples = 0
         with torch.no_grad():
-            for inputs, targets in tqdm(val_loader, desc=f"Epoch {epoch+1}/{num_epochs} [Val]"):
+            for batch in tqdm(val_loader, desc=f"Epoch {epoch+1}/{num_epochs} [Val]"):
+                if batch is None:
+                    continue
+                inputs, targets = batch
                 inputs, targets = inputs.to(device), targets.to(device)
                 outputs = model(inputs)
                 val_loss = compute_loss(outputs, targets, classification_mode, criterion)

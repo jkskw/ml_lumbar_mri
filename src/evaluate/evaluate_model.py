@@ -8,7 +8,7 @@ import torch.nn as nn
 
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 from src.visualization.visualize import plot_confusion_matrix
-from src.model.dataset import SingleDiseaseDataset, MultiLabelSpinalDataset
+from src.model.dataset import SingleDiseaseDataset, MultiLabelSpinalDataset, custom_collate_filter_none
 from src.model.model_builder import build_model
 from src.model.train_model import create_data_splits, parse_depth_from_folder, parse_size_from_folder
 
@@ -19,9 +19,6 @@ def load_config(config_path: str = "config.yml") -> dict:
 
 
 def _to_predictions(outputs, classification_mode):
-    """
-    Convert logits -> discrete predictions.
-    """
     if classification_mode == "single_multiclass":
         return torch.argmax(outputs, dim=1)
     elif classification_mode == "single_binary":
@@ -62,19 +59,16 @@ def evaluate_model(model_path: str, config_path: str = "config.yml", split: str 
     interim_base = config["data"]["interim_path"]
     selected_path = os.path.join(interim_base, folder)
 
-    # Use the same parsing functions as training
     final_depth = parse_depth_from_folder(folder)
     final_size  = parse_size_from_folder(folder)
 
     df = pd.read_csv(raw_csv)
     
-    # For multi-disease, ensure that missing labels are dropped before deduplication.
     if classification_mode.startswith("single"):
         label_col = f"{disease}_label"
         df = df.dropna(subset=[label_col])
         df_dedup = df.groupby("study_id", as_index=False).first()
         df_dedup[label_col] = df_dedup[label_col].astype(int)
-        # Create the split using the shared helper.
         _, _, test_df = create_data_splits(df_dedup, label_col,
                                            test_size=config["training"]["test_size"],
                                            val_split=config["training"]["validation_split_of_temp"],
@@ -86,11 +80,9 @@ def evaluate_model(model_path: str, config_path: str = "config.yml", split: str 
                                        classification_mode=classification_mode)
     else:
         needed_cols = ["scs_label", "lnfn_label", "rnfn_label"]
-        # Drop studies missing any of the labels first, then deduplicate.
         df = df.dropna(subset=needed_cols)
         df_dedup = df.groupby("study_id", as_index=False).first()
         df_dedup[needed_cols] = df_dedup[needed_cols].astype(int)
-        # Create a combined column for stratification.
         df_dedup["multi_label"] = (df_dedup["scs_label"].astype(str) + "_" +
                                    df_dedup["lnfn_label"].astype(str) + "_" +
                                    df_dedup["rnfn_label"].astype(str))
@@ -106,7 +98,8 @@ def evaluate_model(model_path: str, config_path: str = "config.yml", split: str 
                                            final_depth, final_size,
                                            classification_mode)
     
-    loader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
+    # Use the custom collate function to filter out invalid samples.
+    loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, collate_fn=custom_collate_filter_none)
 
     # Build the model using the centralized model builder.
     model, _ = build_model(config, input_channels)
@@ -119,7 +112,10 @@ def evaluate_model(model_path: str, config_path: str = "config.yml", split: str 
     all_preds = []
 
     with torch.no_grad():
-        for x, y in tqdm(loader, desc=f"Evaluating on {split} set"):
+        for batch in tqdm(loader, desc=f"Evaluating on {split} set"):
+            if batch is None:
+                continue  # Skip batch if no valid samples are present.
+            x, y = batch
             x = x.to(device)
             y = y.to(device)
 
@@ -138,12 +134,11 @@ def evaluate_model(model_path: str, config_path: str = "config.yml", split: str 
         all_targets = np.array(all_targets).flatten()
         all_preds   = np.array(all_preds).flatten()
     else:
-        all_targets = np.concatenate(all_targets, axis=0)  # Shape: (num_studies, 3)
+        all_targets = np.concatenate(all_targets, axis=0)
         all_preds   = np.concatenate(all_preds, axis=0)
 
     print("[INFO] Evaluation Completed.\n")
 
-    # Reporting metrics
     if classification_mode in ["single_multiclass", "single_binary"]:
         acc = accuracy_score(all_targets, all_preds)
         print(f"Accuracy: {acc:.4f}")
@@ -165,7 +160,6 @@ def evaluate_model(model_path: str, config_path: str = "config.yml", split: str 
             print(classification_report(t, p, zero_division=0))
             cm = confusion_matrix(t, p)
             print("Confusion Matrix:\n", cm, "\n")
-            # Adjust class names as needed:
             class_names = ["0", "1", "2"] if classification_mode == "multi_multiclass" else ["0", "1"]
             plot_confusion_matrix(cm, class_names=class_names,
                                   title=f"{dname} Confusion Matrix")

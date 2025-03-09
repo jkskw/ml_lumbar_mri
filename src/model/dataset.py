@@ -48,26 +48,22 @@ class SingleDiseaseDataset(Dataset):
                  dataframe: pd.DataFrame,
                  disease: str,
                  tensor_dir: str,
-                 # The next two are no longer forced in code, but we keep them for your constructor signature
                  final_depth: int,  
                  final_size: tuple,
                  classification_mode: str = "single_multiclass",
                  transform=None):
-        """
-        Args:
-            dataframe: Must have "study_id" and a column like "<disease>_label".
-            disease: e.g. "lnfn", "scs", or "rnfn".
-            tensor_dir: Path to .pt files for that disease.
-            final_depth, final_size: Not actually used to override shapes, but retained for signature.
-            classification_mode: "single_multiclass" or "single_binary".
-            transform: Optional transform on the 4D volume.
-        """
         super().__init__()
         self.data = dataframe.reset_index(drop=True)
         self.disease = disease
         self.tensor_dir = tensor_dir
         self.classification_mode = classification_mode
         self.transform = transform
+        
+        # Store expected dimensions from config.
+        self.final_depth = final_depth
+        self.final_size = final_size  # (height, width)
+        # Expected tensor shape on disk: [D, H, W]
+        self.expected_shape = (final_depth, final_size[0], final_size[1])
 
     def __len__(self):
         return len(self.data)
@@ -75,37 +71,35 @@ class SingleDiseaseDataset(Dataset):
     def _load_tensor(self, study_id: int) -> torch.Tensor:
         file_path = os.path.join(self.tensor_dir, f"{int(study_id)}.pt")
         if os.path.exists(file_path):
-            # Physically stored shape, e.g. [D, H, W]
-            tensor = torch.load(file_path)
+            tensor = torch.load(file_path)  # shape: [D, H, W]
         else:
-            # If missing, fallback to an empty volume or minimal shape.
-            # e.g. shape [1,1], though you might want [0,0] or some other fallback.
-            tensor = torch.zeros((1,1,1), dtype=torch.float32)
+            tensor = torch.zeros((1, 1, 1), dtype=torch.float32)
         return tensor
 
     def _to_binary(self, label: int) -> int:
-        # For single_binary: 0 => 0, else => 1
         return 0 if label == 0 else 1
 
     def __getitem__(self, idx: int):
         row = self.data.iloc[idx]
         study_id = row["study_id"]
 
-        # 1) Load the disk shape [D,H,W].
+        # 1) Load tensor from disk
         vol_3d = self._load_tensor(study_id)
+        # Check the loaded tensor’s shape
+        if vol_3d.shape != self.expected_shape:
+            # print(f"[WARN] Skipping study_id={study_id}: tensor shape {vol_3d.shape} does not match expected {self.expected_shape}.")
+            return None, None
 
-        # 2) Insert channel dimension => [1, D, H, W]
+        # 2) Unsqueeze channel dimension: [1, D, H, W]
         vol_4d = vol_3d.unsqueeze(0)
-
         if self.transform:
             vol_4d = self.transform(vol_4d)
 
         # 3) Build label
         raw_label = int(row[f"{self.disease}_label"])
         if self.classification_mode == "single_multiclass":
-            label = torch.tensor(raw_label, dtype=torch.long)  # e.g. 0..2
+            label = torch.tensor(raw_label, dtype=torch.long)
         else:
-            # single_binary
             label = torch.tensor([self._to_binary(raw_label)], dtype=torch.float32)
 
         return vol_4d, label
@@ -126,14 +120,6 @@ class MultiLabelSpinalDataset(Dataset):
                  final_size: tuple,
                  classification_mode: str = "multi_multiclass",
                  transform=None):
-        """
-        Args:
-            dataframe: Must have "study_id", "scs_label", "lnfn_label", "rnfn_label".
-            scs_dir, lnfn_dir, rnfn_dir: Paths to .pt files for each condition.
-            final_depth, final_size: Not forcibly used to override shapes, but retained for signature.
-            classification_mode: "multi_multiclass" or "multi_binary".
-            transform: optional transform on the 4D volume.
-        """
         super().__init__()
         self.data = dataframe.reset_index(drop=True)
         self.scs_dir = scs_dir
@@ -142,17 +128,19 @@ class MultiLabelSpinalDataset(Dataset):
         self.classification_mode = classification_mode
         self.transform = transform
 
+        self.final_depth = final_depth
+        self.final_size = final_size  # (height, width)
+        self.expected_shape = (final_depth, final_size[0], final_size[1])
+
     def __len__(self):
         return len(self.data)
 
     def _load_tensor(self, directory: str, study_id: int) -> torch.Tensor:
         file_path = os.path.join(directory, f"{int(study_id)}.pt")
         if os.path.exists(file_path):
-            # e.g. shape [D,H,W]
-            tensor = torch.load(file_path)
+            tensor = torch.load(file_path)  # shape: [D, H, W]
         else:
-            # Fallback minimal shape
-            tensor = torch.zeros((1,1,1), dtype=torch.float32)
+            tensor = torch.zeros((1, 1, 1), dtype=torch.float32)
         return tensor
 
     def _to_binary(self, label: int) -> int:
@@ -162,41 +150,56 @@ class MultiLabelSpinalDataset(Dataset):
         row = self.data.iloc[idx]
         study_id = row["study_id"]
 
-        # 1) Load each .pt => e.g. [D,H,W]
+        # Load each tensor
         scs_t  = self._load_tensor(self.scs_dir,  study_id)
         lnfn_t = self._load_tensor(self.lnfn_dir, study_id)
         rnfn_t = self._load_tensor(self.rnfn_dir, study_id)
 
-        # if not( scs_t.shape == lnfn_t.shape == rnfn_t.shape ):
-        # # You can either 
-        # # 1) raise an exception that the DataLoader will catch
-        # # 2) or return None, None and handle in __len__, etc.
-        #     return None, None
+        # Check each tensor’s shape
+        if scs_t.shape != self.expected_shape:
+            # print(f"[WARN] Skipping study_id={study_id} (scs): tensor shape {scs_t.shape} does not match expected {self.expected_shape}.")
+            return None, None
+        if lnfn_t.shape != self.expected_shape:
+            # print(f"[WARN] Skipping study_id={study_id} (lnfn): tensor shape {lnfn_t.shape} does not match expected {self.expected_shape}.")
+            return None, None
+        if rnfn_t.shape != self.expected_shape:
+            # print(f"[WARN] Skipping study_id={study_id} (rnfn): tensor shape {rnfn_t.shape} does not match expected {self.expected_shape}.")
+            return None, None
 
+        # Optionally, you can still unify shapes if needed
         scs_t, lnfn_t, rnfn_t = unify_3d_volumes_to_max_shape([scs_t, lnfn_t, rnfn_t])
-
     
-        # 2) Stack => shape [3, D, H, W]
+        # Stack into a 4D tensor: [3, D, H, W]
         vol_4d = torch.stack([scs_t, lnfn_t, rnfn_t], dim=0)
-
         if self.transform:
             vol_4d = self.transform(vol_4d)
 
-        # 3) Build label => shape [3]
+        # Build label vector [scs_label, lnfn_label, rnfn_label]
         scs_raw  = int(row["scs_label"])
         lnfn_raw = int(row["lnfn_label"])
         rnfn_raw = int(row["rnfn_label"])
-
         if self.classification_mode == "multi_multiclass":
             scs_lbl  = torch.tensor(scs_raw,  dtype=torch.long)
             lnfn_lbl = torch.tensor(lnfn_raw, dtype=torch.long)
             rnfn_lbl = torch.tensor(rnfn_raw, dtype=torch.long)
         else:
-            # multi_binary => 0 vs 1
             scs_lbl  = torch.tensor(self._to_binary(scs_raw),  dtype=torch.float32)
             lnfn_lbl = torch.tensor(self._to_binary(lnfn_raw), dtype=torch.float32)
             rnfn_lbl = torch.tensor(self._to_binary(rnfn_raw), dtype=torch.float32)
+        label_1d = torch.stack([scs_lbl, lnfn_lbl, rnfn_lbl])  # shape: [3]
 
-        label_1d = torch.stack([scs_lbl, lnfn_lbl, rnfn_lbl])  # shape [3]
+        # Also check the stacked tensor’s overall shape
+        expected_stacked_shape = (3, self.expected_shape[0], self.expected_shape[1], self.expected_shape[2])
+        if vol_4d.shape != expected_stacked_shape:
+            # print(f"[WARN] Skipping study_id={study_id}: stacked tensor shape {vol_4d.shape} does not match expected {expected_stacked_shape}.")
+            return None, None
 
         return vol_4d, label_1d
+
+def custom_collate_filter_none(batch):
+    # Filter out samples that are None.
+    filtered = [item for item in batch if item[0] is not None and item[1] is not None]
+    if len(filtered) == 0:
+        # If every sample in the batch was discarded, return an empty batch.
+        return None
+    return torch.utils.data.default_collate(filtered)
