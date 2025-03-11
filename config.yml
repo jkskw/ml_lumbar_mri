@@ -47,30 +47,47 @@ training:
   #  - single_binary
   #  - multi_multiclass
   #  - multi_binary
-  classification_mode: "multi_multiclass"  
+  classification_mode: "single_multiclass"  
   
   # Disease used for single-disease modes
   disease: "lnfn"
 
   # Name of the folder in data/interim containing .pt files
-  selected_tensor_folder: "target_window_128x128_5D_B2A2"
+  # selected_tensor_folder: "target_window_128x128_3D_B1A1"
+  selected_tensor_folder: "target_window_128x128_3D_B1A1"
 
   # Model architecture: "simple_3dcnn", "advanced_single", "advanced_single_improved", "advanced_multi", "resnet3d"
-  model_arch: "resnet3d"
+  model_arch: "advanced_single_improved"
   
   # Splitting
   test_size: 0.2
   validation_split_of_temp: 0.5
 
   # Hyperparams
-  batch_size: 32
-  num_epochs: 50
+  batch_size: 16
+  num_epochs: 200
+
   learning_rate: 0.001
-  dropout_prob: 0.3
-  
+  use_lr_scheduler: false
+  lr_scheduler_patience: 5
+  lr_scheduler_factor: 0.1
+
+  dropout_prob: 0.5
+
   # Early stopping
-  early_stopping_patience: 50
+  early_stopping_patience: 200
 
   excluded_studies:
     - 2780132468
     - 2492114990
+    - 3294654272
+    - 665627263
+
+  # Handling imbalanced data
+  imbalance:
+    use_class_weights: true       # Set to true to apply class weighting in the loss function.
+    use_weighted_sampler: false      # Set to true to use a WeightedRandomSampler in your DataLoader.
+    loss_type: "cross_entropy"      # Options: "cross_entropy" or "focal"
+    focal:
+      alpha: [0.3, 0.8, 1.0]                   # Alpha parameter for focal loss.
+      gamma: 3.0                    # Gamma parameter for focal loss.
