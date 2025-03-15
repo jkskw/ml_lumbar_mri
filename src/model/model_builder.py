@@ -1,115 +1,53 @@
 import torch.nn as nn
+import importlib
 
-from src.model.models import (
-    Simple3DCNN,
-    AdvancedSpinal3DNetSingle,
-    AdvancedSpinal3DNetImproved,
-    AdvancedSpinal3DNetMulti,
-    ResNet3D
-)
-from src.utils.enums import ClassificationMode, ModelArchitecture
+from src.utils.enums import ClassificationMode
+from src.utils.registry import MODEL_REGISTRY
 
-
-def _get_model_and_criterion(
-    classification_mode: ClassificationMode,
-    model_arch: ModelArchitecture,
-    input_channels: int,
-    dropout_prob: float
-):
+def load_model(model_name, **kwargs):
     """
-    Internal helper to build the correct model + criterion given classification mode and architecture.
+    Dynamically loads a model class from the registered module.
+    
+    :param model_name: Name of the model class (as defined in the registry).
+    :param kwargs: Additional arguments to pass to the model constructor.
+    :return: Instantiated model object.
     """
-    if classification_mode in [ClassificationMode.SINGLE_MULTICLASS, ClassificationMode.SINGLE_BINARY]:
-        # Single-disease
-        num_classes = 3 if classification_mode == ClassificationMode.SINGLE_MULTICLASS else 1
+    if model_name not in MODEL_REGISTRY:
+        raise ValueError(f"Model '{model_name}' is not registered. Available models: {list(MODEL_REGISTRY.keys())}")
 
-        # Pick model architecture
-        if model_arch == ModelArchitecture.SIMPLE_3DCNN:
-            model = Simple3DCNN(
-                num_classes=num_classes,
-                input_channels=input_channels,
-                dropout_prob=dropout_prob
-            )
-        elif model_arch == ModelArchitecture.ADVANCED_SINGLE:
-            model = AdvancedSpinal3DNetSingle(
-                num_classes=num_classes,
-                input_channels=input_channels,
-                dropout_prob=dropout_prob
-            )
-        elif model_arch == ModelArchitecture.ADVANCED_SINGLE_IMPROVED:
-            model = AdvancedSpinal3DNetImproved(
-                num_classes=num_classes,
-                input_channels=input_channels,
-                dropout_prob=dropout_prob
-            )
-        else:
-            # Fallback
-            model = Simple3DCNN(
-                num_classes=num_classes,
-                input_channels=input_channels,
-                dropout_prob=dropout_prob
-            )
+    module_path = MODEL_REGISTRY[model_name]
+    module = importlib.import_module(module_path)
+    model_class = getattr(module, model_name)
 
-        # Criterion
-        if classification_mode == ClassificationMode.SINGLE_MULTICLASS:
-            criterion = nn.CrossEntropyLoss()
-        else:  # SINGLE_BINARY
-            criterion = nn.BCEWithLogitsLoss()
-
-    else:
-        # Multi-disease
-        # The model will produce 3 heads, each either multiclass(3) or binary(1)
-        if model_arch == ModelArchitecture.RESNET3D:
-            model = ResNet3D(
-                input_channels=input_channels,
-                block_channels=[32, 64, 128],
-                num_blocks=[2, 2, 2],
-                classification_mode=classification_mode.value,
-                dropout_prob=dropout_prob
-            )
-        elif model_arch == ModelArchitecture.ADVANCED_MULTI:
-            output_mode = "multi_multiclass" if classification_mode == ClassificationMode.MULTI_MULTICLASS else "multi_binary"
-            model = AdvancedSpinal3DNetMulti(
-                input_channels=input_channels,
-                dropout_prob=dropout_prob,
-                output_mode=output_mode
-            )
-        else:
-            # Fallback to advanced multi
-            output_mode = "multi_multiclass" if classification_mode == ClassificationMode.MULTI_MULTICLASS else "multi_binary"
-            model = AdvancedSpinal3DNetMulti(
-                input_channels=input_channels,
-                dropout_prob=dropout_prob,
-                output_mode=output_mode
-            )
-
-        # Criterion
-        if classification_mode == ClassificationMode.MULTI_MULTICLASS:
-            criterion = nn.CrossEntropyLoss()
-        else:  # MULTI_BINARY
-            criterion = nn.BCEWithLogitsLoss()
-
-    return model, criterion
+    return model_class(**kwargs)
 
 
 def build_model(config: dict, in_channels: int):
     """
-    Reads classification_mode, model_arch, dropout_prob from config
-    and returns (model, criterion).
+    Constructs a model based on a given configuration.
+    
+    :param config: Dictionary containing model parameters.
+    :param in_channels: Number of input channels (e.g., 1 for T1/T2 separately, 2 for combined).
+    :return: Instantiated model and loss criterion.
     """
-
-    classification_str = config["training"]["classification_mode"]
-    model_arch_str = config["training"]["model_arch"]
+    model_name = config["training"]["model_arch"]
+    classification_mode = ClassificationMode(config["training"]["classification_mode"])
     dropout_prob = config["training"]["dropout_prob"]
 
-    # Convert string to Enum
-    classification_mode = ClassificationMode(classification_str)
-    model_arch = ModelArchitecture(model_arch_str)
+    num_classes = 3 if classification_mode == ClassificationMode.SINGLE_MULTICLASS else 1
 
-    model, criterion = _get_model_and_criterion(
-        classification_mode=classification_mode,
-        model_arch=model_arch,
+    # Load model dynamically
+    model = load_model(
+        model_name=model_name,
+        num_classes=num_classes,
         input_channels=in_channels,
         dropout_prob=dropout_prob
     )
+
+    # Set loss function
+    if classification_mode == ClassificationMode.SINGLE_MULTICLASS:
+        criterion = nn.CrossEntropyLoss()
+    else:
+        criterion = nn.BCEWithLogitsLoss()
+
     return model, criterion

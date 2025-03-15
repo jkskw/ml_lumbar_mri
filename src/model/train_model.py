@@ -205,7 +205,6 @@ def train_model(config_path="config.yml"):
     classification_str = config["training"]["classification_mode"]
     classification_mode = ClassificationMode(classification_str)
     disease = config["training"]["disease"]
-    folder = config["training"]["selected_tensor_folder"]
     test_size = config["training"]["test_size"]
     val_split = config["training"]["validation_split_of_temp"]
     batch_size = config["training"]["batch_size"]
@@ -284,8 +283,6 @@ def train_model(config_path="config.yml"):
                                   collate_fn=custom_collate_filter_none)
     val_loader = DataLoader(val_ds, batch_size=batch_size, shuffle=False,
                             collate_fn=custom_collate_filter_none)
-    test_loader = DataLoader(test_ds, batch_size=batch_size, shuffle=False,
-                             collate_fn=custom_collate_filter_none)
 
     skipped_train = sum(1 for i in range(len(train_ds)) if train_ds[i][0] is None)
     base_logger.info(f"Total training samples skipped due to incorrect dimensions: {skipped_train} out of {len(train_ds)}")
@@ -297,6 +294,13 @@ def train_model(config_path="config.yml"):
     model.to(device)
     optimizer = optim.Adam(model.parameters(), lr=lr)
     base_logger.info(f"Initial learning rate: {lr:.6f}")
+
+    if config["training"].get("pretrained_ckpt_path", None):
+        ckpt_path = config["training"]["pretrained_ckpt_path"]
+        print(f"[INFO] Loading pretrained weights from: {ckpt_path}")
+        state_dict = torch.load(ckpt_path, map_location=device)
+        # If some keys do not match exactly, you can do strict=False:
+        model.load_state_dict(state_dict, strict=False)
 
     # Initialize LR scheduler if enabled
     if config["training"].get("use_lr_scheduler", False):
@@ -327,6 +331,7 @@ def train_model(config_path="config.yml"):
     base_logger.info(f"Device = {device}, LR={lr:.6f}, BatchSize={batch_size}, Epochs={num_epochs}, Dropout={dropout_prob}")
 
     best_val_acc = 0.0
+    best_val_loss = float('inf')
     patience_counter = 0
     train_losses, val_losses = [], []
     train_accs, val_accs = [], []
@@ -413,7 +418,16 @@ def train_model(config_path="config.yml"):
             if patience_counter >= early_stopping_patience:
                 base_logger.info(f"[INFO] Early stopping at epoch {epoch+1}. No improvement in {patience_counter} epochs.")
                 break
+        
+        if avg_val_loss < best_val_loss:
+            best_val_loss = avg_val_loss
+            best_path = os.path.join(logger.get_log_dir(), "best_val_loss_model.pth")
+            torch.save(model.state_dict(), best_path)
+            base_logger.info(f">> New best model saved at {best_path}")
 
     # 10) Plot training curves
     # plot_training_curves(train_losses, val_losses, train_accs, val_accs, figsize=(10, 5))
     base_logger.info(f"[INFO] Training complete. Logs & model in {logger.get_log_dir()}")
+
+if __name__ == "__main__":
+    train_model()

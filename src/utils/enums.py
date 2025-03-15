@@ -1,4 +1,5 @@
 from enum import Enum
+from src.utils.registry import MODEL_REGISTRY
 
 class ClassificationMode(Enum):
     SINGLE_MULTICLASS = "single_multiclass"
@@ -6,9 +7,4 @@ class ClassificationMode(Enum):
     MULTI_MULTICLASS = "multi_multiclass"
     MULTI_BINARY = "multi_binary"
 
-class ModelArchitecture(Enum):
-    SIMPLE_3DCNN = "simple_3dcnn"
-    ADVANCED_SINGLE = "advanced_single"
-    ADVANCED_SINGLE_IMPROVED = "advanced_single_improved"
-    ADVANCED_MULTI = "advanced_multi"
-    RESNET3D = "resnet3d"
+ModelArchitecture = Enum("ModelArchitecture", {name: name for name in MODEL_REGISTRY.keys()})
