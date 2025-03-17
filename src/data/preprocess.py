@@ -8,156 +8,154 @@ import pydicom as dcm
 from glob import glob
 from tqdm.auto import tqdm
 
-
 class DataPreprocessor:
     """
-    A class to preprocess lumbar MRI DICOM images by:
-      1) Merging train_series_descriptions.csv and train_label_coordinates.csv
-         into a single merged DataFrame (with height/width from actual DICOM files).
-      2) Merging classification labels (Normal/Mild->0, Moderate->1, Severe->2) from train.csv
-         for L4/L5 disc:
-           - spinal_canal_stenosis_l4_l5
-           - left_neural_foraminal_narrowing_l4_l5
-           - right_neural_foraminal_narrowing_l4_l5
-      3) Saving that final merged DataFrame to merged_train_data.csv (containing all needed columns)
-         ONLY if it doesn't exist already; otherwise we load it directly.
-      4) Filtering out Axial T2, focusing on the target disc, building .pt volumes in
-         scs / lnfn / rnfn subfolders (depending on 'condition').
+    A class to preprocess lumbar MRI DICOM images for multiple discs, building
+    scs_label, lnfn_label, rnfn_label columns dynamically.
+
+    It:
+      1) Merges train_series_descriptions.csv + train_label_coordinates.csv => preliminary df
+      2) Merges classification labels from train.csv for *all discs*:
+         e.g. spinal_canal_stenosis_l1_l2, l2_l3, l4_l5, l5_s1, etc.
+      3) Unifies them into single scs_label, lnfn_label, rnfn_label columns
+         based on each row's "level".
+      4) Filters out Axial T2, focuses on the discs in `discs_to_process`.
+      5) Saves .pt volumes in subfolders scs/, lnfn/, rnfn/.
     """
 
-    def __init__(self, config_path: str):
+    def __init__(self, config_path: str = "config.yml"):
         self.config = self.load_config(config_path)
-        self.raw_path = self.config["data"].get("raw_path", "./data/raw")
-        self.tensors_base_path = self.config["data"].get(
-            "interim_path", "./data/interim")
+        self.raw_path = self.config["data"]["raw_path"]
+        self.interim_base_path = self.config["data"]["interim_base_path"]
 
-        # Preprocessing settings
         prep_cfg = self.config["preprocessing"]
-        self.target_disc = prep_cfg.get("target_disc", "L4/L5")
-        self.final_depth = prep_cfg.get("final_depth", 32)
-        self.final_size = tuple(prep_cfg.get("final_size", [96, 96]))
-        self.cropped_size = tuple(prep_cfg.get("cropped_size", [512, 512]))
-        self.cropping_dict = prep_cfg.get("cropping", {})
+        self.discs_to_process = prep_cfg["discs_to_process"]
+        self.final_depth = prep_cfg["final_depth"]
+        self.final_size = tuple(prep_cfg["final_size"])
+        self.cropped_size = tuple(prep_cfg["cropped_size"])
+        self.cropping_dict = prep_cfg["cropping"]
+        self.mode = prep_cfg["mode"]
 
-        # Mode: "full_series" or "target_window"
-        self.preprocessing_mode = prep_cfg.get(
-            "mode", "full_series")
-        tw_cfg = self.config.get("target_window", {})
-        self.slices_before = tw_cfg.get("slices_before", 0)
-        self.slices_after = tw_cfg.get("slices_after", 0)
+        tw = prep_cfg["target_window"]
+        self.slices_before = tw["slices_before"]
+        self.slices_after = tw["slices_after"]
 
-        # Decide output subdirectory name
-        if self.preprocessing_mode == "full_series":
-            output_subdir = f"{self.preprocessing_mode}_{self.final_size[0]}x{self.final_size[1]}_{self.final_depth}D"
+        # Decide subfolder name, e.g. target_window_128x128_5D_B2A2
+        if self.mode == "full_series":
+            self.output_subfolder = f"full_series_{self.final_size[0]}x{self.final_size[1]}_{self.final_depth}D"
         else:
-            output_subdir = f"{self.preprocessing_mode}_{self.final_size[0]}x{self.final_size[1]}_{int(self.slices_before) + int(self.slices_after) + 1}D_B{self.slices_before}A{self.slices_after}"
+            depth = self.slices_before + self.slices_after + 1
+            self.output_subfolder = f"target_window_{self.final_size[0]}x{self.final_size[1]}_{depth}D_B{self.slices_before}A{self.slices_after}"
 
-        self.output_dir = os.path.join(self.tensors_base_path, output_subdir)
-        os.makedirs(self.output_dir, exist_ok=True)
+        print(f"[INFO] DataPreprocessor init: building volumes in subfolders like {self.output_subfolder}")
 
-        print(f"[INFO] Processed tensors will be saved in: {self.output_dir}")
+    def load_config(self, path: str) -> dict:
+        with open(path, "r") as f:
+            return yaml.safe_load(f)
 
-    def load_config(self, config_path: str) -> dict:
-        with open(config_path, "r") as f:
-            config = yaml.safe_load(f)
-        print("[INFO] Loaded configuration:")
-        print(config)
-        return config
+    def disc_to_suffix(self, level_str: str) -> str:
+        """
+        Converts a level like 'L4/L5' -> 'l4_l5', 'L5/S1' -> 'l5_s1'.
+        We'll use this to find the right column in train.csv 
+        e.g. 'spinal_canal_stenosis_l5_s1'.
+        """
+        return level_str.lower().replace("/", "_")
 
     def build_merged_train_data(self) -> pd.DataFrame:
         """
         Builds or loads 'merged_train_data.csv'.
-        If the file already exists, we load and return it.
+        If the file already exists, loads it directly.
+
         Otherwise:
-          1) Merges train_series_descriptions.csv + train_label_coordinates.csv => preliminary df
-          2) Adds [height, width] from DICOM scanning
-          3) Merges classification columns for L4/L5 from train.csv => numeric columns scs_label, lnfn_label, rnfn_label
-          4) Saves the final DataFrame to 'merged_train_data.csv' in data/raw
-          5) Returns that DataFrame
+          1) merges train_series_descriptions.csv + train_label_coordinates.csv 
+             => merged_df
+          2) merges *all* columns from train.csv 
+             => e.g. spinal_canal_stenosis_l5_s1, etc.
+          3) for each row, unify them into scs_label, lnfn_label, rnfn_label 
+             using row['level'].
+          4) writes merged_train_data.csv.
         """
         merged_csv_path = os.path.join(self.raw_path, "merged_train_data.csv")
-        if os.path.isfile(merged_csv_path):
-            print(
-                f"[INFO] '{merged_csv_path}' already exists. Loading it directly.")
+        if os.path.exists(merged_csv_path):
+            print(f"[INFO] Using existing {merged_csv_path}")
             return pd.read_csv(merged_csv_path)
 
-        # (a) read series and label coordinates
-        series_csv = os.path.join(
-            self.raw_path, "train_series_descriptions.csv")
+        # read series + label coords
+        series_csv = os.path.join(self.raw_path, "train_series_descriptions.csv")
         labels_csv = os.path.join(self.raw_path, "train_label_coordinates.csv")
 
         df_series = pd.read_csv(series_csv)
         df_labels = pd.read_csv(labels_csv)
-        merged_df = pd.merge(df_labels, df_series, on=[
-                             "study_id", "series_id"], how="inner")
-        print(f"[INFO] Merged shape before DICOM shape: {merged_df.shape}")
+        merged_df = pd.merge(df_labels, df_series, on=["study_id","series_id"], how="inner")
 
-        # (b) compute shape
+        # compute shape from DICOM
         shapes = []
         for _, row in tqdm(merged_df.iterrows(), total=len(merged_df), desc="Computing DICOM shapes"):
-            h, w = self.get_dicom_shape(
-                row["study_id"], row["series_id"], row["instance_number"])
-            shapes.append((h, w))
+            h, w = self.get_dicom_shape(row["study_id"], row["series_id"], row["instance_number"])
+            shapes.append((h,w))
         merged_df["height"] = [s[0] for s in shapes]
-        merged_df["width"] = [s[1] for s in shapes]
-        merged_df.dropna(subset=["height", "width"], inplace=True)
+        merged_df["width"]  = [s[1] for s in shapes]
+        merged_df.dropna(subset=["height","width"], inplace=True)
         merged_df["height"] = merged_df["height"].astype(int)
-        merged_df["width"] = merged_df["width"].astype(int)
+        merged_df["width"]  = merged_df["width"].astype(int)
 
-        # (c) merge classification labels from train.csv for L4/L5
+        # read train.csv with columns for *all discs*
         train_csv = os.path.join(self.raw_path, "train.csv")
-        if os.path.isfile(train_csv):
-            df_train = pd.read_csv(train_csv)
-            keep_cols = [
-                "study_id",
-                "spinal_canal_stenosis_l4_l5",
-                "left_neural_foraminal_narrowing_l4_l5",
-                "right_neural_foraminal_narrowing_l4_l5",
-            ]
-            df_train = df_train[keep_cols].copy()
+        df_train = pd.read_csv(train_csv)  # must contain e.g. spinal_canal_stenosis_l5_s1, etc.
 
-            # map text -> numeric
-            label_map = {
-                "Normal/Mild": 0,
-                "Moderate": 1,
-                "Severe": 2
-            }
-            df_train["scs_label"] = df_train["spinal_canal_stenosis_l4_l5"].map(
-                label_map)
-            df_train["lnfn_label"] = df_train["left_neural_foraminal_narrowing_l4_l5"].map(
-                label_map)
-            df_train["rnfn_label"] = df_train["right_neural_foraminal_narrowing_l4_l5"].map(
-                label_map)
+        # Merge them => now merged_df has all columns from train.csv
+        merged_df = pd.merge(merged_df, df_train, on="study_id", how="left")
 
-            df_train.drop(
-                columns=["spinal_canal_stenosis_l4_l5", "left_neural_foraminal_narrowing_l4_l5",
-                         "right_neural_foraminal_narrowing_l4_l5"],
-                inplace=True
-            )
+        # define the text->int label map for the degenerative labels
+        label_map = {
+            "Normal/Mild": 0,
+            "Moderate": 1,
+            "Severe": 2
+        }
 
-            merged_df = pd.merge(merged_df, df_train,
-                                 on="study_id", how="left")
-        else:
-            print(
-                f"[WARNING] {train_csv} not found, skipping classification label merge.")
+        # define pickers
+        def pick_scs_label(row):
+            disc_suffix = self.disc_to_suffix(row["level"])   # e.g. "l5_s1"
+            col_name = f"spinal_canal_stenosis_{disc_suffix}" # e.g. "spinal_canal_stenosis_l5_s1"
+            if col_name not in row:
+                return None
+            raw_val = row[col_name]  # might be "Moderate", or NaN
+            return label_map.get(raw_val, None)
+
+        def pick_lnfn_label(row):
+            disc_suffix = self.disc_to_suffix(row["level"])
+            col_name = f"left_neural_foraminal_narrowing_{disc_suffix}"
+            if col_name not in row:
+                return None
+            raw_val = row[col_name]
+            return label_map.get(raw_val, None)
+
+        def pick_rnfn_label(row):
+            disc_suffix = self.disc_to_suffix(row["level"])
+            col_name = f"right_neural_foraminal_narrowing_{disc_suffix}"
+            if col_name not in row:
+                return None
+            raw_val = row[col_name]
+            return label_map.get(raw_val, None)
+
+        merged_df["scs_label"]  = merged_df.apply(pick_scs_label, axis=1)
+        merged_df["lnfn_label"] = merged_df.apply(pick_lnfn_label, axis=1)
+        merged_df["rnfn_label"] = merged_df.apply(pick_rnfn_label, axis=1)
 
         merged_df.to_csv(merged_csv_path, index=False)
-        print(
-            f"[INFO] Final merged CSV with classification saved to {merged_csv_path}, shape={merged_df.shape}")
+        print(f"[INFO] Wrote merged_train_data.csv with shape={merged_df.shape}")
         return merged_df
 
-    def get_dicom_shape(self, study_id: int, series_id: int, instance_number: int):
-        dcm_path = os.path.join(
-            self.raw_path, "train_images", str(study_id), str(series_id),
-            f"{int(instance_number)}.dcm"
-        )
+    def get_dicom_shape(self, study_id, series_id, instance_num):
+        # read actual DICOM to get shape
+        dcm_path = os.path.join(self.raw_path, "train_images", str(study_id), str(series_id), f"{int(instance_num)}.dcm")
         if not os.path.isfile(dcm_path):
             return None, None
         ds = dcm.dcmread(dcm_path)
         arr = ds.pixel_array
         return arr.shape[0], arr.shape[1]
 
-    def load_and_normalize_dicom(self, dicom_path: str) -> torch.Tensor:
+    def load_and_normalize_dicom(self, dicom_path):
         ds = dcm.dcmread(dicom_path)
         arr = ds.pixel_array.astype(np.float32)
         t = torch.from_numpy(arr)
@@ -168,65 +166,50 @@ class DataPreprocessor:
         t /= (t.max() + 1e-6)
         return t
 
-    def resize_2d(self, image: torch.Tensor, out_h: int, out_w: int) -> torch.Tensor:
-        image = image.unsqueeze(0).unsqueeze(0)  # [B=1, C=1, H, W]
-        resized = F.interpolate(image, size=(
-            out_h, out_w), mode='bilinear', align_corners=False)
-        return resized.squeeze(0).squeeze(0)
+    def resize_2d(self, image: torch.Tensor, out_h: int, out_w: int):
+        # simple 2D bilinear
+        image = image.unsqueeze(0).unsqueeze(0)
+        out   = F.interpolate(image, size=(out_h, out_w), mode='bilinear', align_corners=False)
+        return out.squeeze(0).squeeze(0)
 
-    def crop_around_xy(self, image: torch.Tensor, cx: float, cy: float, left: int, right: int, top: int, bottom: int) -> torch.Tensor:
+    def scale_xy(self, x, y, orig_w, orig_h, new_w, new_h):
+        return x * (new_w / orig_w), y * (new_h / orig_h)
+
+    def crop_around_xy(self, image, cx, cy, left, right, top, bottom):
         H, W = image.shape
         row_min = max(int(cy - top), 0)
         row_max = min(int(cy + bottom), H)
         col_min = max(int(cx - left), 0)
         col_max = min(int(cx + right), W)
-        if row_min >= row_max or col_min >= col_max:
-            return torch.zeros((0, 0), dtype=image.dtype)
+        if row_min>=row_max or col_min>=col_max:
+            return torch.zeros((0,0), dtype=image.dtype)
         return image[row_min:row_max, col_min:col_max]
 
-    def pad_or_resize_3d(self, volume: torch.Tensor, out_depth: int, final_hw: tuple) -> torch.Tensor:
-        D, H, W = volume.shape
-        # Depth
+    def pad_or_resize_3d(self, vol_3d, out_depth, out_hw):
+        D,H,W = vol_3d.shape
         if D < out_depth:
-            pad_depth = out_depth - D
-            volume = torch.cat([volume, torch.zeros(
-                (pad_depth, H, W), dtype=volume.dtype)], dim=0)
+            extra = out_depth - D
+            pad_vol = torch.zeros((extra, H, W), dtype=vol_3d.dtype)
+            vol_3d = torch.cat([vol_3d, pad_vol], dim=0)
         elif D > out_depth:
-            volume = F.interpolate(
-                volume.unsqueeze(0).unsqueeze(0),
-                size=(out_depth, H, W),
-                mode='trilinear',
-                align_corners=False
-            ).squeeze(0).squeeze(0)
-
-        # Then resize H,W
-        final_h, final_w = final_hw
-        volume = F.interpolate(
-            volume.unsqueeze(0).unsqueeze(0),
-            size=(volume.shape[0], final_h, final_w),
-            mode='trilinear',
-            align_corners=False
-        ).squeeze(0).squeeze(0)
-        return volume
-
-    def scale_xy(self, x: float, y: float, orig_w: int, orig_h: int, new_w: int, new_h: int):
-        return x * (new_w / orig_w), y * (new_h / orig_h)
+            vol_3d = F.interpolate(vol_3d.unsqueeze(0).unsqueeze(0), size=(out_depth,H,W),
+                                   mode='trilinear', align_corners=False).squeeze(0).squeeze(0)
+        final_h, final_w = out_hw
+        vol_3d = F.interpolate(vol_3d.unsqueeze(0).unsqueeze(0), size=(vol_3d.shape[0], final_h, final_w),
+                               mode='trilinear', align_corners=False).squeeze(0).squeeze(0)
+        return vol_3d
 
     def get_crop_margins(self, series_desc: str):
+        # example logic from your code
         if series_desc == "Sagittal T2/STIR":
-            margins = self.cropping_dict.get("scs", {}).get("sagt2", {})
+            m = self.cropping_dict.get("scs", {}).get("sagt2", {})
         elif series_desc == "Sagittal T1":
-            margins = self.cropping_dict.get("nfn", {}).get("sagt1", {})
+            m = self.cropping_dict.get("nfn", {}).get("sagt1", {})
         else:
-            margins = {}
-        return (
-            margins.get("left", 0),
-            margins.get("right", 0),
-            margins.get("upper", 0),
-            margins.get("lower", 0),
-        )
+            m = {}
+        return (m.get("left", 0), m.get("right", 0), m.get("upper",0), m.get("lower",0))
 
-    def get_subfolder_name(self, condition: str) -> str:
+    def get_subfolder_name(self, condition: str):
         if condition == "Spinal Canal Stenosis":
             return "scs"
         elif condition == "Right Neural Foraminal Narrowing":
@@ -235,130 +218,117 @@ class DataPreprocessor:
             return "lnfn"
         return "other"
 
-    def process(self):
+    def process_all_discs(self):
         """
-        Steps:
-          (1) Build (or load) merged_train_data.csv with classification columns.
-          (2) Read it, do final filtering (Axial T2, target disc).
-          (3) For each group, build 3D volume and store in subfolder.
-          (4) Overwrite final CSV with the same data, so user sees final shape.
+        Main entry point:
+          - build or load merged_train_data (with dynamic scs_label, lnfn_label, rnfn_label)
+          - for each disc in discs_to_process, filter, build volumes in subfolders
         """
-        # Step 1: build or load merged_train_data
-        merged_csv_path = os.path.join(self.raw_path, "merged_train_data.csv")
         merged_df = self.build_merged_train_data()
 
-        # Step 2: filter out Axial T2, keep only target disc
-        df_filtered = merged_df.copy()
-        df_filtered = df_filtered[df_filtered["series_description"] != "Axial T2"]
-        df_filtered = df_filtered[df_filtered["level"] == self.target_disc]
-        print(
-            f"[INFO] After disc & Axial filtering: shape={df_filtered.shape}")
+        for disc_label in self.discs_to_process:
+            self.process_single_disc(merged_df, disc_label)
 
-        # Group by (study_id, series_id, condition)
+    def process_single_disc(self, merged_df: pd.DataFrame, disc_label: str):
+        """
+        Preprocess a single disc (e.g. "L4/L5" or "L5/S1") => build .pt volumes
+        in e.g. ./data/interim/L5S1/<output_subfolder>/scs/<study_id>.pt, etc.
+        """
+
+        df_filt = merged_df.copy()
+        df_filt = df_filt[df_filt["level"] == disc_label]
+        df_filt = df_filt[df_filt["series_description"] != "Axial T2"]
+
+        # Build disc output dir: e.g. ./data/interim/L5S1/target_window_128x128_5D_B2A2
+        out_dir = os.path.join(self.interim_base_path,
+                               disc_label.replace("/", ""),  # "L5S1"
+                               self.output_subfolder)
+        os.makedirs(out_dir, exist_ok=True)
+
         group_cols = ["study_id", "series_id", "condition"]
-        grouped = df_filtered.groupby(group_cols)
+        grouped = df_filt.groupby(group_cols)
 
-        for (sid, serid, condition), group in tqdm(grouped, desc="Processing series groups"):
+        for (sid, serid, cond), group in tqdm(grouped, desc=f"Building volumes for {disc_label}"):
             row0 = group.iloc[0]
             series_desc = row0["series_description"]
-            x_val = row0["x"]
-            y_val = row0["y"]
-            orig_w = row0["width"]
-            orig_h = row0["height"]
-            target_instance = row0["instance_number"]
+            x_val, y_val = row0["x"], row0["y"]
+            orig_w, orig_h = row0["width"], row0["height"]
+            target_inst = row0["instance_number"]
 
-            left, right, top, bottom = self.get_crop_margins(series_desc)
-            if (left + right + top + bottom) == 0:
+            left, right, up, down = self.get_crop_margins(series_desc)
+            if (left+right+up+down) == 0:
                 continue
 
-            out_subfolder = self.get_subfolder_name(condition)
-            out_dir = os.path.join(self.output_dir, out_subfolder)
-            os.makedirs(out_dir, exist_ok=True)
-
-            dcm_folder = os.path.join(
-                self.raw_path, "train_images", str(sid), str(serid))
-            dcm_paths = sorted(
-                glob(os.path.join(dcm_folder, "*.dcm")),
-                key=lambda p: int(os.path.basename(p).replace(".dcm", ""))
-            )
+            dcm_folder = os.path.join(self.raw_path, "train_images", str(sid), str(serid))
+            dcm_paths = sorted(glob(os.path.join(dcm_folder, "*.dcm")),
+                               key=lambda p: int(os.path.basename(p).replace(".dcm","")))
 
             # find target index
-            target_index = None
-            for i, dp in enumerate(dcm_paths):
-                inst_num = int(os.path.basename(dp).replace(".dcm", ""))
-                if inst_num == target_instance:
-                    target_index = i
+            target_idx = None
+            for i,dp in enumerate(dcm_paths):
+                if int(os.path.basename(dp).replace(".dcm","")) == target_inst:
+                    target_idx = i
                     break
-            if target_index is None:
-                print(
-                    f"[WARN] Missing target slice for study_id={sid}, series_id={serid}")
+            if target_idx is None:
                 continue
 
-            # slices
-            if self.preprocessing_mode.lower() == "target_window":
-                start_idx = max(target_index - self.slices_before, 0)
-                end_idx = min(target_index + self.slices_after,
-                              len(dcm_paths)-1)
+            # pick slices
+            if self.mode.lower() == "target_window":
+                start_idx = max(0, target_idx - self.slices_before)
+                end_idx   = min(len(dcm_paths)-1, target_idx + self.slices_after)
                 selected_paths = dcm_paths[start_idx:end_idx+1]
             else:
-                if self.final_depth == 1:
-                    selected_paths = [dcm_paths[target_index]]
-                else:
-                    selected_paths = dcm_paths
+                selected_paths = dcm_paths  # or do full_series logic
 
-            # build volume
-            slices = []
+            # load slices
+            slices2d = []
             for dp in selected_paths:
                 img = self.load_and_normalize_dicom(dp)
-                img = self.resize_2d(
-                    img, self.cropped_size[0], self.cropped_size[1])
-                x_scaled, y_scaled = self.scale_xy(x_val, y_val, orig_w, orig_h,
-                                                   self.cropped_size[1], self.cropped_size[0])
-                patch = self.crop_around_xy(
-                    img, x_scaled, y_scaled, left, right, top, bottom)
-                if patch.shape[0] == 0 or patch.shape[1] == 0:
+                img = self.resize_2d(img, self.cropped_size[0], self.cropped_size[1])
+                # scale x,y
+                x_scl, y_scl = self.scale_xy(x_val, y_val, orig_w, orig_h,
+                                             self.cropped_size[1], self.cropped_size[0])
+                patch = self.crop_around_xy(img, x_scl, y_scl, left,right,up,down)
+                if patch.shape[0]*patch.shape[1] == 0:
                     continue
-                slices.append(patch)
+                slices2d.append(patch)
 
-            if len(slices) == 0:
+            if not slices2d:
                 continue
 
-            # pad
-            max_h = max(s.shape[0] for s in slices)
-            max_w = max(s.shape[1] for s in slices)
-            padded_slices = []
-            for s in slices:
-                pad_h = max_h - s.shape[0]
-                pad_w = max_w - s.shape[1]
-                padded = F.pad(s, (0, pad_w, 0, pad_h), "constant", 0.0)
-                padded_slices.append(padded)
+            # unify
+            max_h = max(s.shape[0] for s in slices2d)
+            max_w = max(s.shape[1] for s in slices2d)
+            padded_stack = []
+            for s in slices2d:
+                ph = max_h - s.shape[0]
+                pw = max_w - s.shape[1]
+                s_padded = F.pad(s, (0, pw, 0, ph), value=0.0)
+                padded_stack.append(s_padded)
+            vol_3d = torch.stack(padded_stack, dim=0)  # [D, H, W]
 
-            vol_3d = torch.stack(padded_slices, dim=0)
-
-            # Depth adjustment
-            if self.preprocessing_mode.lower() == "full_series":
-                vol_3d = self.pad_or_resize_3d(
-                    vol_3d, self.final_depth, self.final_size)
+            # if full_series => pad or resize to self.final_depth
+            if self.mode.lower() == "full_series":
+                vol_3d = self.pad_or_resize_3d(vol_3d, self.final_depth, self.final_size)
             else:
-                # target_window => keep D but fix H,W
-                vol_3d = F.interpolate(
-                    vol_3d.unsqueeze(0).unsqueeze(0),
-                    size=(vol_3d.shape[0],
-                          self.final_size[0], self.final_size[1]),
-                    mode='trilinear',
-                    align_corners=False
-                ).squeeze(0).squeeze(0)
+                # target_window => keep depth but fix H,W
+                vol_3d = F.interpolate(vol_3d.unsqueeze(0).unsqueeze(0),
+                                       size=(vol_3d.shape[0], self.final_size[0], self.final_size[1]),
+                                       mode='trilinear', align_corners=False
+                                      ).squeeze(0).squeeze(0)
 
-            out_path = os.path.join(out_dir, f"{sid}.pt")
+            # write
+            subfolder = self.get_subfolder_name(cond)  # e.g. scs, lnfn, rnfn
+            cond_dir = os.path.join(out_dir, subfolder)
+            os.makedirs(cond_dir, exist_ok=True)
+            out_path = os.path.join(cond_dir, f"{sid}.pt")
             torch.save(vol_3d, out_path)
 
-        # Step 3: Overwrite merged_train_data.csv with final shape if you want
-        # We'll just store the filtered DataFrame now
-        df_filtered.to_csv(merged_csv_path, index=False)
-        print(
-            f"[INFO] Overwrote merged_train_data.csv with final shape (only target disc + no Axial T2): {df_filtered.shape}")
-        print(f"[INFO] Tensors saved in subfolders under: {self.output_dir}")
-
+    def process(self):
+        """
+        If you just want to run them all in one function:
+        """
+        self.process_all_discs()
 
 if __name__ == "__main__":
     preprocessor = DataPreprocessor("config.yml")
