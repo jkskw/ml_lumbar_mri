@@ -12,15 +12,25 @@ kaggle:
 # Data configuration
 data:
   raw_path: "./data/raw"
-  interim_path: "./data/interim/"
+  # Base directory for interim data:
+  interim_base_path: "./data/interim/"
   processed_path: "./data/processed"
 
 # Preprocessing parameters
 preprocessing:
-  target_disc: "L4/L5"
-  final_depth: 1
-  final_size: [96, 96]
+  # The discs to build volumes for:
+  discs_to_process:
+  # - "L1/L2"
+  # - "L2/L3"
+  # - "L3/L4"
+  # - "L4/L5"
+  # - "L5/S1"
+   
+
+  final_depth: 5
+  final_size: [128, 128]
   cropped_size: [512, 512]
+
   cropping:
     scs:
       sagt2:
@@ -34,11 +44,11 @@ preprocessing:
         right: 32
         upper: 40
         lower: 40
-  mode: "target_window" # or "full_series"
-  target_window:
-    slices_before: 1
-    slices_after: 1
 
+  mode: "target_window"     # or "full_series"
+  target_window:
+    slices_before: 2
+    slices_after: 2
 
 # Model / Training configuration
 training:
@@ -47,34 +57,43 @@ training:
   #  - single_binary
   #  - multi_multiclass
   #  - multi_binary
-  classification_mode: "single_multiclass"  
-  
+  classification_mode: "single_multiclass"
+  binary_mapping_mode: "severe_positive" # "normal_negative" / "severe_positive" which means Normal/Mild= Negative (0), Moderate + Severe = Positive (1)
+
+
   # Disease used for single-disease modes
-  disease: "lnfn"
+  # possible values: "scs", "rnfn", "lnfn"
+  disease: "scs"
 
-  # Name of the folder in data/interim containing .pt files
-  # selected_tensor_folder: "target_window_128x128_3D_B1A1"
-  selected_tensor_folder: "target_window_128x128_3D_B1A1"
+  # Subfolder name for .pt volumes. e.g. "target_window_128x128_5D_B2A2"
+  selected_tensor_subfolder: "target_window_128x128_5D_B2A2"
 
-  # Model architecture: "simple_3dcnn", "advanced_single", "advanced_single_improved", "advanced_multi", "resnet3d"
-  model_arch: "advanced_single_improved"
-  
+  # The discs from which we want to load volumes for training:
+  discs_for_training:
+    - "L1/L2"
+    - "L2/L3"
+    - "L3/L4"
+    - "L4/L5"
+    - "L5/S1"
+
+  # Custom models: "AdvancedSpinal3DNetImproved", "CustomResNet3D", "CustomNet", "EnhancedSpinal3DNet"
+  # ResNet3D models: "ResNet3D_10", "ResNet3D_18", "ResNet3D_34", "ResNet3D_50", "ResNet3D_101"
+  # New models: "ResNeXt3D", "DenseNet3D", "EfficientNet3D", "HybridSpinalModel3D"
+  model_arch: "AdvancedSpinal3DNetImproved"
+  pretrained_ckpt_path:  # e.g. "models/pretrained/resnet_34.pth"
+
   # Splitting
   test_size: 0.2
   validation_split_of_temp: 0.5
 
   # Hyperparams
-  batch_size: 16
-  num_epochs: 200
-
-  learning_rate: 0.001
+  batch_size: 32
+  num_epochs: 100
+  learning_rate: 0.0001
   use_lr_scheduler: false
   lr_scheduler_patience: 5
   lr_scheduler_factor: 0.1
-
   dropout_prob: 0.5
-
-  # Early stopping
   early_stopping_patience: 200
 
   excluded_studies:
@@ -85,9 +104,9 @@ training:
 
   # Handling imbalanced data
   imbalance:
-    use_class_weights: true       # Set to true to apply class weighting in the loss function.
-    use_weighted_sampler: false      # Set to true to use a WeightedRandomSampler in your DataLoader.
-    loss_type: "cross_entropy"      # Options: "cross_entropy" or "focal"
+    use_class_weights: true
+    use_weighted_sampler: true
+    loss_type: "cross_entropy"    # or "focal"
     focal:
-      alpha: [0.3, 0.8, 1.0]                   # Alpha parameter for focal loss.
-      gamma: 3.0                    # Gamma parameter for focal loss.
+      alpha: [0.3, 0.8, 1.0]
+      gamma: 3.0
