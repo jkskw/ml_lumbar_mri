@@ -151,8 +151,8 @@ def evaluate_model(model_path: str, config_path="config.yml", split="test"):
     print("[INFO] Overall metrics:")
     bal_acc = balanced_accuracy_score(all_targets, all_preds)
     acc = accuracy_score(all_targets, all_preds)
-    print("Balanced Accuracy:", bal_acc)
     print("Accuracy:", acc)
+    print("Balanced Accuracy:", bal_acc)
     print("Classification Report:")
     print(classification_report(all_targets, all_preds, zero_division=0, digits=4))
     print("Imbalanced Classification Report:")
@@ -173,6 +173,8 @@ def evaluate_model(model_path: str, config_path="config.yml", split="test"):
         print("Balanced Accuracy:", disc_bal_acc)
         print("Classification Report:")
         print(classification_report(disc_targets, disc_preds, zero_division=0, digits=4))
+        print("Imbalanced Classification Report:")
+        print(classification_report_imbalanced(disc_targets, disc_preds, zero_division=0, digits=4))
         disc_cm = confusion_matrix(disc_targets, disc_preds)
         print("Confusion Matrix:\n", disc_cm)
 
