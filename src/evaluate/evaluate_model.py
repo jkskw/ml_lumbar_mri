@@ -4,6 +4,7 @@ import yaml
 import numpy as np
 from tqdm.auto import tqdm
 import torch.nn as nn
+import pandas as pd
 
 from imblearn.metrics import classification_report_imbalanced
 from sklearn.metrics import confusion_matrix, balanced_accuracy_score, classification_report, accuracy_score
@@ -18,11 +19,47 @@ from src.model.train_model import create_data_splits, parse_depth_from_folder, p
 from src.utils.enums import ClassificationMode
 from src.visualization.visualize import plot_confusion_matrix
 
+def map_label_3class_to_2class(label, mode="normal_negative"):
+    """
+    Convert a 3-class label to a 2-class label for binary classification.
+    
+    Args:
+        label: int, original label (0, 1, or 2).
+        mode: str, mapping mode; "severe_positive" maps 2 to 1 and others to 0,
+                   "normal_negative" maps 0 to 0 and others to 1.
+    
+    Returns:
+        int: Binary-mapped label.
+    """
+    if mode == "severe_positive":
+        return 1 if label == 2 else 0
+    else:
+        return 0 if label == 0 else 1
+
 def load_config(config_path="config.yml") -> dict:
+    """
+    Load configuration from a YAML file.
+    
+    Args:
+        config_path: str, path to the configuration file.
+    
+    Returns:
+        dict: Loaded configuration.
+    """
     with open(config_path, "r") as f:
         return yaml.safe_load(f)
 
 def _to_predictions(outputs, classification_mode):
+    """
+    Convert raw model outputs into predicted class labels based on the classification mode.
+    
+    Args:
+        outputs: torch.Tensor, raw outputs from the model.
+        classification_mode: str, mode of classification (e.g., "single_multiclass", "single_binary").
+    
+    Returns:
+        torch.Tensor: Predicted class labels.
+    """
     if classification_mode == "single_multiclass":
         return torch.argmax(outputs, dim=1)
     elif classification_mode == "single_binary":
@@ -45,62 +82,114 @@ def _to_predictions(outputs, classification_mode):
         return torch.cat([scs_pred, lnfn_pred, rnfn_pred], dim=1)
 
 def evaluate_model(model_path: str, config_path="config.yml", split="test"):
+    """
+    Evaluate the trained model on the test set.
+    
+    This function supports two evaluation modes:
+      - When a saved test split CSV exists and/or 'use_saved_test_split' is True,
+        only the data from the CSV is used.
+      - Otherwise, the full dataset is loaded and filtered by the evaluation discs.
+        For each disc, if saved test data exist for that disc, they are used; otherwise,
+        the full subset is used.
+    
+    Args:
+        model_path: str, path to the saved model checkpoint.
+        config_path: str, path to the configuration YAML file.
+        split: str, name of the split being evaluated (default "test").
+    
+    Returns:
+        None. Prints evaluation metrics to stdout.
+    """
     config = load_config(config_path)
     classification_mode = config["training"]["classification_mode"]
     classification_enum = ClassificationMode(classification_mode)
-
     disease = config["training"]["disease"]
     subfolder = config["training"]["selected_tensor_subfolder"]
-    discs_for_training = config["training"].get("discs_for_training", ["L4/L5"])
 
-    # --- Load merged CSV and process ---
-    import pandas as pd
-    raw_csv = os.path.join(config["data"]["raw_path"], "merged_train_data.csv")
-    df_all = pd.read_csv(raw_csv)
-
-    df_all["disc_label"] = df_all["level"].str.replace("/", "")
-
-    # Filter to only rows with discs we want
-    df_filtered = df_all[df_all["level"].isin(discs_for_training)].copy()
-
-    # Remove duplicates based on study_id and level
-    df_filtered = df_filtered.drop_duplicates(subset=["study_id", "level"]).copy()
-
-    if df_filtered.empty:
-        print("No data found for requested discs. Exiting.")
-        return
-
-    print(f"After filtering to discs {discs_for_training} and removing duplicates, shape={df_filtered.shape}")
-
-    if classification_enum in [ClassificationMode.SINGLE_MULTICLASS, ClassificationMode.SINGLE_BINARY]:
-        label_col = f"{disease}_label"
-        df_filtered = df_filtered.dropna(subset=[label_col])
-        df_filtered[label_col] = df_filtered[label_col].astype(int)
-        final_label_key = label_col
+    # Determine whether to use a saved test split.
+    use_saved_test_split = config["evaluation"].get("use_saved_test_split", True)
+    model_dir = os.path.dirname(model_path)
+    saved_split_path = os.path.join(model_dir, "test_split.csv")
+    
+    if use_saved_test_split:
+        if not os.path.exists(saved_split_path):
+            raise FileNotFoundError(f"Test split file not found at {saved_split_path}")
+        test_df = pd.read_csv(saved_split_path)
+        print(f"[INFO] Loaded saved test split from: {saved_split_path}")
     else:
-        needed_cols = ["scs_label", "lnfn_label", "rnfn_label"]
-        df_filtered = df_filtered.dropna(subset=needed_cols)
-        for c in needed_cols:
-            df_filtered[c] = df_filtered[c].astype(int)
-        df_filtered["multi_label"] = (df_filtered["scs_label"].astype(str) + "_" +
-                                      df_filtered["lnfn_label"].astype(str) + "_" +
-                                      df_filtered["rnfn_label"].astype(str))
-        final_label_key = "multi_label"
-
-    train_df, val_df, test_df = create_data_splits(df_filtered, final_label_key,
-                                                    config["training"]["test_size"],
-                                                    config["training"]["validation_split_of_temp"],
-                                                    config["project"]["seed"])
-
-    # We use the test set for evaluation
-    # Build disc_dirs mapping:
+        # Optionally load the saved test split if it exists.
+        if os.path.exists(saved_split_path):
+            saved_df = pd.read_csv(saved_split_path)
+            print(f"[INFO] Found saved test split at: {saved_split_path}")
+        else:
+            saved_df = pd.DataFrame()
+        
+        # Load full dataset and filter by evaluation discs.
+        full_dataset_path = config["evaluation"].get(
+            "full_dataset_path",
+            os.path.join(config["data"]["raw_path"], "merged_train_data.csv")
+        )
+        full_df = pd.read_csv(full_dataset_path)
+        full_df["disc_label"] = full_df["level"].str.replace("/", "")
+        
+        # Filter full dataset to only include evaluation discs.
+        discs_for_evaluation = config["evaluation"].get(
+            "discs_for_evaluation",
+            config["training"].get("discs_for_training", [])
+        )
+        if discs_for_evaluation:
+            full_df = full_df[full_df["level"].isin(discs_for_evaluation)].copy()
+            print(f"[INFO] Filtering full dataset for evaluation discs: {discs_for_evaluation}")
+        else:
+            print("[INFO] No discs_for_evaluation specified; using the full dataset.")
+        
+        # Remove duplicates.
+        full_df = full_df.drop_duplicates(subset=["study_id", "level"]).copy()
+        
+        # Prepare labels and apply binary mapping if necessary.
+        if classification_enum in [ClassificationMode.SINGLE_MULTICLASS, ClassificationMode.SINGLE_BINARY]:
+            label_col = f"{disease}_label"
+            full_df = full_df.dropna(subset=[label_col])
+            full_df[label_col] = full_df[label_col].astype(int)
+            if classification_enum == ClassificationMode.SINGLE_BINARY:
+                binary_mapping_mode = config["training"].get("binary_mapping_mode", "normal_negative")
+                full_df[label_col] = full_df[label_col].apply(lambda x: map_label_3class_to_2class(x, mode=binary_mapping_mode))
+            final_label_key = label_col
+        else:
+            needed_cols = ["scs_label", "lnfn_label", "rnfn_label"]
+            full_df = full_df.dropna(subset=needed_cols)
+            for c in needed_cols:
+                full_df[c] = full_df[c].astype(int)
+            full_df["multi_label"] = (full_df["scs_label"].astype(str) + "_" +
+                                      full_df["lnfn_label"].astype(str) + "_" +
+                                      full_df["rnfn_label"].astype(str))
+            final_label_key = "multi_label"
+        
+        # For each evaluation disc, prefer using saved data if available.
+        combined_list = []
+        for disc in discs_for_evaluation:
+            disc_saved = saved_df[saved_df["level"] == disc] if not saved_df.empty else pd.DataFrame()
+            if not disc_saved.empty:
+                print(f"[INFO] Model was trained on data for disc {disc}; using saved test split data for evaluation.")
+                combined_list.append(disc_saved)
+            else:
+                disc_full = full_df[full_df["level"] == disc]
+                print(f"[INFO] No saved test split data for disc {disc}; using full dataset subset for evaluation.")
+                combined_list.append(disc_full)
+        test_df = pd.concat(combined_list, ignore_index=True)
+        print(f"[INFO] Combined evaluation test set size: {len(test_df)}")
+    
+    # --- Build disc_dirs mapping ---
+    # Construct a mapping from disc names (without slashes) to their data directories.
+    discs_to_use = config["evaluation"].get("discs_for_evaluation",
+                      config["training"].get("discs_for_training", ["L4/L5"]))
     interim_base_path = config["data"].get("interim_base_path", "./data/interim")
     disc_dirs = {}
-    for d in discs_for_training:
+    for d in discs_to_use:
         key = d.replace("/", "")
         disc_dirs[key] = os.path.join(interim_base_path, key, subfolder)
-
-    # Build dataset
+    
+    # --- Build dataset based on classification mode ---
     if classification_enum in [ClassificationMode.SINGLE_MULTICLASS, ClassificationMode.SINGLE_BINARY]:
         dataset = SingleDiseaseDatasetMultiDisc(
             test_df, disc_dirs, disease,
@@ -118,20 +207,25 @@ def evaluate_model(model_path: str, config_path="config.yml", split="test"):
         )
         in_channels = 3
 
-    loader = torch.utils.data.DataLoader(dataset, batch_size=config["training"]["batch_size"],
-                                           shuffle=False, collate_fn=custom_collate_filter_none)
+    # Create DataLoader for evaluation.
+    loader = torch.utils.data.DataLoader(
+        dataset,
+        batch_size=config["training"]["batch_size"],
+        shuffle=False,
+        collate_fn=custom_collate_filter_none
+    )
 
-    # --- Build and load model ---
+    # --- Build and load the trained model ---
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model, _ = build_model(config, in_channels)
     model.load_state_dict(torch.load(model_path, map_location=device))
     model.to(device)
     model.eval()
 
+    # Collect predictions and ground-truth labels.
     all_targets = []
     all_preds = []
     all_disc_labels = []
-
     with torch.no_grad():
         for batch in tqdm(loader, desc=f"Evaluating on {split} set"):
             if batch is None:
@@ -148,6 +242,7 @@ def evaluate_model(model_path: str, config_path="config.yml", split="test"):
     all_targets = np.array(all_targets)
     all_preds = np.array(all_preds)
 
+    # --- Compute and Print Evaluation Metrics ---
     print("[INFO] Overall metrics:")
     bal_acc = balanced_accuracy_score(all_targets, all_preds)
     acc = accuracy_score(all_targets, all_preds)
@@ -160,7 +255,7 @@ def evaluate_model(model_path: str, config_path="config.yml", split="test"):
     cm = confusion_matrix(all_targets, all_preds)
     print("Confusion Matrix:\n", cm)
 
-    # Per-disc breakdown
+    # --- Per-Disc Breakdown ---
     unique_discs = sorted(set(all_disc_labels))
     for disc in unique_discs:
         indices = [i for i, d in enumerate(all_disc_labels) if d == disc]

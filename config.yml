@@ -1,112 +1,105 @@
-# Global project configuration
+# Global Project Configuration
 project:
-  name: "Lumbar Spine Degenerative Classification"
-  description: "Automated evaluation of degenerative lumbar spine changes from MRI images using deep learning."
-  seed: 42
+  name: "Lumbar Spine Degenerative Classification"         # Project name.
+  description: "Automated evaluation of degenerative lumbar spine changes from MRI images using deep learning."  # Detailed project description.
+  seed: 42                                                  # Global random seed for reproducibility.
 
-# Kaggle API config
+# Kaggle API Configuration
 kaggle:
-  competition: "rsna-2024-lumbar-spine-degenerative-classification"
-  download_path: "./data"
+  competition: "rsna-2024-lumbar-spine-degenerative-classification"  # Kaggle competition identifier.
+  download_path: "./data"                                   # Directory for downloading competition data.
 
-# Data configuration
+# Data Configuration
 data:
-  raw_path: "./data/raw"
-  # Base directory for interim data:
-  interim_base_path: "./data/interim/"
-  processed_path: "./data/processed"
+  raw_path: "./data/raw"                                    # Path to raw data files.
+  interim_base_path: "./data/interim/"                      # Directory for intermediate processed data.
+  processed_path: "./data/processed"                        # Directory for final processed data.
 
-# Preprocessing parameters
+# Preprocessing Parameters
 preprocessing:
-  # The discs to build volumes for:
+  # Optional: list of discs for which volumes should be built.
   discs_to_process:
   # - "L1/L2"
   # - "L2/L3"
   # - "L3/L4"
   # - "L4/L5"
   # - "L5/S1"
-   
-
-  final_depth: 5
-  final_size: [128, 128]
-  cropped_size: [512, 512]
+  final_depth: 5                                            # Target depth (number of slices) for the 3D volumes.
+  final_size: [128, 128]                                    # Final spatial dimensions (width, height) for each volume.
+  cropped_size: [512, 512]                                  # Dimensions for the initial cropped region.
 
   cropping:
     scs:
       sagt2:
-        left: 96
-        right: 32
-        upper: 40
-        lower: 40
+        left: 96                                          # Pixels to crop from the left for SCS region.
+        right: 32                                         # Pixels to crop from the right for SCS region.
+        upper: 40                                         # Pixels to crop from the top.
+        lower: 40                                         # Pixels to crop from the bottom.
     nfn:
       sagt1:
-        left: 96
-        right: 32
-        upper: 40
-        lower: 40
+        left: 96                                          # Pixels to crop from the left for NFN region.
+        right: 32                                         # Pixels to crop from the right for NFN region.
+        upper: 40                                         # Pixels to crop from the top.
+        lower: 40                                         # Pixels to crop from the bottom.
 
-  mode: "target_window"     # or "full_series"
+  mode: "target_window"                                     # Cropping mode; either "target_window" or "full_series".
   target_window:
-    slices_before: 2
-    slices_after: 2
+    slices_before: 1                                        # Number of slices before the target slice to include.
+    slices_after: 1                                         # Number of slices after the target slice to include.
 
-# Model / Training configuration
+# Model/Training Configuration
 training:
-  # Possible values (4 modes):
-  #  - single_multiclass
-  #  - single_binary
-  #  - multi_multiclass
-  #  - multi_binary
-  classification_mode: "single_multiclass"
-  binary_mapping_mode: "severe_positive" # "normal_negative" / "severe_positive" which means Normal/Mild= Negative (0), Moderate + Severe = Positive (1)
-
-
-  # Disease used for single-disease modes
-  # possible values: "scs", "rnfn", "lnfn"
-  disease: "scs"
-
-  # Subfolder name for .pt volumes. e.g. "target_window_128x128_5D_B2A2"
-  selected_tensor_subfolder: "target_window_128x128_5D_B2A2"
-
-  # The discs from which we want to load volumes for training:
+  classification_mode: "single_multiclass"                # Mode options: "single_multiclass", "single_binary", "multi_multiclass", "multi_binary".
+  binary_mapping_mode: "normal_negative"                  # For single-binary: "normal_negative" maps Normal/Mild to 0, Moderate+Severe to 1.
+  disease: "rnfn"                                         # Disease label to predict (options: "scs", "rnfn", "lnfn").
+  selected_tensor_subfolder: "target_window_128x128_3D_B1A1"  # Subfolder name containing preprocessed tensor volumes.
   discs_for_training:
+    # Uncomment the discs to include in training.
+    # - "L1/L2"
+    # - "L2/L3"
+    # - "L3/L4"
+    - "L4/L5"
+    # - "L5/S1"
+
+  # Custom models: "AdvancedSpinal3DNetImproved", "CustomResNet3D", "CustomNet", "EnhancedSpinal3DNet"
+  # ResNet3D models: "ResNet3D_10", "ResNet3D_18", "ResNet3D_34", "ResNet3D_50", "ResNet3D_101"
+  # New models: "ResNet3D_10", "DenseNet3D", "EfficientNet3D", "HybridSpinalModel3D"
+  model_arch: "ResNet3D_18"                                 # Architecture name (e.g., "ResNet3D_18").
+  pretrained_ckpt_path:                                   # Path to a pretrained checkpoint, if available.
+  
+  # Data Splitting Parameters
+  test_size: 0.2                                          # Fraction of data used for testing.
+  validation_split_of_temp: 0.5                           # Fraction of temporary split used for validation.
+
+  # Hyperparameters
+  batch_size: 16                                          # Number of samples per training batch.
+  num_epochs: 200                                         # Maximum number of training epochs.
+  learning_rate: 0.0001                                   # Optimizer learning rate.
+  use_lr_scheduler: false                                 # Flag to enable/disable learning rate scheduler.
+  lr_scheduler_patience: 5                                # Patience for LR scheduler before reducing the learning rate.
+  lr_scheduler_factor: 0.1                                # Factor by which the learning rate will be reduced.
+  dropout_prob: 0.3                                       # Dropout probability to mitigate overfitting.
+  early_stopping_patience: 200                            # Number of epochs with no improvement before stopping training.
+
+  # Imbalanced Data Handling
+  imbalance:
+    method: "none"                                      # Resampling method: "none", "undersampling", "oversampling", or "hybrid".
+    use_class_weights: true                             # Flag to use class weights in loss computation.
+    use_weighted_sampler: true                          # Flag to use a weighted random sampler during training.
+    loss_type: "cross_entropy"                          # Loss type: "cross_entropy" or "focal".
+    focal:
+      alpha: [0.3, 0.8, 1.0]                              # Class weight parameters for focal loss.
+      gamma: 3.0                                        # Focusing parameter for focal loss.
+    undersampling_ratio: 0.7                            # Ratio for reducing majority class samples.
+    oversampling_ratio: 0.7                             # Ratio for increasing minority class samples.
+    smote: false                                        # Flag to use SMOTE for oversampling (if applicable).
+
+# Evaluation Configuration
+evaluation:
+  use_saved_test_split: false                           # If true, evaluation uses a pre-saved test split CSV.
+  discs_for_evaluation:
     - "L1/L2"
     - "L2/L3"
     - "L3/L4"
     - "L4/L5"
-    - "L5/S1"
-
-  # Custom models: "AdvancedSpinal3DNetImproved", "CustomResNet3D", "CustomNet", "EnhancedSpinal3DNet"
-  # ResNet3D models: "ResNet3D_10", "ResNet3D_18", "ResNet3D_34", "ResNet3D_50", "ResNet3D_101"
-  # New models: "ResNeXt3D", "DenseNet3D", "EfficientNet3D", "HybridSpinalModel3D"
-  model_arch: "AdvancedSpinal3DNetImproved"
-  pretrained_ckpt_path:  # e.g. "models/pretrained/resnet_34.pth"
-
-  # Splitting
-  test_size: 0.2
-  validation_split_of_temp: 0.5
-
-  # Hyperparams
-  batch_size: 32
-  num_epochs: 100
-  learning_rate: 0.0001
-  use_lr_scheduler: false
-  lr_scheduler_patience: 5
-  lr_scheduler_factor: 0.1
-  dropout_prob: 0.5
-  early_stopping_patience: 200
-
-  excluded_studies:
-    - 2780132468
-    - 2492114990
-    - 3294654272
-    - 665627263
-
-  # Handling imbalanced data
-  imbalance:
-    use_class_weights: true
-    use_weighted_sampler: true
-    loss_type: "cross_entropy"    # or "focal"
-    focal:
-      alpha: [0.3, 0.8, 1.0]
-      gamma: 3.0
+    - "L5/S1"                                          # List of discs for which evaluation metrics will be computed.
