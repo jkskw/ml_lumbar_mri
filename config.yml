@@ -12,7 +12,7 @@ kaggle:
 # Data Configuration
 data:
   raw_path: "./data/raw"                                    # Path to raw data files.
-  interim_base_path: "./data/interim/"                      # Directory for intermediate processed data.
+  interim_base_path: "./data/interim"                      # Directory for intermediate processed data.
   processed_path: "./data/processed"                        # Directory for final processed data.
 
 # Preprocessing Parameters
@@ -47,12 +47,18 @@ preprocessing:
     slices_before: 1                                        # Number of slices before the target slice to include.
     slices_after: 1                                         # Number of slices after the target slice to include.
 
+  # Extended preprocessing
+  technique: proposed_mean_median_3d
+  ksize: 3
+  input_tensor_dir: 
+  - "data/interim/L4L5"
+
 # Model/Training Configuration
 training:
-  classification_mode: "single_multiclass"                # Mode options: "single_multiclass", "single_binary", "multi_multiclass", "multi_binary".
+  classification_mode: "single_binary"                # Mode options: "single_multiclass", "single_binary", "multi_multiclass", "multi_binary".
   binary_mapping_mode: "normal_negative"                  # For single-binary: "normal_negative" maps Normal/Mild to 0, Moderate+Severe to 1.
-  disease: "rnfn"                                         # Disease label to predict (options: "scs", "rnfn", "lnfn").
-  selected_tensor_subfolder: "target_window_128x128_3D_B1A1"  # Subfolder name containing preprocessed tensor volumes.
+  disease: "scs"                                         # Disease label to predict (options: "scs", "rnfn", "lnfn").
+  selected_tensor_subfolder: "full_series_128x128_15D"  # Subfolder name containing preprocessed tensor volumes.
   discs_for_training:
     # Uncomment the discs to include in training.
     # - "L1/L2"
@@ -63,43 +69,54 @@ training:
 
   # Custom models: "AdvancedSpinal3DNetImproved", "CustomResNet3D", "CustomNet", "EnhancedSpinal3DNet"
   # ResNet3D models: "ResNet3D_10", "ResNet3D_18", "ResNet3D_34", "ResNet3D_50", "ResNet3D_101"
-  # New models: "ResNet3D_10", "DenseNet3D", "EfficientNet3D", "HybridSpinalModel3D"
-  model_arch: "ResNet3D_18"                                 # Architecture name (e.g., "ResNet3D_18").
+  # New models: "ResNet3D_10", "DenseNet3D", "EfficientNet3D", "HybridSpinalModel3D", "ResNeXtEncoderBiLSTMClassifier"
+  model_arch: "DenseNet3D_121"                                 # Architecture name (e.g., "ResNet3D_18").
   pretrained_ckpt_path:                                   # Path to a pretrained checkpoint, if available.
   
+  use_k_fold: false
+  num_folds: 5
+
   # Data Splitting Parameters
   test_size: 0.2                                          # Fraction of data used for testing.
   validation_split_of_temp: 0.5                           # Fraction of temporary split used for validation.
 
   # Hyperparameters
   batch_size: 16                                          # Number of samples per training batch.
-  num_epochs: 200                                         # Maximum number of training epochs.
+  num_epochs: 35                                         # Maximum number of training epochs.
   learning_rate: 0.0001                                   # Optimizer learning rate.
   use_lr_scheduler: false                                 # Flag to enable/disable learning rate scheduler.
-  lr_scheduler_patience: 5                                # Patience for LR scheduler before reducing the learning rate.
+  lr_scheduler_patience: 10                                # Patience for LR scheduler before reducing the learning rate.
   lr_scheduler_factor: 0.1                                # Factor by which the learning rate will be reduced.
-  dropout_prob: 0.3                                       # Dropout probability to mitigate overfitting.
+  dropout_prob: 0.5                                      # Dropout probability to mitigate overfitting.
   early_stopping_patience: 200                            # Number of epochs with no improvement before stopping training.
 
   # Imbalanced Data Handling
   imbalance:
     method: "none"                                      # Resampling method: "none", "undersampling", "oversampling", or "hybrid".
+    undersampling_ratio: 0.8                            # Ratio for reducing majority class samples.
+    oversampling_ratio: 0.5                             # Ratio for increasing minority class samples.
+    smote: false                                        # Flag to use SMOTE for oversampling (if applicable).
+    
     use_class_weights: true                             # Flag to use class weights in loss computation.
+    manual_class_weights: true      # Set true to override automatic class weights
+    manual_class_weights_binary: [1.0, 2.0]      # For binary classification: [weight for class 0, weight for class 1]
+    manual_class_weights_multiclass: [1, 2.0, 4.0]  # For multiclass: [weight for class 0, weight for class 1, weight for class 2]
+    
     use_weighted_sampler: true                          # Flag to use a weighted random sampler during training.
+
     loss_type: "cross_entropy"                          # Loss type: "cross_entropy" or "focal".
     focal:
       alpha: [0.3, 0.8, 1.0]                              # Class weight parameters for focal loss.
       gamma: 3.0                                        # Focusing parameter for focal loss.
-    undersampling_ratio: 0.7                            # Ratio for reducing majority class samples.
-    oversampling_ratio: 0.7                             # Ratio for increasing minority class samples.
-    smote: false                                        # Flag to use SMOTE for oversampling (if applicable).
+    
+
 
 # Evaluation Configuration
 evaluation:
-  use_saved_test_split: false                           # If true, evaluation uses a pre-saved test split CSV.
+  use_saved_test_split: true                           # If true, evaluation uses a pre-saved test split CSV.
   discs_for_evaluation:
-    - "L1/L2"
-    - "L2/L3"
-    - "L3/L4"
+    # - "L1/L2"
+    # - "L2/L3"
+    # - "L3/L4"
     - "L4/L5"
-    - "L5/S1"                                          # List of discs for which evaluation metrics will be computed.
+    # - "L5/S1"                                          # List of discs for which evaluation metrics will be computed.

@@ -2,6 +2,9 @@
 /data/interim/*
 /data/processed/*
 /data/raw/*
+models/*
+MedicalNet
+todo.md
 
 scripts
 examples
