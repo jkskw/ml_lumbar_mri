@@ -25,3 +25,5 @@ pyarrow
 fastparquet
 plotly
 ipywidgets
+imblearn
+PyWavelets
