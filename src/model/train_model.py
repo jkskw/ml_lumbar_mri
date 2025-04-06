@@ -8,7 +8,9 @@ from tqdm.auto import tqdm
 from torch.utils.data import DataLoader, WeightedRandomSampler
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import balanced_accuracy_score, recall_score
 from collections import Counter
+import warnings
 
 from src.utils.enums import ClassificationMode
 from src.model.dataset import (
@@ -198,6 +200,47 @@ def compute_accuracy(outputs, targets, classification_mode):
                          (lnfn_preds.squeeze(1) == targets[:, 1]).sum().item() +
                          (rnfn_preds.squeeze(1) == targets[:, 2]).sum().item())
         return total_correct / (3 * bsz + 1e-8)
+
+def compute_balanced_accuracy(outputs, targets, classification_mode):
+    if classification_mode == ClassificationMode.SINGLE_MULTICLASS:
+        preds = torch.argmax(outputs, dim=1).cpu().numpy()
+        true = targets.cpu().numpy()
+        return recall_score(true, preds, labels=[0, 1, 2], average="macro", zero_division=0)
+    
+    elif classification_mode == ClassificationMode.SINGLE_BINARY:
+        preds = (torch.sigmoid(outputs) > 0.5).float().cpu().numpy().astype(int).ravel()
+        true = targets.cpu().numpy().astype(int).ravel()
+        return recall_score(true, preds, labels=[0, 1], average="macro", zero_division=0)
+    
+    elif classification_mode == ClassificationMode.MULTI_MULTICLASS:
+        preds_scs  = torch.argmax(outputs[0], dim=1).cpu().numpy()
+        preds_lnfn = torch.argmax(outputs[1], dim=1).cpu().numpy()
+        preds_rnfn = torch.argmax(outputs[2], dim=1).cpu().numpy()
+        
+        true_scs  = targets[:, 0].cpu().numpy()
+        true_lnfn = targets[:, 1].cpu().numpy()
+        true_rnfn = targets[:, 2].cpu().numpy()
+        
+        ba_scs  = recall_score(true_scs, preds_scs, labels=[0, 1, 2], average="macro", zero_division=0)
+        ba_lnfn = recall_score(true_lnfn, preds_lnfn, labels=[0, 1, 2], average="macro", zero_division=0)
+        ba_rnfn = recall_score(true_rnfn, preds_rnfn, labels=[0, 1, 2], average="macro", zero_division=0)
+        
+        return (ba_scs + ba_lnfn + ba_rnfn) / 3.0
+
+    elif classification_mode == ClassificationMode.MULTI_BINARY:
+        preds_scs  = (torch.sigmoid(outputs[0]) > 0.5).float().cpu().numpy().astype(int).ravel()
+        preds_lnfn = (torch.sigmoid(outputs[1]) > 0.5).float().cpu().numpy().astype(int).ravel()
+        preds_rnfn = (torch.sigmoid(outputs[2]) > 0.5).float().cpu().numpy().astype(int).ravel()
+        
+        true_scs  = targets[:, 0].cpu().numpy().astype(int).ravel()
+        true_lnfn = targets[:, 1].cpu().numpy().astype(int).ravel()
+        true_rnfn = targets[:, 2].cpu().numpy().astype(int).ravel()
+        
+        ba_scs  = recall_score(true_scs, preds_scs, labels=[0, 1], average="macro", zero_division=0)
+        ba_lnfn = recall_score(true_lnfn, preds_lnfn, labels=[0, 1], average="macro", zero_division=0)
+        ba_rnfn = recall_score(true_rnfn, preds_rnfn, labels=[0, 1], average="macro", zero_division=0)
+        
+        return (ba_scs + ba_lnfn + ba_rnfn) / 3.0
 
 
 def map_label_3class_to_2class(label, mode="normal_negative"):
@@ -443,27 +486,44 @@ def train_model(config_path="config.yml"):
 
     class_weights = None
     sample_weights = None
+
     if use_class_weights:
-        if classification_mode in [ClassificationMode.SINGLE_MULTICLASS, ClassificationMode.SINGLE_BINARY]:
-            labels = train_df[label_col].tolist()
-            counts = Counter(labels)
-            total = len(labels)
-            if classification_mode == ClassificationMode.SINGLE_BINARY:
-                num_0 = sum(1 for x in labels if x == 0)
-                num_1 = sum(1 for x in labels if x != 0)
-                pos_weight = (num_0 / num_1) if num_1 > 0 else 1.0
-                base_logger.info(f"Computed pos_weight for BCEWithLogitsLoss: {pos_weight:.3f}")
-            else:  # SINGLE_MULTICLASS
-                sorted_keys = sorted(counts.keys())
-                weights = [total / counts[k] for k in sorted_keys]
-                class_weights = torch.tensor(weights, dtype=torch.float)
-                base_logger.info(f"Computed class weights for CrossEntropyLoss: {class_weights}")
-        else:  # Multi-label: compute sample weights
-            labels = train_df["multi_label"].tolist()
-            counts = Counter(labels)
-            total = len(labels)
-            mapping = {label: total / count for label, count in counts.items()}
-            base_logger.info(f"Computed sample weight mapping for multi-label: {mapping}")
+            # Check if manual class weights are enabled
+            if imbalance_cfg.get("manual_class_weights", False):
+                if classification_mode in [ClassificationMode.SINGLE_MULTICLASS, ClassificationMode.SINGLE_BINARY]:
+                    if classification_mode == ClassificationMode.SINGLE_BINARY:
+                        class_weights = torch.tensor(imbalance_cfg["manual_class_weights_binary"], dtype=torch.float)
+                        base_logger.info(f"Using manual binary class weights: {class_weights}")
+                    else:
+                        class_weights = torch.tensor(imbalance_cfg["manual_class_weights_multiclass"], dtype=torch.float)
+                        base_logger.info(f"Using manual multiclass weights: {class_weights}")
+                else:
+                    # For multi-label tasks, add similar handling if needed.
+                    base_logger.info("Manual class weights not defined for multi-label tasks.")
+            else:
+                # Automatic computation of class weights from training data
+                if classification_mode in [ClassificationMode.SINGLE_MULTICLASS, ClassificationMode.SINGLE_BINARY]:
+                    labels = train_df[label_col].tolist()
+                    counts = Counter(labels)
+                    total = len(labels)
+                    if classification_mode == ClassificationMode.SINGLE_BINARY:
+                        num_0 = sum(1 for x in labels if x == 0)
+                        num_1 = sum(1 for x in labels if x != 0)
+                        pos_weight = (num_0 / num_1) if num_1 > 0 else 1.0
+                        base_logger.info(f"Computed pos_weight for BCEWithLogitsLoss: {pos_weight:.3f}")
+                        # Here you could set class_weights = torch.tensor([1.0, pos_weight])
+                    else:  # SINGLE_MULTICLASS
+                        sorted_keys = sorted(counts.keys())
+                        weights = [total / counts[k] for k in sorted_keys]
+                        class_weights = torch.tensor(weights, dtype=torch.float)
+                        base_logger.info(f"Computed class weights for CrossEntropyLoss: {class_weights}")
+                else:
+                    # For multi-label tasks, compute sample weights (or extend this logic if needed)
+                    labels = train_df["multi_label"].tolist()
+                    counts = Counter(labels)
+                    total = len(labels)
+                    mapping = {label: total / count for label, count in counts.items()}
+                    base_logger.info(f"Computed sample weight mapping for multi-label: {mapping}")
 
     if use_weighted_sampler:
         if classification_mode in [ClassificationMode.SINGLE_MULTICLASS, ClassificationMode.SINGLE_BINARY]:
@@ -557,15 +617,17 @@ def train_model(config_path="config.yml"):
 
     # --- 7. Training loop ---
     best_val_acc = 0.0
+    best_val_bal_acc = 0.0
     best_val_loss = float('inf')
     patience_counter = 0
 
     train_losses, val_losses = [], []
     train_accs, val_accs = [], []
+    train_bal_accs, val_bal_accs = [], []
 
     for epoch in range(num_epochs):
         model.train()
-        running_loss, running_correct = 0.0, 0.0
+        running_loss, running_correct, running_bal_correct = 0.0, 0.0, 0.0
         total_samples = 0
 
         # Iterate over training batches.
@@ -584,15 +646,19 @@ def train_model(config_path="config.yml"):
 
             running_loss += loss.item()
             batch_acc = compute_accuracy(outputs, y, classification_mode)
+            batch_bal_acc = compute_balanced_accuracy(outputs, y, classification_mode)
             total_samples += len(x)
             running_correct += batch_acc * len(x)
+            running_bal_correct = batch_bal_acc * len(x)
 
         avg_train_loss = running_loss / len(train_loader)
         avg_train_acc = running_correct / (total_samples + 1e-8)
+        avg_train_bal_acc = running_bal_correct / (total_samples + 1e-8)
 
         # Validation loop.
         model.eval()
         val_loss_sum, val_correct = 0.0, 0.0
+        val_correct_bal = 0.0
         val_samples = 0
         with torch.no_grad():
             for batch in tqdm(val_loader, desc=f"[Val] Epoch {epoch+1}/{num_epochs}"):
@@ -604,11 +670,14 @@ def train_model(config_path="config.yml"):
                 val_loss = criterion(outputs_val, y_val)
                 val_loss_sum += val_loss.item()
                 batch_val_acc = compute_accuracy(outputs_val, y_val, classification_mode)
+                batch_val_bal_acc = compute_balanced_accuracy(outputs_val, y_val, classification_mode)
                 val_samples += len(x_val)
                 val_correct += batch_val_acc * len(x_val)
+                val_correct_bal += batch_val_bal_acc * len(x_val)
 
         avg_val_loss = val_loss_sum / len(val_loader)
         avg_val_acc = val_correct / (val_samples + 1e-8)
+        avg_val_bal_acc = val_correct_bal / (val_samples + 1e-8)
 
         # Record losses and accuracies.
         train_losses.append(avg_train_loss)
@@ -616,9 +685,12 @@ def train_model(config_path="config.yml"):
         train_accs.append(avg_train_acc)
         val_accs.append(avg_val_acc)
 
+        train_bal_accs.append(avg_train_bal_acc)
+        val_bal_accs.append(avg_val_bal_acc)
+
         # Log current epoch metrics.
         logger.log(epoch+1, avg_train_loss, avg_val_loss, avg_train_acc, avg_val_acc)
-        base_logger.info(f"[Epoch {epoch+1}/{num_epochs}] Train Loss={avg_train_loss:.4f}, Val Loss={avg_val_loss:.4f}, Train Acc={avg_train_acc:.4f}, Val Acc={avg_val_acc:.4f}")
+        base_logger.info(f"[Epoch {epoch+1}/{num_epochs}] Train Loss={avg_train_loss:.4f}, Val Loss={avg_val_loss:.4f}, Train Acc={avg_train_acc:.4f}, Val Acc={avg_val_acc:.4f}, Balanced Val Acc={avg_val_bal_acc:.4f}")
 
         if scheduler:
             scheduler.step(avg_val_loss)
@@ -641,6 +713,13 @@ def train_model(config_path="config.yml"):
             best_loss_path = os.path.join(logger.get_log_dir(), "best_val_loss_model.pth")
             torch.save(model.state_dict(), best_loss_path)
             base_logger.info(f"[Checkpoint] New best val loss: {best_val_loss:.4f}, model saved -> {best_loss_path}")
+
+        if avg_val_bal_acc > best_val_bal_acc:
+            best_val_bal_acc = avg_val_bal_acc
+            best_bal_path = os.path.join(logger.get_log_dir(), "best_bal_acc_model.pth")
+            torch.save(model.state_dict(), best_bal_path)
+            base_logger.info(f"[Checkpoint] New best balanced val acc: {best_val_bal_acc:.4f}, model saved -> {best_bal_path}")
+
 
     base_logger.info(f"[INFO] Training complete. Logs & splits & models in {logger.get_log_dir()}")
     # Optionally, plot training curves.
