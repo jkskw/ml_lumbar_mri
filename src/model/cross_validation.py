@@ -3,7 +3,7 @@ import yaml
 import logging
 import numpy as np
 import pandas as pd
-import copy  # For deepcopy-ing the model state_dict
+import copy
 from collections import Counter
 
 import torch
@@ -16,17 +16,15 @@ from sklearn.model_selection import StratifiedKFold, KFold
 from sklearn.metrics import confusion_matrix, balanced_accuracy_score, classification_report
 from imblearn.metrics import classification_report_imbalanced
 
-# ---------------------------------------------------------------------
-# Reuse your existing modules (only those that won't conflict):
-# ---------------------------------------------------------------------
+# Import functions and classes from local modules
 from src.model.train_model import (
     load_config,
     create_data_splits,
     parse_depth_from_folder,
     parse_size_from_folder,
     map_label_3class_to_2class,
-    compute_accuracy,           # optional if you want
-    compute_balanced_accuracy   # optional if you want
+    compute_accuracy,
+    compute_balanced_accuracy
 )
 from src.model.imbalance_utils import apply_imbalance_strategy
 from src.model.dataset import (
@@ -38,12 +36,18 @@ from src.model.model_builder import build_model
 from src.utils.enums import ClassificationMode
 from src.utils.logger import setup_python_logger
 
-# ---------------------------------------------------------------------
-# 1) A small helper to create disc_dirs map
-# ---------------------------------------------------------------------
+
 def build_disc_dirs_map(discs_for_training, subfolder, interim_base_path):
     """
-    Create a dictionary mapping each disc (with slashes removed) to its directory path.
+    Create a mapping from each disc (with slashes removed) to its corresponding data directory.
+
+    Args:
+        discs_for_training (list of str): List of disc identifiers.
+        subfolder (str): Name of the subfolder containing tensor volumes.
+        interim_base_path (str): Base path for interim data.
+
+    Returns:
+        dict: Mapping from disc key (e.g., "L4L5") to its full directory path.
     """
     disc_dirs = {}
     for d in discs_for_training:
@@ -52,13 +56,17 @@ def build_disc_dirs_map(discs_for_training, subfolder, interim_base_path):
         disc_dirs[key] = path
     return disc_dirs
 
-# ---------------------------------------------------------------------
-# 2) Local `_to_predictions()` that handles single vs. multi properly
-# ---------------------------------------------------------------------
+
 def _to_predictions(outputs, classification_mode: ClassificationMode):
     """
-    Convert raw model outputs into predicted class labels or multi-label predictions,
-    depending on classification_mode.
+    Convert raw model outputs into predicted labels based on the classification mode.
+
+    Args:
+        outputs (torch.Tensor or tuple): Raw outputs from the model.
+        classification_mode (ClassificationMode): Enum indicating the classification task type.
+
+    Returns:
+        torch.Tensor: Predicted labels.
     """
     if classification_mode == ClassificationMode.SINGLE_MULTICLASS:
         return torch.argmax(outputs, dim=1)
@@ -67,37 +75,44 @@ def _to_predictions(outputs, classification_mode: ClassificationMode):
         return (probs > 0.5).float()
     elif classification_mode == ClassificationMode.MULTI_MULTICLASS:
         out_scs, out_lnfn, out_rnfn = outputs
-        scs_pred  = torch.argmax(out_scs, dim=1, keepdim=True)
+        scs_pred = torch.argmax(out_scs, dim=1, keepdim=True)
         lnfn_pred = torch.argmax(out_lnfn, dim=1, keepdim=True)
         rnfn_pred = torch.argmax(out_rnfn, dim=1, keepdim=True)
         return torch.cat([scs_pred, lnfn_pred, rnfn_pred], dim=1)
     else:  # MULTI_BINARY
         out_scs, out_lnfn, out_rnfn = outputs
-        scs_probs  = torch.sigmoid(out_scs)
+        scs_probs = torch.sigmoid(out_scs)
         lnfn_probs = torch.sigmoid(out_lnfn)
         rnfn_probs = torch.sigmoid(out_rnfn)
-        scs_pred  = (scs_probs > 0.5).float()
+        scs_pred = (scs_probs > 0.5).float()
         lnfn_pred = (lnfn_probs > 0.5).float()
         rnfn_pred = (rnfn_probs > 0.5).float()
         return torch.cat([scs_pred, lnfn_pred, rnfn_pred], dim=1)
 
-# ---------------------------------------------------------------------
-# 3) The cross_validate_model function (updated)
-# ---------------------------------------------------------------------
+
 def cross_validate_model(config_path="config.yml"):
     """
-    Performs K-Fold cross-validation.
-    For each fold:
-      - Creates (train, val) splits.
-      - Applies imbalance/WeightedRandomSampler if needed.
-      - Trains for `num_epochs` with TQDM progress bars.
-      - Saves per-epoch metrics to a CSV file for each fold.
-      - Stores and evaluates the best model (based on validation balanced accuracy) on the validation set.
-      - Logs additional metrics: macro-average precision, recall, f1-score, and per-disc reports including confusion matrices.
-    
-    Finally, aggregates and logs the average metrics across folds.
+    Perform K-Fold cross-validation for the training pipeline.
+
+    For each fold, this function:
+      - Loads the configuration and sets up logging.
+      - Loads and filters the dataset based on specified discs.
+      - Prepares labels for single-label or multi-label classification.
+      - Creates K-Fold splits (stratified for single-label classification).
+      - Applies imbalance strategies to the training set.
+      - Constructs the training and validation datasets and dataloaders.
+      - Trains the model for a specified number of epochs while tracking metrics.
+      - Saves per-epoch metrics to CSV and stores the best model state for the fold.
+      - Evaluates the best model on the validation set, logging overall and per-disc metrics.
+      - Aggregates and logs average metrics across folds.
+
+    Args:
+        config_path (str): Path to the YAML configuration file.
+
+    Returns:
+        None
     """
-    # --- 1) Load config + initial setup ---
+    # Load configuration and initial parameters
     config = load_config(config_path)
     seed = config["project"]["seed"]
     use_k_fold = config["training"].get("use_k_fold", False)
@@ -107,7 +122,7 @@ def cross_validate_model(config_path="config.yml"):
         print("[INFO] use_k_fold=false in config. Skipping cross-validation.")
         return
 
-    # Create a dedicated CV results folder with naming convention.
+    # Create a directory for cross-validation results
     prefix = (
         f"cv_{config['training']['model_arch']}_"
         f"{config['training']['classification_mode']}_"
@@ -120,18 +135,17 @@ def cross_validate_model(config_path="config.yml"):
     cv_dir = os.path.join("./models", prefix)
     os.makedirs(cv_dir, exist_ok=True)
 
-    # Setup logger to save logs in cv_dir/training.log.
+    # Setup logger for cross-validation
     logger = logging.getLogger(__name__)
     log_file_path = os.path.join(cv_dir, "training.log")
     setup_python_logger(logger, log_file_path)
 
-    # Log dataset information from the config file.
+    # Log dataset and training configuration details
     logger.info("===== DATASET INFORMATION FROM CONFIG =====")
     dataset_info = config.get("training", {})
     for key, value in dataset_info.items():
         logger.info(f"{key}: {value}")
     logger.info("============================================")
-
     logger.info("===== Starting K-Fold Cross-Validation =====")
     logger.info(f"Number of folds: {num_folds}, Seed={seed}")
 
@@ -149,7 +163,7 @@ def cross_validate_model(config_path="config.yml"):
     dropout_prob = config["training"]["dropout_prob"]
     early_stop = config["training"]["early_stopping_patience"]
 
-    # Imbalance configuration.
+    # Imbalance configuration parameters
     imbalance_cfg = config["training"].get("imbalance", {})
     method = imbalance_cfg.get("method", "none")
     undersampling_ratio = imbalance_cfg.get("undersampling_ratio", 0.5)
@@ -157,16 +171,15 @@ def cross_validate_model(config_path="config.yml"):
     smote = imbalance_cfg.get("smote", False)
     use_weighted_sampler = imbalance_cfg.get("use_weighted_sampler", False)
 
-    # --- 2) Load the data ---
+    # Load and filter the dataset
     merged_csv_path = os.path.join(config["data"]["raw_path"], "merged_train_data.csv")
     df_all = pd.read_csv(merged_csv_path)
     df_all["disc_label"] = df_all["level"].str.replace("/", "")
 
-    # Filter for discs_for_training.
     df_filtered = df_all[df_all["level"].isin(discs_for_training)].copy()
     df_filtered = df_filtered.drop_duplicates(subset=["study_id", "level"]).copy()
 
-    # Prepare labels for single-label vs multi-label.
+    # Prepare labels for single-label or multi-label classification
     if classification_mode in [ClassificationMode.SINGLE_MULTICLASS, ClassificationMode.SINGLE_BINARY]:
         label_col = f"{disease}_label"
         df_filtered = df_filtered.dropna(subset=[label_col])
@@ -190,7 +203,7 @@ def cross_validate_model(config_path="config.yml"):
 
     logger.info(f"[CrossVal] Filtered dataset shape = {df_filtered.shape}")
 
-    # --- 3) Create K-Folds ---
+    # Create K-Fold splits with stratification for single-label classification
     if classification_mode in [ClassificationMode.SINGLE_MULTICLASS, ClassificationMode.SINGLE_BINARY]:
         y_strat = df_filtered[final_label_key].values
         skf = StratifiedKFold(n_splits=num_folds, shuffle=True, random_state=seed)
@@ -199,18 +212,16 @@ def cross_validate_model(config_path="config.yml"):
         kf = KFold(n_splits=num_folds, shuffle=True, random_state=seed)
         splits = list(kf.split(df_filtered))
 
-    # To store metrics for each fold.
+    # List to store metrics for each fold
     fold_metrics = []
 
-    # --- 4) Loop over folds ---
+    # Loop over each fold
     for fold_idx, (train_idx, val_idx) in enumerate(splits, start=1):
         logger.info(f"\n=== [Fold {fold_idx}/{num_folds}] ===")
-
-        # Sliced data.
         train_df = df_filtered.iloc[train_idx].copy()
-        val_df   = df_filtered.iloc[val_idx].copy()
+        val_df = df_filtered.iloc[val_idx].copy()
 
-        # Apply imbalance strategy.
+        # Apply imbalance strategy to training data
         if classification_mode in [ClassificationMode.SINGLE_MULTICLASS, ClassificationMode.SINGLE_BINARY]:
             balanced_train_df = apply_imbalance_strategy(
                 df=train_df,
@@ -233,7 +244,7 @@ def cross_validate_model(config_path="config.yml"):
             )
         train_df = balanced_train_df
 
-        # Build datasets.
+        # Build training and validation datasets
         if classification_mode in [ClassificationMode.SINGLE_MULTICLASS, ClassificationMode.SINGLE_BINARY]:
             in_channels = 1
             train_ds = SingleDiseaseDatasetMultiDisc(
@@ -269,13 +280,9 @@ def cross_validate_model(config_path="config.yml"):
                 classification_mode=classification_str
             )
 
-        # Build DataLoaders.
+        # Build DataLoaders
         if use_weighted_sampler:
-            if classification_mode in [ClassificationMode.SINGLE_MULTICLASS, ClassificationMode.SINGLE_BINARY]:
-                labels_list = train_df[final_label_key].tolist()
-            else:
-                labels_list = train_df["multi_label"].tolist()
-
+            labels_list = train_df[final_label_key].tolist() if classification_mode in [ClassificationMode.SINGLE_MULTICLASS, ClassificationMode.SINGLE_BINARY] else train_df["multi_label"].tolist()
             c = Counter(labels_list)
             total = len(labels_list)
             mapping = {lab: total / c[lab] for lab in c}
@@ -290,17 +297,15 @@ def cross_validate_model(config_path="config.yml"):
         else:
             train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True,
                                       collate_fn=custom_collate_filter_none)
-        # NOTE: It is assumed that the dataset returns a third element (disc ID) per sample.
         val_loader = DataLoader(val_ds, batch_size=batch_size, shuffle=False,
                                 collate_fn=custom_collate_filter_none)
 
         logger.info(f"[Fold {fold_idx}] Train size={len(train_ds)}, Val size={len(val_ds)}")
 
-        # Build model & optimizer.
+        # Build model and optimizer
         model, criterion = build_model(config, in_channels)
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         model.to(device)
-
         optimizer = torch.optim.Adam(model.parameters(), lr=lr)
         scheduler = None
         if config["training"].get("use_lr_scheduler", False):
@@ -308,12 +313,11 @@ def cross_validate_model(config_path="config.yml"):
             pat_ = config["training"].get("lr_scheduler_patience", 10)
             scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=factor_, patience=pat_, verbose=True)
 
-        best_fold_val_acc = 0.0
         best_fold_val_bal_acc = 0.0
         patience_counter = 0
-        best_state = None  # To store the best model state for this fold
+        best_state = None  # Store the best model state for this fold
 
-        # Lists to track per-epoch metrics.
+        # Lists to record per-epoch metrics
         epoch_history = []
         train_loss_history = []
         val_loss_history = []
@@ -321,9 +325,8 @@ def cross_validate_model(config_path="config.yml"):
         val_acc_history = []
         val_bal_acc_history = []
 
-        # --- 4.6) Training loop with TQDM ---
+        # Training loop for the current fold
         for epoch in range(num_epochs):
-            # --- TRAIN ---
             model.train()
             train_loss_sum = 0.0
             train_correct = 0.0
@@ -360,7 +363,7 @@ def cross_validate_model(config_path="config.yml"):
             else:
                 train_acc = train_correct / (train_samples * 3 + 1e-8)
 
-            # --- VALIDATION during training ---
+            # Validation phase
             model.eval()
             val_loss_sum = 0.0
             val_samples = 0
@@ -416,7 +419,6 @@ def cross_validate_model(config_path="config.yml"):
                 f"Val Bal Acc={val_bal_acc:.4f}"
             )
 
-            # Record per-epoch metrics.
             epoch_history.append(epoch+1)
             train_loss_history.append(avg_train_loss)
             val_loss_history.append(avg_val_loss)
@@ -424,7 +426,7 @@ def cross_validate_model(config_path="config.yml"):
             val_acc_history.append(val_acc)
             val_bal_acc_history.append(val_bal_acc)
 
-            # Save best model state based on validation balanced accuracy.
+            # Save best model state based on validation balanced accuracy
             if val_bal_acc > best_fold_val_bal_acc:
                 logger.info(f"[Fold {fold_idx}] New Best Balanced Accuracy: {val_bal_acc:.4f}")
                 best_fold_val_bal_acc = val_bal_acc
@@ -436,35 +438,34 @@ def cross_validate_model(config_path="config.yml"):
                     logger.info(f"[Fold {fold_idx}] Early stopping at epoch {epoch+1}")
                     break
 
-        # --- 4.7) Evaluate the best model for this fold ---
+        # Evaluate the best model for the current fold
         if best_state is not None:
             model.load_state_dict(best_state)
 
         model.eval()
         all_targets = []
         all_preds = []
-        all_discs = []  # to store disc identifiers per sample
+        all_discs = []  # Store disc identifiers per sample
         with torch.no_grad():
             for batch in tqdm(val_loader, desc=f"[Fold {fold_idx}][Model Evaluation]"):
                 if batch is None:
                     continue
-                # Assuming the dataset returns (x, y, disc_id)
                 x_val, y_val, disc = batch
                 x_val, y_val = x_val.to(device), y_val.to(device)
                 outputs_val = model(x_val)
                 preds = _to_predictions(outputs_val, classification_mode)
                 all_targets.extend(y_val.cpu().numpy())
                 all_preds.extend(preds.cpu().numpy())
-                all_discs.extend(disc)  # store disc information
+                all_discs.extend(disc)
 
-        # Compute overall classification report.
+        # Compute overall classification report and macro-averaged metrics
         cls_report_dict = classification_report(all_targets, all_preds, zero_division=0, digits=4, output_dict=True)
         macro_avg = cls_report_dict.get("macro avg", {})
         precision_macro = macro_avg.get("precision", 0.0)
         recall_macro = macro_avg.get("recall", 0.0)
         f1_macro = macro_avg.get("f1-score", 0.0)
 
-        # Compute per-disc classification reports and confusion matrices.
+        # Compute per-disc classification reports and confusion matrices
         unique_discs = set(all_discs)
         per_disc_reports = {}
         per_disc_conf_matrices = {}
@@ -477,7 +478,7 @@ def cross_validate_model(config_path="config.yml"):
             per_disc_reports[disc_id] = report
             per_disc_conf_matrices[disc_id] = cm_disc
 
-        # Log overall metrics.
+        # Log overall metrics for the fold
         if classification_mode in [ClassificationMode.SINGLE_MULTICLASS, ClassificationMode.SINGLE_BINARY]:
             cm_overall = confusion_matrix(all_targets, all_preds)
             logger.info(f"[Fold {fold_idx}] Best Model Overall Classification Report:\n{classification_report(all_targets, all_preds, zero_division=0, digits=4)}")
@@ -492,12 +493,12 @@ def cross_validate_model(config_path="config.yml"):
                 logger.info(f"[Fold {fold_idx}] {name} Overall Classification Report:\n{rep}")
                 logger.info(f"[Fold {fold_idx}] {name} Overall Confusion Matrix:\n{cm_disc}")
 
-        # Log per-disc reports and confusion matrices.
+        # Log per-disc reports and confusion matrices
         for disc_id in unique_discs:
             logger.info(f"[Fold {fold_idx}] Classification Report for Disc {disc_id}:\n{per_disc_reports[disc_id]}")
             logger.info(f"[Fold {fold_idx}] Confusion Matrix for Disc {disc_id}:\n{per_disc_conf_matrices[disc_id]}")
 
-        # Append fold metrics including the additional ones.
+        # Store metrics for the current fold
         fold_metrics.append({
             "fold_idx": fold_idx,
             "val_acc": val_acc,
@@ -509,7 +510,7 @@ def cross_validate_model(config_path="config.yml"):
             "per_disc_conf_matrices": per_disc_conf_matrices
         })
 
-        # Save per-epoch training/validation metrics to a CSV file for this fold.
+        # Save per-epoch metrics for the fold to a CSV file
         fold_df = pd.DataFrame({
             "epoch": epoch_history,
             "train_loss": train_loss_history,
@@ -522,7 +523,7 @@ def cross_validate_model(config_path="config.yml"):
         fold_df.to_csv(fold_csv_path, index=False)
         logger.info(f"[Fold {fold_idx}] Saved per-epoch metrics to {fold_csv_path}")
 
-    # --- 5) Aggregate results across folds ---
+    # Aggregate results across folds
     avg_acc = np.mean([fm["val_acc"] for fm in fold_metrics])
     avg_bal_acc = np.mean([fm["val_bal_acc"] for fm in fold_metrics])
     avg_precision = np.mean([fm["precision_macro"] for fm in fold_metrics])
@@ -542,6 +543,7 @@ def cross_validate_model(config_path="config.yml"):
     logger.info("=====================================")
 
     print("[DONE] Cross-validation complete.")
+
 
 if __name__ == "__main__":
     cross_validate_model("config.yml")
